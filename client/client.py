@@ -11,41 +11,40 @@ def loop():
     Do the loop!
     '''
 
-    server_addr = None
+    server = None
+    devices = set()
 
     while True:
 
         # Wait from received packet.
         buf, address = s.recvfrom(2048)
-        out = buf[1:].decode('utf-8')
-
-        if not len(out):
+        if not len(buf):
             break
 
         bwho = buf[0] - OPSET
         btype = buf[1] - OPSET
-        print("Connected to %s" % address[0])
-        print("Got ", btype)
-        #s.sendto(str('hi').encode('utf-8'), address)
+        print("From", address, "got OP", bwho, btype)
 
         if bwho == 0:
-            # Server
-            server_addr = address
-
-            response = b'10'
-            #response.append("got ya".encode())
-            s.sendto(response, server_addr)
-
-        elif bwho == 1:
-            # Device
+            # SERVER
             if btype == 0:
-                # Send back OK
-                response = b'10'
-                s.sendto(response, address)
-            elif btype == 1:
-                # Send back server address
-                response = b'11'
-                response += json.dumps(server_addr).encode()
+                # DISCOVERY: Add server + pass through to devices
+                server = address
+
+                code = b'12' # CLIENT + INFO
+                response = json.dumps(list(devices)).encode()
+                s.sendto(code + response, server)
+
+                for device in devices:
+                    s.sendto(code, device)
+
+        elif bwho == 2:
+            # DEVICE
+            if btype == 0:
+                # DISCOVERY: Send back server addr and add to device list
+                devices.add(address)
+                response = b'12' #CLIENT + INFO
+                response += json.dumps(server).encode()
                 s.sendto(response, address)
         #else:
             # What to do?
