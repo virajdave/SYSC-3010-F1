@@ -162,7 +162,7 @@ public class Server extends Thread {
             @Override
             public void run() {
             	while (true) {
-	            	Message msg = s.recvMessage();
+	            	Message msg = s.recvWait();
 	            	if (msg != null) {
 	            		System.out.println(msg.toString());
 	            	}

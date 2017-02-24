@@ -20,7 +20,7 @@ public class Message {
 	}
 	
 	public Message(DatagramPacket packet) {
-		this.message = new String(packet.getData()).trim();
+		this.message = new String(packet.getData(), 0, packet.getLength());
 		this.address = (InetSocketAddress)packet.getSocketAddress();
 	}
 	
