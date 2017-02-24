@@ -4,37 +4,40 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 public class Web {
-	HashMap<InetAddress, Client> clients;
+	private int index;
+	private HashMap<InetAddress, Integer> devices;
 	
 	public Web() {
-		clients = new HashMap<>();
+		index = 0;
+		devices = new HashMap<>();
 	}
 	
-	public Client addClient(InetAddress addr) {
-		Client c = new Client();
-		clients.put(addr, c);
-		return c;
+	/**
+	 * Get an address device ID mapping.
+	 * @param addr InetAddress
+	 * @return device ID
+	 */
+	public Integer add(InetAddress addr) {
+		int device = index++;
+		devices.put(addr, device);
+		return device;
 	}
 	
-	public void addDevice(InetAddress addr, int port) {
-		
+	/**
+	 * Remove an address device ID mapping.
+	 * @param addr InetAddress
+	 * @return if a device was removed
+	 */
+	public boolean remove(InetAddress addr) {
+		return devices.remove(addr) != null;
 	}
 	
-	public boolean removeClient(InetAddress addr) {
-		
-		return true;
-	}
-	
-	public boolean removeDevice(InetAddress addr, int port) {
-		
-		return true;
-	}
-	
-	public Client getClient(InetAddress addr) {
-		return clients.get(addr);
-	}
-	
-	public Device getDevice(InetAddress addr, int port) {
-		return null;
+	/**
+	 * Get an address device ID mapping.
+	 * @param addr InetAddress
+	 * @return device ID
+	 */
+	public Integer get(InetAddress addr) {
+		return devices.get(addr);
 	}
 }

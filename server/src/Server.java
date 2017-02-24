@@ -26,6 +26,9 @@ public class Server extends Thread {
     	port = _port;
     }
 	
+    /**
+     * Start up the server.
+     */
 	public void run() {
 
         try {
@@ -42,13 +45,15 @@ public class Server extends Thread {
 
             // Receive.
             while (keepRunning){
+            	// Stick a received message in a packet.
             	byte[] data = new byte[PACKET_SIZE];
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 socket.receive(packet);
+                // Create a message from the packet and add it to the queue, notify any waiting receives.
                 Message message = new Message(packet);
-                synchronized (this) {
-                    recvQueue.add(message);
-                    this.notifyAll();
+                recvQueue.add(message);
+                synchronized (recvQueue) {
+                	recvQueue.notifyAll();
                 }
             }
             
@@ -61,13 +66,21 @@ public class Server extends Thread {
         }
 	}
 	
+	/**
+	 * Close down the server.
+	 */
 	public void close() {
 		keepRunning = false;
 	}
 	
+	/**
+	 * Send a message.
+	 * @param message
+	 */
 	public void sendMessage(Message message) {
         try {
             if (socket != null){
+            	// Convert message data to bytes, create the packet and send it.
                 byte[] sendData = message.getMessage().getBytes("UTF-8");
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, message.getSocketAddress());
                 socket.send(sendPacket);
@@ -79,13 +92,19 @@ public class Server extends Thread {
         }
 	}
 	
+	/**
+	 * Send a message over broadcast.
+	 * @param message
+	 */
 	public void sendBroadcast(Message message) {
 		if (bcast == null) {
+			// Get the bcast address if it hasn't been set yet.
 			bcast = Net.getBroadcast();
 		}
 		
         try {
             if (socket != null){
+            	// Convert message data to bytes, create the packet and send it to bcast at the given port.
                 byte[] sendData = message.getMessage().getBytes("UTF-8");
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, bcast, message.getPort());
                 socket.send(sendPacket);
@@ -97,10 +116,36 @@ public class Server extends Thread {
         }
 	}
 	
+	/**
+	 * Check for a received message, waiting if the queue is empty.
+	 * @return Message
+	 */
+	public Message recvWait() {
+		// Wait if the queue is empty.
+		if (recvQueue.isEmpty()) {
+	        synchronized (recvQueue) {
+	            try {
+					recvQueue.wait();
+				} catch (InterruptedException e) {}
+	        }
+		}
+        
+        return recvMessage();
+	}
+	
+	/**
+	 * Check for a received message.
+	 * @return Message or null if the queue is empty
+	 */
 	public Message recvMessage() {
+		// Grab the first message and return it.
 		return recvQueue.poll();
 	}
 	
+	
+	/**
+	 * TEST
+	 */
 	public static void main(String[] args) throws UnknownHostException {
         // Check the arguments
         if (args.length != 1) {
@@ -117,17 +162,10 @@ public class Server extends Thread {
             @Override
             public void run() {
             	while (true) {
-	            	try {
-	            		synchronized (s) {
-							s.wait();
-	            		}
-		            	Message msg = s.recvMessage();
-		            	if (msg != null) {
-		            		System.out.println(msg.toString());
-		            	}
-					} catch (InterruptedException e) {
-						break;
-					}
+	            	Message msg = s.recvMessage();
+	            	if (msg != null) {
+	            		System.out.println(msg.toString());
+	            	}
             	}
             }
         });

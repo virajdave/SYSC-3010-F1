@@ -14,32 +14,15 @@ public class Manager extends Thread {
 		System.out.println("going");
     	
     	while (true) {
-			try {
-				synchronized (server) {
-					server.wait();
-    			}
-    		} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
     		// Check for new incoming messages.
-        	Message msg = server.recvMessage();
+        	Message msg = server.recvWait();
         	if (msg != null) {
-        		Client c = web.getClient(msg.getAddress());
-        		if (c != null) {
-        			Device d = c.getDevice(msg.getPort());
-        			if (d != null) {
-        				// Yay it exists!
-        				System.out.println("This device exists.");
-        			} else {
-        				// Add new device.
-            			c.addDevice(msg.getPort());
-        				System.out.println("Added new device.");
-        			}
+        		Integer d = web.get(msg.getAddress());
+        		if (d != null) {
+    				System.out.println("This device exists.");
         		} else {
-        			// Add new client + device.
-        			web.addClient(msg.getAddress()).addDevice(msg.getPort());
-    				System.out.println("Added new client + device.");
+        			web.add(msg.getAddress());
+    				System.out.println("Added new device.");
         		}
         	}
     	}
