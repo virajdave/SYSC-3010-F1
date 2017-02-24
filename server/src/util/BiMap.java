@@ -60,11 +60,13 @@ public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
-		K k = (K)key;
-		V v = (V)value;
+		if (values.containsKey(value)) {
+			// Special case to remove existing value to avoid duplication in keys.
+			keys.remove(values.get(value));
+		}
 		
-		values.put(v, k);
-		return keys.put(k, v);
+		values.put(value, key);
+		return keys.put(key, value);
 	}
 
 	@Override
