@@ -13,7 +13,7 @@ public class Web {
 	}
 	
 	/**
-	 * Get an address device ID mapping.
+	 * Add a address device ID mapping.
 	 * @param addr InetAddress
 	 * @return device ID
 	 */
@@ -24,9 +24,10 @@ public class Web {
 	}
 	
 	/**
-	 * Change an address device ID mapping.
-	 * @param addr InetAddress
-	 * @return if a device was removed
+	 * Change device ID -> address.
+	 * @param device ID
+	 * @param new_addr address to change to
+	 * @return device ID
 	 */
 	public Integer change(Integer device, InetSocketAddress new_addr) {
 		devices.inverse().put(device, new_addr);
@@ -35,9 +36,10 @@ public class Web {
 	}
 	
 	/**
-	 * Change an address device ID mapping.
-	 * @param addr InetAddress
-	 * @return if a device was removed
+	 * Change address - address.
+	 * @param old_addr address to change from
+	 * @param new_addr address to change to
+	 * @return device ID
 	 */
 	public Integer change(InetSocketAddress old_addr, InetSocketAddress new_addr) {
 		Integer device = devices.get(old_addr);
@@ -47,7 +49,16 @@ public class Web {
 	}
 	
 	/**
-	 * Remove an address device ID mapping.
+	 * Remove device ID mapping.
+	 * @param device ID
+	 * @return if a device was removed
+	 */
+	public boolean remove(Integer device) {
+		return devices.inverse().remove(device) != null;
+	}
+	
+	/**
+	 * Remove address mapping.
 	 * @param addr InetAddress
 	 * @return if a device was removed
 	 */
@@ -56,11 +67,20 @@ public class Web {
 	}
 	
 	/**
-	 * Get an address device ID mapping.
+	 * Get address -> device ID.
 	 * @param addr InetAddress
 	 * @return device ID
 	 */
 	public Integer get(InetSocketAddress addr) {
 		return devices.get(addr);
+	}
+	
+	/**
+	 * Get device ID -> Address.
+	 * @param device ID
+	 * @return Address
+	 */
+	public InetSocketAddress get(Integer device) {
+		return devices.inverse().get(device);
 	}
 }

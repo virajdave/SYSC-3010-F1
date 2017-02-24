@@ -60,8 +60,12 @@ public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
+		if (keys.containsKey(key)) {
+			// Case to remove existing key to avoid duplication in values.
+			values.remove(keys.get(value));
+		}
 		if (values.containsKey(value)) {
-			// Special case to remove existing value to avoid duplication in keys.
+			// Case to remove existing value to avoid duplication in keys.
 			keys.remove(values.get(value));
 		}
 		
