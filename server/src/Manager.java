@@ -17,11 +17,11 @@ public class Manager extends Thread {
     		// Check for new incoming messages.
         	Message msg = server.recvWait();
         	if (msg != null) {
-        		Integer d = web.get(msg.getAddress());
+        		Integer d = web.get(msg.getSocketAddress());
         		if (d != null) {
     				System.out.println("This device exists.");
         		} else {
-        			web.add(msg.getAddress());
+        			web.add(msg.getSocketAddress());
     				System.out.println("Added new device.");
         		}
         	}
