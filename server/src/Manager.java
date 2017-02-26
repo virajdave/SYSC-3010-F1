@@ -1,9 +1,13 @@
+import java.util.Observable;
+import java.util.Observer;
+
+import devices.Device;
 import types.*;
 import util.Codes;
 
-public class Manager extends Thread {
-	Web web;
-	Server server;
+public class Manager extends Thread implements Observer {
+	private Web web;
+	private Server server;
 	
 	public Manager(int port) {
 		web = new Web();
@@ -33,8 +37,8 @@ public class Manager extends Thread {
 	
 	private void device(Message msg) {
 		char code = msg.getMessage().charAt(1);
-		Integer id = web.get(msg.getSocketAddress());
-		if (id == null) {
+		Device d = web.get(msg.getSocketAddress());
+		if (d == null) {
 			if (code == Codes.T_ACK) {
 				String[] info = msg.getMessage().substring(2).split("/");
 				int type = -1;
@@ -47,11 +51,13 @@ public class Manager extends Thread {
 					System.out.println("Couldn't parse info.");
 					return;
 				}
+				
 				// Create device blah blah
+				d = web.add(msg.getSocketAddress(), type);
+				d.addObserver(this);
 				System.out.println("Device of type: " + type);
 				
-				// Add id mapping
-				id = web.add(msg.getSocketAddress());
+				int id = d.getID();
 				System.out.println("Added device #" + id);
 				// Send ack back letting the device know it was connected.
 				server.sendMessage(new Message("" + Codes.W_SERVER + Codes.T_ACK, msg.getSocketAddress()));
@@ -61,7 +67,7 @@ public class Manager extends Thread {
 			}
 			return;
 		}
-		System.out.println("Message from device #" + id + ": "  + msg.getMessage());
+		System.out.println("Message from device #" + d.getID() + ": "  + msg.getMessage());
 		
 		// Quick check device ID matches.
 		
@@ -122,5 +128,11 @@ public class Manager extends Thread {
         int port = Integer.parseInt(args[0]);
         
 		new Manager(port).start();
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }

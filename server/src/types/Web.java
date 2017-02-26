@@ -1,11 +1,13 @@
 package types;
 
 import java.net.InetSocketAddress;
+
+import devices.Device;
 import util.BiMap;
 
 public class Web {
-	private int index;
-	private BiMap<InetSocketAddress, Integer> devices;
+	private static int index;
+	private BiMap<InetSocketAddress, Device> devices;
 	
 	public Web() {
 		index = 0;
@@ -13,23 +15,23 @@ public class Web {
 	}
 	
 	/**
-	 * Add a address device ID mapping.
+	 * Add a address device mapping.
 	 * @param addr InetAddress
-	 * @return device ID
+	 * @return device
 	 */
-	public Integer add(InetSocketAddress addr) {
-		int device = index++;
+	public Device add(InetSocketAddress addr, int type) {
+		Device device = Device.createNew(type, index++);
 		devices.put(addr, device);
 		return device;
 	}
 	
 	/**
-	 * Change device ID -> address.
-	 * @param device ID
+	 * Change device -> address.
+	 * @param device
 	 * @param new_addr address to change to
-	 * @return device ID
+	 * @return device
 	 */
-	public Integer change(Integer device, InetSocketAddress new_addr) {
+	public Device change(Device device, InetSocketAddress new_addr) {
 		devices.inverse().put(device, new_addr);
 		
 		return device;
@@ -39,21 +41,21 @@ public class Web {
 	 * Change address - address.
 	 * @param old_addr address to change from
 	 * @param new_addr address to change to
-	 * @return device ID
+	 * @return device
 	 */
-	public Integer change(InetSocketAddress old_addr, InetSocketAddress new_addr) {
-		Integer device = devices.get(old_addr);
+	public Device change(InetSocketAddress old_addr, InetSocketAddress new_addr) {
+		Device device = devices.get(old_addr);
 		devices.inverse().put(device, new_addr);
 		
 		return device;
 	}
 	
 	/**
-	 * Remove device ID mapping.
-	 * @param device ID
+	 * Remove device mapping.
+	 * @param device
 	 * @return if a device was removed
 	 */
-	public boolean remove(Integer device) {
+	public boolean remove(Device device) {
 		return devices.inverse().remove(device) != null;
 	}
 	
@@ -67,20 +69,20 @@ public class Web {
 	}
 	
 	/**
-	 * Get address -> device ID.
+	 * Get address -> device.
 	 * @param addr InetAddress
-	 * @return device ID
+	 * @return device
 	 */
-	public Integer get(InetSocketAddress addr) {
+	public Device get(InetSocketAddress addr) {
 		return devices.get(addr);
 	}
 	
 	/**
-	 * Get device ID -> Address.
-	 * @param device ID
+	 * Get device -> Address.
+	 * @param device
 	 * @return Address
 	 */
-	public InetSocketAddress get(Integer device) {
+	public InetSocketAddress get(Device device) {
 		return devices.inverse().get(device);
 	}
 }
