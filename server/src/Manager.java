@@ -37,9 +37,12 @@ public class Manager extends Thread implements Observer {
 	
 	private void device(Message msg) {
 		char code = msg.getMessage().charAt(1);
+		
+		// Get the device, if it doesn't exist try adding it.
 		Device d = web.get(msg.getSocketAddress());
 		if (d == null) {
 			if (code == Codes.T_ACK) {
+				// Get the type from the message info.
 				String[] info = msg.getMessage().substring(2).split("/");
 				int type = -1;
 				try {
@@ -52,13 +55,11 @@ public class Manager extends Thread implements Observer {
 					return;
 				}
 				
-				// Create device blah blah
+				// Create device and watch for events.
 				d = web.add(msg.getSocketAddress(), type);
 				d.addObserver(this);
-				System.out.println("Device of type: " + type);
+				System.out.println("Added device #" + d.getID() + " of type " + type);
 				
-				int id = d.getID();
-				System.out.println("Added device #" + id);
 				// Send ack back letting the device know it was connected.
 				server.sendMessage(new Message("" + Codes.W_SERVER + Codes.T_ACK, msg.getSocketAddress()));
 			} else {
@@ -71,6 +72,7 @@ public class Manager extends Thread implements Observer {
 		
 		// Quick check device ID matches.
 		
+		// Do different things depending on what the code is.
 		switch (code) {
 			case Codes.T_BEAT:
 				// uh don't know what to do here.
@@ -118,6 +120,12 @@ public class Manager extends Thread implements Observer {
 				System.out.println("wat is dis -> " + msg.toString());
 		}
 	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	public static void main(String[] args) {
         // Check the arguments
@@ -128,11 +136,5 @@ public class Manager extends Thread implements Observer {
         int port = Integer.parseInt(args[0]);
         
 		new Manager(port).start();
-	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
 	}
 }
