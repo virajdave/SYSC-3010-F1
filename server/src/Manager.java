@@ -26,7 +26,7 @@ public class Manager extends Thread implements Observer {
         		switch (who) {
         			case Codes.W_DEVICE:
         				device(msg); break;
-        			case Codes.W_APP: 
+        			case Codes.W_APP:
         				app(msg); break;
         			default:
         				System.out.println("wat is dis -> " + msg.toString());
@@ -80,15 +80,8 @@ public class Manager extends Thread implements Observer {
 			case Codes.T_ACK:
 				// Check if anything is waiting on an ack?
 				break;
-			case Codes.T_INPUT:
-				// Look through ruleset to see if anything expects this input.
+			case Codes.T_DATA:
 				// Send to device driver.
-				break;
-			case Codes.T_OUTPUT: 
-				// Probably asking for an output? Not sure if this happens.
-				break;
-			case Codes.T_CONF: 
-				// This also probably shouldn't happen?
 				break;
 			default:
 				System.out.println("wat is dis -> " + msg.toString());
@@ -106,16 +99,8 @@ public class Manager extends Thread implements Observer {
 			case Codes.T_ACK:
 				// Check if anything is waiting on an ack?
 				break;
-			case Codes.T_INPUT:
-				// Look through ruleset to see if anything expects this input.
-				// Send to device driver.
-				break;
-			case Codes.T_OUTPUT: 
-				// Probably asking for an output? Not sure if this happens.
-				break;
-			case Codes.T_CONF: 
-				// This also probably shouldn't happen?
-				break;
+			case Codes.T_DATA:
+				// Figure out what this is and what to do with it.
 			default:
 				System.out.println("wat is dis -> " + msg.toString());
 		}
@@ -123,7 +108,17 @@ public class Manager extends Thread implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+		
+		if (!(arg0 instanceof Device)) {
+			System.out.println("UH OH");
+			return;
+		}
+		Device d = (Device)arg0;
+		
+		if (arg1 instanceof String) {
+			String msg = (String)arg1;
+			server.sendMessage(new Message(Codes.W_SERVER + Codes.T_DATA + msg, web.get(d)));
+		}
 		
 	}
 	

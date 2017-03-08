@@ -2,18 +2,14 @@ package devices;
 
 import java.util.Observable;
 
-import types.Conf;
 import types.Data;
 import types.Info;
 
 public abstract class Device extends Observable {
-	private int id;
+	private int id = -1;
+	private boolean dead = false;
 	
 	public abstract void giveMessage(String msg);
-	
-	public abstract boolean giveInput(Data in);
-	
-	public abstract boolean setConf(Conf in);
 	
 	public abstract boolean requestOutput(Data in);
 	
@@ -25,6 +21,14 @@ public abstract class Device extends Observable {
 	
 	public boolean hasID(int i) {
 		return id == i;
+	}
+	
+	public boolean isDead() {
+		return dead;
+	}
+	
+	public void setDead(boolean dead) {
+		this.dead = dead;
 	}
 	
 	public static Device createNew(int type, int id) {

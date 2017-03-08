@@ -8,8 +8,6 @@ public class Codes {
 	
 	public static final char T_BEAT   = '0';
 	public static final char T_ACK    = '1';
-	public static final char T_INPUT  = '2';
-	public static final char T_OUTPUT = '3';
-	public static final char T_CONF   = '4';
+	public static final char T_DATA   = '2';
 
 }
