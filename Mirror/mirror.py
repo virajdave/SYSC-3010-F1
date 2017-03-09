@@ -88,31 +88,34 @@ class mirrorGUI:
 
 		# time section of gui
 		self.timeFrame = Frame(self.top, bg=self.mirrorBg)
-		self.timeFrame.place(rely=0.0, relx=0.0, x=0, y=0, anchor=NW)
 		self.timeLab = Label(self.timeFrame, textvariable=self.timeVar, fg=self.mirrorFg, bg=self.mirrorBg, font=(self.fontType, self.largeFontSize)) 
-		self.timeLab.grid(row=0, column=0)
 		self.widgets.append(self.timeLab)
 		self.dateLab = Label(self.timeFrame, textvariable=self.dateVar, fg=self.mirrorFg, bg=self.mirrorBg, font=(self.fontType, self.smallFontSize)) 
-		self.dateLab.grid(row=1, column=0)
 		self.widgets.append(self.dateLab)
-
 
 		# weather section of gui
 		self.weatherFrame = Frame(self.top, bg=self.mirrorBg)
-		self.weatherFrame.place(rely=0.0, relx=1.0, x=0, y=0, anchor=NE)
 		self.tempLab = Label(self.weatherFrame, textvariable=self.tempVar, fg=self.mirrorFg, bg=self.mirrorBg, font=(self.fontType, self.largeFontSize)) 
-		self.tempLab.grid(row=0, column=0)
 		self.widgets.append(self.tempLab)
 		self.conLab = Label(self.weatherFrame, textvariable=self.conditionsVar, fg=self.mirrorFg, bg=self.mirrorBg, font=(self.fontType, self.smallFontSize)) 
-		self.conLab.grid(row=1, column=0)
 		self.widgets.append(self.conLab)
 		self.minmaxLab = Label(self.weatherFrame, textvariable=self.minmaxVar, fg=self.mirrorFg, bg=self.mirrorBg, font=(self.fontType, self.smallFontSize)) 
-		self.minmaxLab.grid(row=2, column=0)
 		self.widgets.append(self.minmaxLab)
 
 		# insert logo
 		self.canvas_image = PhotoImage(file='CAM.png')
 		self.logoLab = Label(self.top, image=self.canvas_image, bg=self.mirrorFg, borderwidth=0)
+		
+		#Positioning of widgets
+		self.timeFrame.place(rely=0.0, relx=0.0, x=0, y=0, anchor=NW)
+		self.timeLab.grid(row=0, column=0)
+		self.dateLab.grid(row=1, column=0)
+		
+		self.weatherFrame.place(rely=0.0, relx=1.0, x=0, y=0, anchor=NE)
+		self.tempLab.grid(row=0, column=0)
+		self.conLab.grid(row=1, column=0)
+		self.minmaxLab.grid(row=2, column=0)
+		
 		self.logoLab.place(rely=1.0, relx=0.0, x=0, y=0, anchor=SW)
 
 
