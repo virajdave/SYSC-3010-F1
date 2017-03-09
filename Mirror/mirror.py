@@ -1,6 +1,5 @@
 from tkinter import *
 from time import *
-from weather import *
 import time
 
 
@@ -28,19 +27,23 @@ class mirrorGUI:
 		self.createWidgets()
 		
 		
-	# GUI Functions ##########################################################################################
+	# GUI widget display Updators #######################################################################################
 
-	# Changes the Gui variables to adjust temperature data
-	def tempUpdate(self):
-		weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
+	# Changes the Gui variable to adjust temperature data
+	def tempUpdate(self, weatherData):
 		temp = str(weatherData['temp']) + ' °C '
 		self.tempVar.set(temp)
+	
+	# Changes the Gui variable to adjust conditions data
+	def conditionsUpdate(self, weatherData):
 		conditions = weatherData['city'] + ', ' + weatherData['country'] + "\t   " + weatherData['sky'] + "    "
-		conditionsVar.set(conditions)
+		self.conditionsVar.set(conditions)
+	
+	# Changes the Gui variable to adjust min and max data
+	def minMaxlineUpdate(self, weatherData):
 		minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
 		self.minmaxVar.set(minmax)
-
-
+		
 	# Changes GUI Variable to update the time based on system time
 	def timeUpdate(self, time):
 		self.timeVar.set(time)
@@ -49,14 +52,8 @@ class mirrorGUI:
 	def dateUpdate(self, date):
 		self.dateVar.set(date)
 
-
-	# Constantly runs to update GUI options
-	def update():
-		timeUpdate()
-		tempUpdate()
-		top.update_idletasks()
-		top.after(500, update)
-
+	# GUI communication to controller #####################################################################################
+	
 	# Reads the queue from the controller and updates as needed
 	def runnerLoop(self, queue):
 		while True:
@@ -67,6 +64,10 @@ class mirrorGUI:
 						self.timeUpdate(message.info)
 					elif message.messageType == 'date':
 						self.dateUpdate(message.info)
+					elif message.messageType == 'weather':
+						self.tempUpdate(message.info)
+						self.conditionsUpdate(message.info)
+						self.minMaxlineUpdate(message.info)
 			time.sleep(0.1)
 
 		

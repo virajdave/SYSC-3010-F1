@@ -1,5 +1,6 @@
 from mirror import *
 from dataPassingObject import *
+from weather import *
 from queue import *
 import _thread, time
 
@@ -22,6 +23,13 @@ def tellGUIToUpdateTime():
 		guiRecvQueue.put_nowait(message('date', date))
 		time.sleep(0.5)
 
+# Every 15 mins fetches new weather data and gives the info to the gui to display
+def tellGUIToUpdateWeather():
+	while True :
+		weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
+		guiRecvQueue.put_nowait(message('weather', weatherData))
+		time.sleep(900)
+
 #Starts up the network, controller and gui threads
 def runController():
 	top = Tk() 	#used as the root for the tk window
@@ -29,7 +37,7 @@ def runController():
 	gui = mirrorGUI(top, guiRecvQueue)
 	_thread.start_new_thread(gui.runnerLoop, (guiRecvQueue,))
 	_thread.start_new_thread(tellGUIToUpdateTime, ())
-	
+	_thread.start_new_thread(tellGUIToUpdateWeather, ())
 	#Display the gui window
 	gui.showGUI()
 runController()
