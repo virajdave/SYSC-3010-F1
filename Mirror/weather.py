@@ -21,7 +21,7 @@ def url_builder(city):
 
 
 def data_fetch(full_api_url):
-    url = urllib.request.urlopen(full_api_url)
+    url = urllib.request.urlopen(full_api_url, timeout=10)
     output = url.read().decode('utf-8')
     raw_api_dict = json.loads(output)
     url.close()
