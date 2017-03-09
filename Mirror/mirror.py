@@ -4,7 +4,6 @@ from weather import *
 import time
 
 # DATA ###################################################################################################
-updateCounter = 500
 # colours
 mirrorBg = 'black'
 mirrorFg = '#2E99A9'  # Match the logo color
@@ -25,8 +24,6 @@ minmaxVar = StringVar()
 
 # Changes the Gui variables to adjust temperature data
 def tempUpdate():
-    #global updateCounter
-    #if updateCounter > 500:
     weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
     temp = str(weatherData['temp']) + ' °C '
     tempVar.set(temp)
@@ -34,9 +31,7 @@ def tempUpdate():
     conditionsVar.set(conditions)
     minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
     minmaxVar.set(minmax)
-    #updateCounter = 0
-    #else:
-     #   updateCounter += 1
+
 
 # Changes GUI Variable to update the time based on system time
 def timeUpdate(time):
@@ -77,10 +72,8 @@ def createmirrorGUI(guiRecvQueue):
 	# time section of gui
 	timeFrame = Frame(top, bg=mirrorBg)
 	timeFrame.place(rely=0.0, relx=0.0, x=0, y=0, anchor=NW)
-	#timeUpdate()
 	timeLab = Label(timeFrame, textvariable=timeVar, fg=mirrorFg, bg=mirrorBg, font=(fontType, largeFontSize)) \
 	.grid(row=0, column=0)
-	#dateUpdate()
 	dateLab = Label(timeFrame, textvariable=dateVar, fg=mirrorFg, bg=mirrorBg, font=(fontType, smallFontSize)) \
 	.grid(row=1, column=0)
 
@@ -94,17 +87,12 @@ def createmirrorGUI(guiRecvQueue):
 	.grid(row=1, column=0)
 	minmaxLab = Label(weatherFrame, textvariable=minmaxVar, fg=mirrorFg, bg=mirrorBg, font=(fontType, smallFontSize)) \
 	.grid(row=2, column=0)
-	#tempUpdate()
 
 	# insert logo
 	canvas_image = PhotoImage(file='CAM.png')
 	# Resizing
 	canvas_image = canvas_image.subsample(3, 3)
 	logo = Label(top, image=canvas_image, bg=mirrorBg).place(rely=1.0, relx=0.0, x=0, y=0, anchor=SW)
-
-
-	#top.after(500, update)
-	#top.after(10, runnerLoop(guiRecvQueue))
 	
 	top.mainloop()
 	
