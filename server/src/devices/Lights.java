@@ -1,6 +1,7 @@
 package devices;
 
 import types.Data;
+import util.Parse;
 
 public class Lights extends Device {
 	
@@ -29,7 +30,7 @@ public class Lights extends Device {
 	@Override
 	public void giveInput(Data in) {
 		if (in.is("set")) {
-			set(Boolean.parseBoolean(in.get()));
+			set(Parse.toBool(in.get()));
 		}
 		
 	}
@@ -37,7 +38,7 @@ public class Lights extends Device {
 	@Override
 	public Data requestOutput(Data in) {
 		if (in.is("set")) {
-			return new Data("set", Boolean.toString(on));
+			return new Data("set", Parse.toString(on));
 		}
 		return null;
 	}
@@ -45,8 +46,7 @@ public class Lights extends Device {
 	@Override
 	public String getInfo() {
 		// If the lights are on.
-		// TODO: add it.
-		return "";
+		return Parse.toString("/", this.getID(), this.isDead(), on);
 	}
 
 }
