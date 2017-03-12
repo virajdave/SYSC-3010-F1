@@ -30,6 +30,8 @@ public class Parse {
 				s[i] = toString((boolean)var[i]);
 			} else if (var[i] instanceof Integer) {
 				s[i] = toString((int)var[i]);
+			} else if (var[i] instanceof String) {
+				s[i] = (String)var[i];
 			} else {
 				throw new IllegalArgumentException("Cannot parse index " + i + " of type '" + var[i].getClass().getName() + "'");
 			}
