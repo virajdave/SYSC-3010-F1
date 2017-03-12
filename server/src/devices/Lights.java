@@ -1,26 +1,53 @@
 package devices;
 
 import types.Data;
-import types.Info;
 
 public class Lights extends Device {
+	
+	private boolean on;
+	
+	public Lights() {
+		set(false);
+	}
+	
+	private void set(boolean change) {
+		if (on != change) {
+			on = change;
+			// TODO send message out.
+			if (on) {
+			    send("1");
+			} else {
+				send("0");
+			}
+		}
+	}
 
 	@Override
 	public void giveMessage(String msg) {
-		// TODO Auto-generated method stub
+		// Nothing here.
+	}
+
+	@Override
+	public void giveInput(Data in) {
+		if (in.is("set")) {
+			set(Boolean.parseBoolean(in.get()));
+		}
 		
 	}
 
 	@Override
-	public boolean requestOutput(Data in) {
-		// TODO Auto-generated method stub
-		return false;
+	public Data requestOutput(Data in) {
+		if (in.is("set")) {
+			return new Data("set", Boolean.toString(on));
+		}
+		return null;
 	}
 
 	@Override
-	public Info getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getInfo() {
+		// If the lights are on.
+		// TODO add it
+		return "";
 	}
 
 }

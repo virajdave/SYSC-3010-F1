@@ -108,18 +108,15 @@ public class Manager extends Thread implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		
-		if (!(arg0 instanceof Device)) {
-			System.out.println("UH OH");
+		// Check correct types.
+		if (!(arg0 instanceof Device) || !(arg1 instanceof String)) {
+			System.err.println("UH OH");
 			return;
 		}
+		
 		Device d = (Device)arg0;
-		
-		if (arg1 instanceof String) {
-			String msg = (String)arg1;
-			server.sendMessage(new Message(Codes.W_SERVER + Codes.T_DATA + msg, web.get(d)));
-		}
-		
+		String msg = (String)arg1;
+		server.sendMessage(new Message(Codes.W_SERVER + Codes.T_DATA + msg, web.get(d)));
 	}
 	
 	public static void main(String[] args) {

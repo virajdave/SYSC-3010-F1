@@ -20,9 +20,18 @@ public class Web {
 	 * @return device
 	 */
 	public Device add(InetSocketAddress addr, int type) {
-		Device device = Device.createNew(type, index++);
+		Device device = Device.createNew(type, index++, this);
 		devices.put(addr, device);
 		return device;
+	}
+	
+	public Device getByID(int id) {
+		for (Device d : devices.inverse().keySet()) {
+			if (d.hasID(id)) {
+				return d;
+			}
+		}
+		return null;
 	}
 	
 	/**
