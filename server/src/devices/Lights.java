@@ -7,13 +7,12 @@ public class Lights extends Device {
 	private boolean on;
 	
 	public Lights() {
-		set(false);
+		on = false;
 	}
 	
 	private void set(boolean change) {
 		if (on != change) {
 			on = change;
-			// TODO send message out.
 			if (on) {
 			    send("1");
 			} else {
@@ -46,7 +45,7 @@ public class Lights extends Device {
 	@Override
 	public String getInfo() {
 		// If the lights are on.
-		// TODO add it
+		// TODO: add it.
 		return "";
 	}
 

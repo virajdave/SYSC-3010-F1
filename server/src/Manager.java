@@ -29,7 +29,7 @@ public class Manager extends Thread implements Observer {
         			case Codes.W_APP:
         				app(msg); break;
         			default:
-        				System.out.println("wat is dis -> " + msg.toString());
+        				System.out.println("unknown W -> " + msg.toString());
         		}
         	}
     	}
@@ -42,13 +42,14 @@ public class Manager extends Thread implements Observer {
 		Device d = web.get(msg.getSocketAddress());
 		if (d == null) {
 			if (code == Codes.T_ACK) {
+				System.out.println("Going to add device.");
 				// Get the type from the message info.
-				String[] info = msg.getMessage().substring(2).split("/");
+				String info = msg.getMessage().substring(2);
 				int type = -1;
 				try {
-					type = Integer.parseInt(info[1]);
+					type = Integer.parseInt(info);
 				} catch (NumberFormatException e) {
-					System.out.println("Device type '" + info[1] + "' unknown.");
+					System.out.println("Device type '" + info + "' unknown.");
 					return;
 				} catch (Exception e) {
 					System.out.println("Couldn't parse info.");
@@ -63,6 +64,7 @@ public class Manager extends Thread implements Observer {
 				// Send ack back letting the device know it was connected.
 				server.sendMessage(new Message("" + Codes.W_SERVER + Codes.T_ACK, msg.getSocketAddress()));
 			} else {
+				System.out.println("Unknown device, sending back beat.");
 				// Don't know what this is, looking for info with a beat.
 				server.sendMessage(new Message("" + Codes.W_SERVER + Codes.T_BEAT, msg.getSocketAddress()));
 			}
@@ -75,16 +77,17 @@ public class Manager extends Thread implements Observer {
 		// Do different things depending on what the code is.
 		switch (code) {
 			case Codes.T_BEAT:
-				// uh don't know what to do here.
+				// Could be ignored.
 				break;
 			case Codes.T_ACK:
-				// Check if anything is waiting on an ack?
+				// TODO: implement ACK checking.
 				break;
 			case Codes.T_DATA:
 				// Send to device driver.
+				d.giveMessage(msg.getMessage().substring(2));
 				break;
 			default:
-				System.out.println("wat is dis -> " + msg.toString());
+				System.out.println("unknown T -> " + msg.toString());
 		}
 	}
 	

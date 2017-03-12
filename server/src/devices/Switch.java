@@ -5,7 +5,7 @@ import types.Data;
 public class Switch extends Device {
 	
 	private boolean on;
-	private Lights light;
+	private Device light;
 	
 	public Switch() {
 		on = false;
@@ -15,14 +15,18 @@ public class Switch extends Device {
 	private void set(boolean change) {
 		if (on != change) {
 			on = change;
+			
 			if (light != null) {
 				light.giveInput(new Data("set", Boolean.toString(on)));
 			}
+			
+			System.out.println("Switch set to " + Boolean.toString(on));
 		}
 	}
 
 	@Override
 	public void giveMessage(String msg) {
+		System.out.println("Switch got message: " + msg);
 		// Set the switch on/off.
 		if(msg.equals("1")) {
 			set(true);
@@ -38,8 +42,8 @@ public class Switch extends Device {
 			set(Boolean.parseBoolean(in.get()));
 		} else if (in.is("light")) {
 			Device d = getDevice(Integer.parseInt(in.get()));
-			if (d instanceof Lights) {
-				light = (Lights)d;
+			if (d != null) {
+				light = d;
 			}
 		}
 		
@@ -56,7 +60,7 @@ public class Switch extends Device {
 	@Override
 	public String getInfo() {
 		// If the switch is on and connected light ID.
-		// TODO add it
+		// TODO: add it.
 		return "";
 	}
 
