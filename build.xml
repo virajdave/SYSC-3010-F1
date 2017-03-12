@@ -2,7 +2,7 @@
 <project name="CAM" default="test" basedir=".">
 
     <target name="test">
-        <ant antfile="server/build.xml" target="test"/>
+        <ant antfile="build.xml" target="test" dir="server"/>
     </target>
 
 </project>
