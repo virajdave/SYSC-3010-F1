@@ -1,14 +1,12 @@
-package test;
-
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class Server {
+public class ServerTest {
 
 	@Test
 	public void test() {
-		// Test something
+		// TODO: make test cases.
 	}
 
 }

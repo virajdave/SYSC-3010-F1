@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<project name="CAM" default="test" basedir=".">
+
+    <target name="test">
+        <ant antfile="server/build.xml" target="test"/>
+    </target>
+
+</project>

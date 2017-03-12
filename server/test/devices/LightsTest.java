@@ -1,9 +1,8 @@
-package test.devices;
+package devices;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import devices.*;
 
 public class LightsTest {
 
