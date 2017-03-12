@@ -17,7 +17,12 @@ public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 		this.values = new HashMap<>();
 	}
 	
-	public BiMap(Map<K, V> keys, Map<V, K> values) {
+	public BiMap(Map<K, V> map) {
+		this();
+		putAll(map);
+	}
+	
+	private BiMap(Map<K, V> keys, Map<V, K> values) {
 		this.keys = keys;
 		this.values = values;
 	}
