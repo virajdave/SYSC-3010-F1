@@ -20,3 +20,6 @@ script:
   - python3 --version
   - ant test
   - pytest
+
+notifications:
+  email: false
