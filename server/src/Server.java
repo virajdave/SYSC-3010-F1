@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -10,7 +11,6 @@ public class Server extends Thread {
     private static final int PACKET_SIZE = 1500;
 
     private Queue<Message> recvQueue;
-	private boolean keepRunning;
     private DatagramSocket socket;
     private Integer port;
     private InetAddress bcast = null;
@@ -21,7 +21,6 @@ public class Server extends Thread {
     
     public Server(Integer _port) {
     	recvQueue = new LinkedList<>();
-    	keepRunning = true;
     	socket = null;
     	port = _port;
     }
@@ -30,7 +29,6 @@ public class Server extends Thread {
      * Start up the server.
      */
 	public void run() {
-
         try {
         	// Create socket.
             if (port != null) {
@@ -44,7 +42,7 @@ public class Server extends Thread {
             }
 
             // Receive.
-            while (keepRunning){
+            while (!Thread.interrupted()){
             	// Stick a received message in a packet.
             	byte[] data = new byte[PACKET_SIZE];
                 DatagramPacket packet = new DatagramPacket(data, data.length);
@@ -57,10 +55,15 @@ public class Server extends Thread {
                 }
             }
             
-        } catch (Exception e) {
+        } catch (SocketException e) {
+        	if (e.getMessage().equals("socket closed") && Thread.interrupted()) {
+        		return;
+        	}
             e.printStackTrace();
-        } finally {
-            if (socket != null) {
+        } catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+            if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
         }
@@ -69,8 +72,11 @@ public class Server extends Thread {
 	/**
 	 * Close down the server.
 	 */
-	public void close() {
-		keepRunning = false;
+	@Override
+	public void interrupt() {
+		super.interrupt();
+        socket.close();
+		System.out.println("DONE");
 	}
 	
 	/**
@@ -87,7 +93,7 @@ public class Server extends Thread {
             } else {
                 System.err.println("Server not running, cannot send message.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 	}
@@ -142,6 +148,10 @@ public class Server extends Thread {
 		return recvQueue.poll();
 	}
 	
+	public Integer getPort() {
+		return port;
+	}
+	
 	
 	/**
 	 * TEST
@@ -188,7 +198,7 @@ public class Server extends Thread {
         }
         System.out.println("Closing down");
         in.close();
-        s.close();
+        s.interrupt();
         t.interrupt();
         try {
 			t.join();
