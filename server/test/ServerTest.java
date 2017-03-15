@@ -32,16 +32,17 @@ public class ServerTest {
 	}
 
 	@Test
-	public void testStartStop() {
+	public void testStartStop() throws InterruptedException {
 		assertTrue(server.isAlive());
 		server.interrupt();
+		server.join(5000);
 		assertFalse(server.isAlive());
 	}
 
 	@Test
 	public void testRecv0() throws InterruptedException {
         // Give the server a chance to run.
-		Thread.sleep(1);
+		Thread.sleep(10);
 		
         Message m = server.recvMessage();
         assertNull(m);
@@ -54,7 +55,7 @@ public class ServerTest {
         socket.send(sendPacket);
 
         // Give the server a chance to run.
-		Thread.sleep(1);
+		Thread.sleep(10);
 		
         Message m = server.recvMessage();
         assertEquals("Testing message", m.getMessage());
@@ -70,7 +71,7 @@ public class ServerTest {
 		}
 
         // Give the server a chance to run.
-		Thread.sleep(1);
+		Thread.sleep(10);
 
 		for (int i = 0; i < 10; i++) {
 	        Message m = server.recvMessage();

@@ -75,8 +75,7 @@ public class Server extends Thread {
 	@Override
 	public void interrupt() {
 		super.interrupt();
-        socket.close();
-		System.out.println("DONE");
+		socket.close();
 	}
 	
 	/**
