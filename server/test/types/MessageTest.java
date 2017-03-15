@@ -11,19 +11,21 @@ import org.junit.Test;
 public class MessageTest {
 
 	@Test
-	public void test() {
-		InetSocketAddress addr;
-		Message m;
+	public void testCreate1() {
+		InetSocketAddress addr = new InetSocketAddress("localhost", 8080);
+		Message m = new Message("Test", addr);
 		
-		addr = new InetSocketAddress("localhost", 8080);
-		m = new Message("Test", addr);
 		assertEquals(addr, m.getSocketAddress());
 		assertEquals(addr.getAddress(), m.getAddress());
 		assertEquals(addr.getPort(), m.getPort());
 		assertEquals("Test", m.getMessage());
+	}
 
-		addr = new InetSocketAddress("10.0.0.12", 25056);
-		m = new Message("Another message", addr.getAddress(), addr.getPort());
+	@Test
+	public void testCreate2() {
+		InetSocketAddress addr = new InetSocketAddress("10.0.0.12", 25056);
+		Message m = new Message("Another message", addr.getAddress(), addr.getPort());
+		
 		assertEquals(addr, m.getSocketAddress());
 		assertEquals(addr.getAddress(), m.getAddress());
 		assertEquals(addr.getPort(), m.getPort());
@@ -31,26 +33,22 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testPacket() throws UnsupportedEncodingException {
-		InetSocketAddress addr;
-		Message m;
-		byte[] data;
+	public void testPacket1() throws UnsupportedEncodingException {		
+		InetSocketAddress addr = new InetSocketAddress("localhost", 8080);
+		byte[] data = "Something GR3AT".getBytes("UTF-8");
+		Message m = new Message(new DatagramPacket(data, data.length, addr));
 		
-		addr = new InetSocketAddress("localhost", 8080);
-		data = "Something GR3AT".getBytes("UTF-8");
-		m = new Message(new DatagramPacket(data, data.length, addr));
 		assertEquals(addr, m.getSocketAddress());
 		assertEquals(addr.getAddress(), m.getAddress());
 		assertEquals(addr.getPort(), m.getPort());
 		assertEquals("Something GR3AT", m.getMessage());
-
+	}
+	
+	@Test
+	public void testPacket2() throws UnsupportedEncodingException {
+		byte[] data = "Message packet".getBytes("UTF-8");
 		try {
-			data = "Message packet".getBytes("UTF-8");
-			m = new Message(new DatagramPacket(data, data.length));
-			assertEquals(addr, m.getSocketAddress());
-			assertEquals(addr.getAddress(), m.getAddress());
-			assertEquals(addr.getPort(), m.getPort());
-			assertEquals("Something GR3AT", m.getMessage());
+			new Message(new DatagramPacket(data, data.length));
 			fail("Expected IllegalArgumentException to be thrown");
 		} catch (IllegalArgumentException e) {
 			assertEquals("packet requires a valid socket address, port out of range:-1", e.getMessage());
@@ -58,16 +56,18 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testToString() {
-		InetSocketAddress addr;
-		Message m;
+	public void testToString1() {		
+		InetSocketAddress addr = new InetSocketAddress("localhost", 8080);
+		Message m = new Message("Test", addr);
 		
-		addr = new InetSocketAddress("localhost", 8080);
-		m = new Message("Test", addr);
 		assertEquals("localhost/127.0.0.1:8080 Test", m.toString());
+	}
 
-		addr = new InetSocketAddress("10.0.0.12", 25056);
-		m = new Message("Another message", addr.getAddress(), addr.getPort());
+	@Test
+	public void testToString2() {
+		InetSocketAddress addr = new InetSocketAddress("10.0.0.12", 25056);
+		Message m = new Message("Another message", addr.getAddress(), addr.getPort());
+		
 		assertEquals("/10.0.0.12:25056 Another message", m.toString());
 	}
 }
