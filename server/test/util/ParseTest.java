@@ -63,11 +63,8 @@ public class ParseTest {
 
 	@Test
 	public void testToStringBool() {
-		assertEquals("1", Parse.toString(1));
-		assertEquals("0", Parse.toString(0));
-		assertEquals("96", Parse.toString(96));
-		assertEquals("25905", Parse.toString(25905));
-		assertEquals("-54", Parse.toString(-54));
+		assertEquals("1", Parse.toString(true));
+		assertEquals("0", Parse.toString(false));
 	}
 
 	@Test
@@ -80,12 +77,21 @@ public class ParseTest {
 	}
 
 	@Test
+	public void testToStringChar() {
+		assertEquals("1", Parse.toString('1'));
+		assertEquals("c", Parse.toString('c'));
+		assertEquals("\\", Parse.toString('\\'));
+		assertEquals("-", Parse.toString('-'));
+	}
+
+	@Test
 	public void testToStringArray() {
 		assertEquals("101", Parse.toString("", true, false, true));
 		assertEquals("-95054", Parse.toString("", -95, 0, 54));
 		assertEquals("test", Parse.toString(":aa", "test"));
 		assertEquals("1/0", Parse.toString("/", true, false));
 		assertEquals("-88+1+no", Parse.toString("+", -88, true, "no"));
+		assertEquals("Bbreak0breakthis", Parse.toString("break", 'B', '0', "this"));
 	}
 
 	@Test
