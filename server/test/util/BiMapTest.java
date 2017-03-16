@@ -19,11 +19,14 @@ public class BiMapTest {
 	}
 
 	@Test
-	public void test() {
+	public void testCreate() {
 		assertEquals(new Integer(2), map.get("Bill"));
 		assertEquals(new Integer(55), map.get("Bobby"));
 		assertEquals(new Integer(420), map.get("Ben"));
-		
+	}
+
+	@Test
+	public void testCreateFromMap() {
 		HashMap<String, Integer> data = new HashMap<>();
 		data.put("Bill", 2);
 		data.put("Bobby", 55);

@@ -33,7 +33,7 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testPacket1() throws UnsupportedEncodingException {		
+	public void testPacket() throws UnsupportedEncodingException {		
 		InetSocketAddress addr = new InetSocketAddress("localhost", 8080);
 		byte[] data = "Something GR3AT".getBytes("UTF-8");
 		Message m = new Message(new DatagramPacket(data, data.length, addr));
@@ -45,7 +45,7 @@ public class MessageTest {
 	}
 	
 	@Test
-	public void testPacket2() throws UnsupportedEncodingException {
+	public void testPacketException() throws UnsupportedEncodingException {
 		byte[] data = "Message packet".getBytes("UTF-8");
 		try {
 			new Message(new DatagramPacket(data, data.length));
@@ -56,7 +56,7 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testToString1() {		
+	public void testToString1() {
 		InetSocketAddress addr = new InetSocketAddress("localhost", 8080);
 		Message m = new Message("Test", addr);
 		

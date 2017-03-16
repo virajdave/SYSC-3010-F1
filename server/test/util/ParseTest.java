@@ -12,7 +12,10 @@ public class ParseTest {
 	public void testToBool() {
 		assertTrue(Parse.toBool("1"));
 		assertFalse(Parse.toBool("0"));
-		
+	}
+
+	@Test
+	public void testToBoolException() {
 		try {
 			Parse.toBool("a"); fail("Expected IllegalArgumentException to be thrown");
 		} catch (IllegalArgumentException e) {
@@ -37,7 +40,10 @@ public class ParseTest {
 		assertEquals(96, Parse.toInt("96"));
 		assertEquals(25905, Parse.toInt("25905"));
 		assertEquals(-54, Parse.toInt("-54"));
-		
+	}
+
+	@Test
+	public void testToIntException() {
 		try {
 			Parse.toInt("a"); fail("Expected NumberFormatException to be thrown");
 		} catch (NumberFormatException e) {
@@ -80,7 +86,10 @@ public class ParseTest {
 		assertEquals("test", Parse.toString(":aa", "test"));
 		assertEquals("1/0", Parse.toString("/", true, false));
 		assertEquals("-88+1+no", Parse.toString("+", -88, true, "no"));
+	}
 
+	@Test
+	public void testToStringArrayException() {
 		try {
 			Parse.toString("", new Parse()); fail("Expected IllegalArgumentException to be thrown");
 		} catch (IllegalArgumentException e) {
