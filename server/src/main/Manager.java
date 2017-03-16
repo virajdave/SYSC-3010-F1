@@ -46,7 +46,7 @@ public class Manager extends Thread implements Observer {
 		// Get the device, if it doesn't exist try adding it.
 		Device d = web.get(msg.getSocketAddress());
 		if (d == null) {
-			if (code == Codes.T_ACK) {
+			if (code == Codes.T_BEAT) {
 				System.out.println("Going to add device.");
 				// Get the type from the message info.
 				String info = msg.getMessage().substring(2);

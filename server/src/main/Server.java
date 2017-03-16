@@ -9,7 +9,7 @@ import types.Message;
 import util.*;
 
 public class Server extends Thread {
-    private static final int PACKET_SIZE = 1500;
+    protected static final int PACKET_SIZE = 1500;
 
     private Queue<Message> recvQueue;
     private DatagramSocket socket;
