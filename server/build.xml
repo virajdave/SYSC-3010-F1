@@ -7,16 +7,26 @@
 
     <path id="classpath.base" />
 
+    <path id="classpath.cuke">
+        <pathelement location="lib/cucumber-core-1.2.5.jar" />
+        <pathelement location="lib/cucumber-java-1.2.5.jar" />
+        <pathelement location="lib/cucumber-junit-1.2.5.jar" />
+        <pathelement location="lib/cucumber-jvm-deps-1.0.5.jar" />
+        <pathelement location="lib/gherkin-2.12.2.jar" />
+    </path>
+
     <path id="classpath.test">
         <pathelement location="lib/junit-4.12.jar" />
         <pathelement location="lib/hamcrest-core-1.3.jar" />
         <pathelement location="lib/cpsuite.jar" />
         <pathelement location="${main.build.dir}"/>
+        <path refid="classpath.cuke" />
         <path refid="classpath.base" />
     </path>
 
-    <target name="test" depends="run, clean" />
+    <target name="test" depends="run, cuke, clean" />
 
+    <!-- Compile src -->
     <target name="compile">
         <mkdir dir="${main.build.dir}"/>
         <javac srcdir="${main.src.dir}" destdir="${main.build.dir}" includeantruntime="false">
@@ -24,6 +34,7 @@
         </javac>
     </target>
 
+    <!-- Compile test and build the src -->
     <target name="build" depends="compile">
         <mkdir dir="${test.build.dir}"/>
         <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false">
@@ -32,8 +43,7 @@
         <echo message="Build done" />
     </target>
     
-    <!-- Test and build all files  -->
-    <!-- To run this: use "ant" (default) or "ant run" -->
+    <!-- Build all files and run JUnit tests -->
     <target name="run" depends="build">
         <junit haltonfailure="yes">
             <classpath>
@@ -47,8 +57,21 @@
         </junit>
     </target>
     
-    <!-- delete all class files -->
-    <!-- To run this: use "ant clean" -->
+    <!-- Build all files and run Cucumber tests -->
+    <target name="cuke" depends="build">
+        <junit haltonfailure="yes">
+            <classpath>
+                <path refid="classpath.test" />
+                <pathelement location="${test.build.dir}"/>
+            </classpath>
+            <formatter type="brief" usefile="false" />
+            <batchtest>
+                <fileset dir="${test.src.dir}" includes="main/Cuke.java" />
+            </batchtest>
+        </junit>
+    </target>
+    
+    <!-- Cleanup the build files -->
     <target name="clean">
         <delete>
             <fileset dir="${basedir}" includes="**/*.class" />
