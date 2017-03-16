@@ -9,9 +9,13 @@ public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
 	
-	public Manager(int port) {
+	public Manager(Server s) {
 		web = new Web();
-		server = new Server(port);
+		server = s;
+	}
+	
+	public Manager(int port) {
+		super(new Server(port));
 	}
 
 	public void run() {

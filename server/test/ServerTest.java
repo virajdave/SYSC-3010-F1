@@ -138,7 +138,11 @@ public class ServerTest {
 					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddr);
 					socket.send(sendPacket);
 				} catch (IOException | InterruptedException e) {
-					e.printStackTrace();
+					if (e.getMessage().toLowerCase().equals("socket is closed")) {
+						System.err.println("Stopped sending messages since socket closed, most likely due to a failed test.");
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 		}).start();
@@ -211,6 +215,14 @@ public class ServerTest {
 		
 		assertEquals("Server sent message", new String(packet.getData(), 0, packet.getLength()));
 		assertEquals(serverAddr, packet.getSocketAddress());
+	}
+
+	@Test
+	public void testSendMessageNull() {
+		try {
+			server.sendMessage(null);
+			fail("Expected NullPointerException to be thrown");
+		} catch (NullPointerException e) {}
 	}
 
 }
