@@ -56,7 +56,7 @@ public class Server extends Thread {
             }
             
         } catch (SocketException e) {
-        	if (e.getMessage().equals("socket closed") && Thread.interrupted()) {
+        	if (e.getMessage().toLowerCase().equals("socket closed") && Thread.interrupted()) {
         		return;
         	}
             e.printStackTrace();

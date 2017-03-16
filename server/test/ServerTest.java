@@ -121,7 +121,7 @@ public class ServerTest {
 						fail("test timeout -> recvWait took too long to complete, may have missed a message.");
 					}
 				} catch (InterruptedException e) {
-					if (!e.getMessage().equals("sleep interrupted")) {
+					if (!e.getMessage().toLowerCase().equals("sleep interrupted")) {
 						e.printStackTrace();
 					}
 				}
@@ -164,7 +164,7 @@ public class ServerTest {
 						fail("test timeout -> recvWait took too long to complete, may have missed a message.");
 					}
 				} catch (InterruptedException e) {
-					if (!e.getMessage().equals("sleep interrupted")) {
+					if (!e.getMessage().toLowerCase().equals("sleep interrupted")) {
 						e.printStackTrace();
 					}
 				}
@@ -183,7 +183,7 @@ public class ServerTest {
 	        		}
         			Thread.sleep(1);
 				} catch (IOException | InterruptedException e) {
-					if (e.getMessage().equals("Socket is closed")) {
+					if (e.getMessage().toLowerCase().equals("socket is closed")) {
 						System.err.println("Stopped sending messages since socket closed, most likely due to a failed test.");
 					} else {
 						e.printStackTrace();
