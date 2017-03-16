@@ -16,7 +16,7 @@ import org.junit.Test;
 import types.Message;
 
 public class ServerTest {
-	private final static int ITERATIONS = 10000;
+	private final static int ITERATIONS = 100;
 	
 	private Server server;
 	private InetSocketAddress serverAddr;
