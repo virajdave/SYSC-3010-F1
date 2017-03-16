@@ -95,7 +95,7 @@ public class ServerTest {
 
 	@Test
 	public void testRecvMessageOverflow() throws IOException, InterruptedException {
-		byte[] sendData = new byte[2000];
+		byte[] sendData = new byte[1600];
 		new Random().nextBytes(sendData);
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddr);
 		socket.send(sendPacket);
