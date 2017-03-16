@@ -49,8 +49,8 @@ public class Server extends Thread {
                 socket.receive(packet);
                 // Create a message from the packet and add it to the queue, notify any waiting receives.
                 Message message = new Message(packet);
-                recvQueue.add(message);
                 synchronized (recvQueue) {
+                    recvQueue.add(message);
                 	recvQueue.notifyAll();
                 }
             }
@@ -127,15 +127,15 @@ public class Server extends Thread {
 	 */
 	public Message recvWait() {
 		// Wait if the queue is empty.
-		if (recvQueue.isEmpty()) {
-	        synchronized (recvQueue) {
+        synchronized (recvQueue) {
+			if (recvQueue.isEmpty()) {
 	            try {
 					recvQueue.wait();
+					return recvQueue.poll();
 				} catch (InterruptedException e) {}
-	        }
-		}
-        
-        return recvMessage();
+			}
+			return recvQueue.poll();
+        }
 	}
 	
 	/**
@@ -144,7 +144,9 @@ public class Server extends Thread {
 	 */
 	public Message recvMessage() {
 		// Grab the first message and return it.
-		return recvQueue.poll();
+        synchronized (recvQueue) {
+        	return recvQueue.poll();
+        }
 	}
 	
 	public Integer getPort() {
