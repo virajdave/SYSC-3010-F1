@@ -1,6 +1,7 @@
 package main;
 
 import java.net.*;
+import java.nio.BufferOverflowException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.HashMap;
@@ -48,11 +49,14 @@ public class ServerStub extends Server {
 	 * @param message
 	 */
 	public void sendMessage(Message message) {
+		if (message.getMessage().length() > PACKET_SIZE) {
+			throw new BufferOverflowException();
+		}
 		if (started) {
 			if (!sendQueue.containsKey(message.getSocketAddress())) {
 				sendQueue.put(message.getSocketAddress(), new LinkedList<>());
 			}
-			sendQueue.get(message.getSocketAddress()).add(new String(message.getMessage().getBytes(), 0, Server.PACKET_SIZE));
+			sendQueue.get(message.getSocketAddress()).add(message.getMessage());
 		} else {
 			System.err.println("Server not running, cannot send message.");
 		}
@@ -103,7 +107,9 @@ public class ServerStub extends Server {
 	}
 
 	public void giveMessage(Message message) {
-		message = new Message(new String(message.getMessage().getBytes(), 0, Server.PACKET_SIZE), message.getSocketAddress());
+		if (message.getMessage().length() > PACKET_SIZE) {
+			throw new BufferOverflowException();
+		}
 		synchronized (recvQueue) {
 			recvQueue.add(message);
 			recvQueue.notifyAll();
