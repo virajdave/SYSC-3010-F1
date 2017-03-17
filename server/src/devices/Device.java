@@ -6,6 +6,7 @@ import types.Data;
 import types.Web;
 
 public abstract class Device extends Observable {
+	private int type = -1;
 	private int id = -1;
 	private boolean dead = false;
 	private Web web;
@@ -43,6 +44,14 @@ public abstract class Device extends Observable {
 	
 	protected Device getDevice(int id) {
 		return web.getByID(id);
+	}
+	
+	/**
+	 * Return the device type.
+	 * @return
+	 */
+	public int getType() {
+		return type;
 	}
 	
 	/**
@@ -88,6 +97,7 @@ public abstract class Device extends Observable {
 		Device d = null;
 		try {
 			d = Device.types[type].newInstance();
+			d.type = type;
 			d.id = id;
 			d.web = web;
 		} catch (Exception e) {
