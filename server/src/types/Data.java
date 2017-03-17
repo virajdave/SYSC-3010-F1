@@ -9,6 +9,11 @@ public class Data {
 		this.data = data;
 	}
 	
+	public Data(String name) {
+		this.name = name;
+		this.data = null;
+	}
+	
 	public boolean is(String n) {
 		return name.equals(n);
 	}

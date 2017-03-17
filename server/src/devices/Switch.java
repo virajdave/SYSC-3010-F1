@@ -20,8 +20,6 @@ public class Switch extends Device {
 			if (light != null) {
 				light.giveInput(new Data("set", Parse.toString(on)));
 			}
-			
-			System.out.println("Switch set to " + Parse.toString(on));
 		}
 	}
 
@@ -43,6 +41,7 @@ public class Switch extends Device {
 			Device d = getDevice(Parse.toInt(in.get()));
 			if (d != null) {
 				light = d;
+				updateFromLight();
 			}
 		}
 		
@@ -55,11 +54,19 @@ public class Switch extends Device {
 		}
 		return null;
 	}
+	
+	private void updateFromLight() {
+		Data isSet = light.requestOutput(new Data("set"));
+		if (isSet != null) {
+			on = Parse.toBool(isSet.get());
+		}
+	}
 
 	@Override
 	public String getInfo() {
 		// If the switch is on and connected light ID.
 		if (light != null) {
+			updateFromLight();
 			return Parse.toString("/", this.getID(), this.isDead(), on, light.getID());
 		} else {
 			return Parse.toString("/", this.getID(), this.isDead(), on, -1);
