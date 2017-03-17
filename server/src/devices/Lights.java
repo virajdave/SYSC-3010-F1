@@ -4,18 +4,18 @@ import types.Data;
 import util.Parse;
 
 public class Lights extends Device {
-	
+
 	private boolean on;
-	
+
 	public Lights() {
 		on = false;
 	}
-	
+
 	private void set(boolean change) {
 		if (on != change) {
 			on = change;
 			if (on) {
-			    send("1");
+				send("1");
 			} else {
 				send("0");
 			}
@@ -32,7 +32,7 @@ public class Lights extends Device {
 		if (in.is("set")) {
 			set(Parse.toBool(in.get()));
 		}
-		
+
 	}
 
 	@Override

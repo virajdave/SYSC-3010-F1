@@ -4,19 +4,19 @@ import types.Data;
 import util.Parse;
 
 public class Switch extends Device {
-	
+
 	private boolean on;
 	private Device light;
-	
+
 	public Switch() {
 		on = false;
 		light = null;
 	}
-	
+
 	private void set(boolean change) {
 		if (on != change) {
 			on = change;
-			
+
 			if (light != null) {
 				light.giveInput(new Data("set", Parse.toString(on)));
 			}
@@ -25,11 +25,11 @@ public class Switch extends Device {
 
 	@Override
 	public void giveMessage(String msg) {
-		System.out.println("Switch got message: " + msg);
 		// Set the switch on/off.
 		try {
 			set(Parse.toBool(msg));
-		} catch (IllegalArgumentException e) {}
+		} catch (IllegalArgumentException e) {
+		}
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class Switch extends Device {
 				updateFromLight();
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class Switch extends Device {
 		}
 		return null;
 	}
-	
+
 	private void updateFromLight() {
 		Data isSet = light.requestOutput(new Data("set"));
 		if (isSet != null) {
