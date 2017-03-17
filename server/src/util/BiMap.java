@@ -7,21 +7,21 @@ import java.util.Map;
 import java.util.Set;
 
 public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
-	
+
 	private static final long serialVersionUID = -3397417736449682169L;
 	private Map<K, V> keys;
 	private Map<V, K> values;
-	
+
 	public BiMap() {
 		this.keys = new HashMap<>();
 		this.values = new HashMap<>();
 	}
-	
+
 	public BiMap(Map<K, V> map) {
 		this();
 		putAll(map);
 	}
-	
+
 	private BiMap(Map<K, V> keys, Map<V, K> values) {
 		this.keys = keys;
 		this.values = values;
@@ -73,14 +73,14 @@ public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 			// Case to remove existing value to avoid duplication in keys.
 			keys.remove(values.get(value));
 		}
-		
+
 		values.put(value, key);
 		return keys.put(key, value);
 	}
 
 	@Override
-	public void putAll(Map<? extends K,? extends V> m) {
-		for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = m.entrySet().iterator(); i.hasNext(); ) {
+	public void putAll(Map<? extends K, ? extends V> m) {
+		for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = m.entrySet().iterator(); i.hasNext();) {
 			Map.Entry<? extends K, ? extends V> e = i.next();
 			put(e.getKey(), e.getValue());
 		}
@@ -102,7 +102,7 @@ public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 	public Collection<V> values() {
 		return keys.values();
 	}
-	
+
 	public BiMap<V, K> inverse() {
 		return new BiMap<>(values, keys);
 	}

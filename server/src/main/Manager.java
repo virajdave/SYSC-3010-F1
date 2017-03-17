@@ -1,4 +1,5 @@
 package main;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,41 +11,43 @@ import util.Parse;
 public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
-	
+
 	public Manager(Server s) {
 		web = new Web();
 		server = s;
 	}
-	
+
 	public Manager(int port) {
 		super(new Server(port));
 	}
 
 	public void run() {
-    	server.start();
+		server.start();
 		System.out.println("going");
-    	
-    	while (true) {
-    		// Check for new incoming messages.
-        	Message msg = server.recvWait();
-        	if (msg != null) {
-        		char who = msg.getMessage().charAt(0);
-        		switch (who) {
-        			case Codes.W_DEVICE:
-        				device(msg); break;
-        			case Codes.W_APP:
-        				app(msg); break;
-        			default:
-        				System.out.println("unknown W -> " + msg.toString());
-        		}
-        	}
-    	}
+
+		while (true) {
+			// Check for new incoming messages.
+			Message msg = server.recvWait();
+			if (msg != null) {
+				char who = msg.getMessage().charAt(0);
+				switch (who) {
+				case Codes.W_DEVICE:
+					device(msg);
+					break;
+				case Codes.W_APP:
+					app(msg);
+					break;
+				default:
+					System.out.println("unknown W -> " + msg.toString());
+				}
+			}
+		}
 	}
-	
+
 	private void device(Message msg) {
 		char code = msg.getMessage().charAt(1);
 		String[] data = msg.getMessage().substring(2).split("/");
-		
+
 		// Get the device, if it doesn't exist try adding it.
 		Device d = web.get(msg.getSocketAddress());
 		if (d == null) {
@@ -62,67 +65,72 @@ public class Manager extends Thread implements Observer {
 					System.out.println("Couldn't parse info.");
 					return;
 				}
-				
+
 				// Create device and watch for events.
 				d = web.add(msg.getSocketAddress(), type);
 				d.addObserver(this);
 				System.out.println("Added device #" + d.getID() + " of type " + type);
-				
+
 				// Send ack back letting the device know it was connected.
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()),
+						msg.getSocketAddress()));
 			} else {
 				System.out.println("Unknown device, sending back beat.");
 				// Don't know what this is, looking for info with a beat.
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), msg.getSocketAddress()));
+				server.sendMessage(
+						new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), msg.getSocketAddress()));
 			}
 			return;
 		}
-		System.out.println("Message from device #" + d.getID() + ": "  + msg.getMessage());
-		
+		System.out.println("Message from device #" + d.getID() + ": " + msg.getMessage());
+
 		// Quick check device ID matches.
-		
+
 		// Do different things depending on what the code is.
 		switch (code) {
-			case Codes.T_BEAT:
-				// Could be ignored.
-				break;
-			case Codes.T_ACK:
-				// TODO: implement ACK checking.
-				break;
-			case Codes.T_DATA:
-				// Send to device driver.
-				d.giveMessage(msg.getMessage().substring(2));
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
-				break;
-			default:
-				System.out.println("unknown device T -> " + msg.toString());
+		case Codes.T_BEAT:
+			// Could be ignored.
+			break;
+		case Codes.T_ACK:
+			// TODO: implement ACK checking.
+			break;
+		case Codes.T_DATA:
+			// Send to device driver.
+			d.giveMessage(msg.getMessage().substring(2));
+			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
+			break;
+		default:
+			System.out.println("unknown device T -> " + msg.toString());
 		}
 	}
-	
+
 	private void app(Message msg) {
 		char code = msg.getMessage().charAt(1);
 		String[] data = msg.getMessage().substring(2).split("/");
-		
+
 		int id;
 		switch (code) {
-			case Codes.T_NETINF:
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF, web.toString()), msg.getSocketAddress()));
-				break;
-			case Codes.T_ACK:
-				// Check if anything is waiting on an ack?
-				break;
-			case Codes.T_DEVINF:
-				id = Parse.toInt(data[0]);
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
-				break;
-			case Codes.T_DATA:
-				id = Parse.toInt(data[0]);
-				Data in = new Data(data[1], data[2]);
-				web.getByID(id).giveInput(in);
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
-				break;
-			default:
-				System.out.println("unknown app T -> " + code);
+		case Codes.T_NETINF:
+			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF, web.toString()),
+					msg.getSocketAddress()));
+			break;
+		case Codes.T_ACK:
+			// Check if anything is waiting on an ack?
+			break;
+		case Codes.T_DEVINF:
+			id = Parse.toInt(data[0]);
+			server.sendMessage(
+					new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()),
+							msg.getSocketAddress()));
+			break;
+		case Codes.T_DATA:
+			id = Parse.toInt(data[0]);
+			Data in = new Data(data[1], data[2]);
+			web.getByID(id).giveInput(in);
+			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
+			break;
+		default:
+			System.out.println("unknown app T -> " + code);
 		}
 	}
 
@@ -133,18 +141,18 @@ public class Manager extends Thread implements Observer {
 			System.err.println("UH OH");
 			return;
 		}
-		
-		Device d = (Device)arg0;
-		String msg = (String)arg1;
+
+		Device d = (Device) arg0;
+		String msg = (String) arg1;
 		server.sendMessage(new Message(Codes.W_SERVER + Codes.T_DATA + msg, web.get(d)));
 	}
-	
+
 	public static void main(String[] args) {
-        // Check the arguments
-        if (args.length != 1) {
-            System.out.println("usage: java UDPSender host port");
-            return;
-        }
+		// Check the arguments
+		if (args.length != 1) {
+			System.out.println("usage: java UDPSender host port");
+			return;
+		}
 		int port = Integer.parseInt(args[0]);
 
 		new Manager(port).start();

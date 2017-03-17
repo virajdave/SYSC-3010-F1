@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Steps {
-	public static final int TIMEOUT = 5;
 	public static final InetSocketAddress appAddr = new InetSocketAddress("localhost", 10);
 
 	ServerStub server;
@@ -28,7 +27,7 @@ public class Steps {
 		manager = new Manager(server);
 		devices = new HashMap<>();
 		manager.start();
-		
+
 		// Sleep to allow threads to start up and get going.
 		Thread.sleep(5);
 	}
@@ -54,7 +53,7 @@ public class Steps {
 
 		String msg = server.getMessage(addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.substring(0, 2));
-		
+
 		int id = Integer.parseInt(msg.substring(2));
 		devices.put(name, new Dev(id, addr));
 	}
@@ -64,7 +63,7 @@ public class Steps {
 		Dev d = devices.get(name);
 		boolean on = set.equals("on");
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DATA, d.id, "/set/", on), appAddr));
-		
+
 		String msg = server.getMessage(appAddr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
 	}
@@ -74,7 +73,7 @@ public class Steps {
 		Dev d = devices.get(name);
 		boolean on = set.equals("on");
 		server.giveMessage(new Message(Parse.toString("", Codes.W_DEVICE, Codes.T_DATA, on), d.addr));
-		
+
 		String msg = server.getMessage(d.addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
 	}
@@ -111,14 +110,14 @@ public class Steps {
 	public void lightShouldBe(String name, DataTable dataTable) throws Throwable {
 		Dev d = devices.get(name);
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DEVINF, d.id), appAddr));
-		
+
 		String msg = server.getMessage(appAddr);
 		String code = msg.substring(0, 2);
 		String[] split = msg.substring(2).split("/");
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);
 		assertEquals(3, split.length);
 		assertEquals(Parse.toString(d.id), split[0]);
-		
+
 		List<List<String>> data = dataTable.raw();
 		for (List<String> row : data) {
 			if (row.get(0).equals("dead")) {
@@ -144,7 +143,7 @@ public class Steps {
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);
 		assertEquals(4, split.length);
 		assertEquals(Parse.toString(d.id), split[0]);
-		
+
 		List<List<String>> data = dataTable.raw();
 		for (List<String> row : data) {
 			if (row.get(0).equals("dead")) {
@@ -165,11 +164,11 @@ public class Steps {
 			}
 		}
 	}
-	
+
 	public class Dev {
 		public int id;
 		public InetSocketAddress addr;
-		
+
 		public Dev(int id, InetSocketAddress addr) {
 			this.id = id;
 			this.addr = addr;

@@ -33,7 +33,7 @@ public class Net {
             InterfaceAddress address = networkInterface.getInterfaceAddresses().get(0);
             return address.getBroadcast();
         } catch (Exception e) {} // EAT exceptions.
-        return null;
-    }
+		return null;
+	}
 
 }
