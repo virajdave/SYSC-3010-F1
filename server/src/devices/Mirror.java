@@ -40,7 +40,10 @@ public class Mirror extends Device {
         return "{\"time\":{"+ time + "}}";
     }
 
+    public void setLoc() {
 
+    }
+    
     public String getWeather() throws IOException {
         String url = buildWeatherURL("Ottawa,Ca");
         InputStream is = new URL(url).openStream();
@@ -75,9 +78,6 @@ public class Mirror extends Device {
         return full_api_url;
     }
 
-    public String thermoTemp() {
-        return "";
-    }
 
     public String setColour(String colour) {
         String returnString = "";
@@ -90,11 +90,15 @@ public class Mirror extends Device {
         }
         return returnString;
     }
-
-    public void setLoc() {
-
+    
+    public String getColour() {
+    	return this.currentColour;
     }
 
+    public String thermoTemp() {
+        return "";
+    }
+    
     public void setThermoDevice() {
 
     }
