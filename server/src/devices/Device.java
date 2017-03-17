@@ -110,6 +110,8 @@ public abstract class Device extends Observable {
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Device>[] types = new Class[] {
 		Lights.class,
-		Switch.class
+		Switch.class,
+		Mirror.class,
+		Thermostat.class
 	};
 }
