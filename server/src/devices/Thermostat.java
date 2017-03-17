@@ -5,7 +5,7 @@ import types.Data;
 /**
  * Created by Mega Prime 2.0 on 3/16/2017.
  */
-public class Thermostat implements Device {
+public class Thermostat extends Device {
     @Override
     public void giveMessage(String msg) {
 
