@@ -52,11 +52,7 @@ public class Steps {
 
 		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("", Codes.W_DEVICE, Codes.T_BEAT, type));
 
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(addr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+		String msg = server.getMessage(addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.substring(0, 2));
 		
 		int id = Integer.parseInt(msg.substring(2));
@@ -69,11 +65,7 @@ public class Steps {
 		boolean on = set.equals("on");
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DATA, d.id, "/set/", on), appAddr));
 		
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(appAddr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+		String msg = server.getMessage(appAddr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
 	}
 
@@ -83,11 +75,7 @@ public class Steps {
 		boolean on = set.equals("on");
 		server.giveMessage(new Message(Parse.toString("", Codes.W_DEVICE, Codes.T_DATA, on), d.addr));
 		
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(d.addr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+		String msg = server.getMessage(d.addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
 	}
 
@@ -97,11 +85,7 @@ public class Steps {
 		int id = devices.get(lightName).id;
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DATA, d.id, "/light/", id), appAddr));
 
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(appAddr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+		String msg = server.getMessage(appAddr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
 	}
 
@@ -128,11 +112,7 @@ public class Steps {
 		Dev d = devices.get(name);
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DEVINF, d.id), appAddr));
 		
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(appAddr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+		String msg = server.getMessage(appAddr);
 		String code = msg.substring(0, 2);
 		String[] split = msg.substring(2).split("/");
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);
@@ -157,12 +137,8 @@ public class Steps {
 	public void switchShouldBe(String name, DataTable dataTable) throws Throwable {
 		Dev d = devices.get(name);
 		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DEVINF, d.id), appAddr));
-		
-		String msg = "";
-		int timeout = 0;
-		while ((msg = server.getMessage(appAddr)) == null && timeout++ < TIMEOUT) {
-			Thread.sleep(10);
-		}
+
+		String msg = server.getMessage(appAddr);
 		String code = msg.substring(0, 2);
 		String[] split = msg.substring(2).split("/");
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);

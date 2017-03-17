@@ -14,7 +14,7 @@ Scenario: Turn on/off light from app
 	
 	When I turn 'off' the light 'light1' from the app 
 	Then the light 'light1' should be turned 'off' 
-	
+
 Scenario: Turn on/off switch 
 	Given the manager is started 
 	And a 'switch' named 'switch1' is connected 

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import types.Message;
 
 public class ServerStub extends Server {
+	private static final int TIMEOUT = 5;
+
 	private Queue<Message> recvQueue;
 	private HashMap<InetSocketAddress, Queue<String>> sendQueue;
 	private boolean started;
@@ -123,9 +125,14 @@ public class ServerStub extends Server {
 	}
 
 	public String getMessage(InetSocketAddress addr) {
-		if (!sendQueue.containsKey(addr)) {
-			return null;
+		int timeout = 0;
+		String s;
+		while ((s = sendQueue.containsKey(addr) ? sendQueue.get(addr).poll() : null) == null && timeout++ < TIMEOUT) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
 		}
-		return sendQueue.get(addr).poll();
+		return s;
 	}
 }
