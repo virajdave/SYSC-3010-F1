@@ -24,12 +24,23 @@ public class Steps {
 	@Given("^the manager is started$")
 	public void startManager() throws Throwable {
 		server = new ServerStub();
-		manager = new Manager(server);
+		manager = new Manager(server, 0, 1);
 		devices = new HashMap<>();
 		manager.start();
 
 		// Sleep to allow threads to start up and get going.
 		Thread.sleep(5);
+	}
+
+	@Given("^the manager sends a heartbeat$")
+	public void sendHearbeat() throws Throwable {
+		manager.doHeartBeat();
+		Thread.sleep(1);
+	}
+
+	@Given("^the manager heartbeat times out$")
+	public void endHearbeat() throws Throwable {
+		Thread.sleep(devices.size() * 5);
 	}
 
 	@When("^a '([^']+)' named '([^']+)' is connected$")

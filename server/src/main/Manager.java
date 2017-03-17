@@ -1,5 +1,6 @@
 package main;
 
+import java.net.InetSocketAddress;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,14 +12,21 @@ import util.Parse;
 public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
+	private int beatrate;
+	private int timeout;
 
 	public Manager(Server s) {
 		web = new Web();
 		server = s;
+		beatrate = 10;
+		timeout = 30;
 	}
 
-	public Manager(int port) {
-		super(new Server(port));
+	public Manager(Server s, int beatrate, int timeout) {
+		web = new Web();
+		server = s;
+		this.beatrate = beatrate;
+		this.timeout = timeout;
 	}
 
 	public void run() {
@@ -134,6 +142,12 @@ public class Manager extends Thread implements Observer {
 		}
 	}
 
+	public void doHeartBeat() {
+		for (InetSocketAddress addr : web.addrList()) {
+			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
+		}
+	}
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// Check correct types.
@@ -155,6 +169,6 @@ public class Manager extends Thread implements Observer {
 		}
 		int port = Integer.parseInt(args[0]);
 
-		new Manager(port).start();
+		new Manager(new Server(port)).start();
 	}
 }

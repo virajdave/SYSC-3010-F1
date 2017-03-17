@@ -1,6 +1,7 @@
 package types;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
 
 import devices.Device;
 import util.BiMap;
@@ -34,6 +35,10 @@ public class Web {
 			}
 		}
 		return null;
+	}
+	
+	public Set<InetSocketAddress> addrList() {
+		return devices.keySet();
 	}
 
 	/**
