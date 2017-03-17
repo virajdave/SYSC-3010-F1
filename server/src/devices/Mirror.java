@@ -101,7 +101,12 @@ public class Mirror extends Device {
 
     @java.lang.Override
     public void giveMessage(String msg) {
-
+        String dataOut = "";
+        if (msg.equals("Weather")) {
+            dataOut = getWeather();
+        } else if (msg.equals("Time")) {
+            dataOut = getTime();
+        }
     }
 
     @java.lang.Override
