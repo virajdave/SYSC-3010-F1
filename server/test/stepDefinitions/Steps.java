@@ -28,6 +28,9 @@ public class Steps {
 		manager = new Manager(server);
 		devices = new HashMap<>();
 		manager.start();
+		
+		// Sleep to allow threads to start up and get going.
+		Thread.sleep(1);
 	}
 
 	@When("^a '([^']+)' named '([^']+)' is connected$")
