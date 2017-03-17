@@ -30,7 +30,7 @@ public class Steps {
 		manager.start();
 		
 		// Sleep to allow threads to start up and get going.
-		Thread.sleep(1);
+		Thread.sleep(5);
 	}
 
 	@When("^a '([^']+)' named '([^']+)' is connected$")
