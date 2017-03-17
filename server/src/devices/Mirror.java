@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import types.Data;
 
 public class Mirror extends Device {
@@ -44,8 +46,7 @@ public class Mirror extends Device {
         InputStream is = new URL(url).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = readAll(rd);
-            return jsonText;
+            return readAll(rd);
         } finally {
             is.close();
         }
@@ -78,8 +79,16 @@ public class Mirror extends Device {
         return "";
     }
 
-    public String setColour() {
-        return "";
+    public String setColour(String colour) {
+        String returnString = "";
+        String HEX_PATTERN = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
+        Pattern r = Pattern.compile(HEX_PATTERN);
+        Matcher m = r.matcher(colour);
+        if (m.find( )) {
+            this.currentColour = m.group(0);
+            returnString = "\"Colour\":{" + m.group(0) + "}";
+        }
+        return returnString;
     }
 
     public void setLoc() {
