@@ -67,11 +67,11 @@ public class Mirror extends Device {
     }
 
     private String buildWeatherURL(String city) {
-        String user_api = 'b86f030e92681cb37afdbb0f336668ae'
-        String unit = 'metric'  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
-        String api = 'http://api.openweathermap.org/data/2.5/weather?q='
-        String full_api_url = api + city + '&mode=json&units=' + unit + '&APPID=' + user_api
-        return full_api_url
+        String user_api = "b86f030e92681cb37afdbb0f336668ae";
+        String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
+        String api = "http://api.openweathermap.org/data/2.5/weather?q=";
+        String full_api_url = api + city + "&mode=json&units=" + unit + "&APPID=" + user_api;
+        return full_api_url;
     }
 
     public String thermoTemp() {
