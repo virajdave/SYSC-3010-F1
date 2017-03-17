@@ -79,7 +79,7 @@ public class Mirror extends Device {
     }
 
 
-    public String setColour(String colour) {
+    private String setColour(String colour) {
         String returnString = "";
         String HEX_PATTERN = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
         Pattern r = Pattern.compile(HEX_PATTERN);
@@ -91,7 +91,7 @@ public class Mirror extends Device {
         return returnString;
     }
     
-    public String getColour() {
+    private String getColour() {
     	return this.currentColour;
     }
 
@@ -121,12 +121,18 @@ public class Mirror extends Device {
 
     @java.lang.Override
     public void giveInput(Data in) {
-
+    	if (in.is("colour")) {
+    		this.setColour(in.get());
+    	}
     }
 
     @java.lang.Override
     public Data requestOutput(Data in) {
-        return null;
+    	Data dataOut = null;
+    	if (in.is("colour")) {
+    		dataOut = new Data("colour", this.getColour());
+    	}
+        return dataOut;
     }
 
     @java.lang.Override
