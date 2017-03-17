@@ -24,7 +24,7 @@ public class ServerStub extends Server {
 		recvQueue = new LinkedList<>();
 		sendQueue = new HashMap<>();
 		started = false;
-		currPort = 0;
+		currPort = 100;
 	}
 
 	/**

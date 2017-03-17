@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 
 import devices.Device;
 import util.BiMap;
+import util.Parse;
 
 public class Web {
 	private static int index;
@@ -93,5 +94,17 @@ public class Web {
 	 */
 	public InetSocketAddress get(Device device) {
 		return devices.inverse().get(device);
+	}
+	
+	@Override
+	public String toString() {
+		String parts[] = new String[devices.size()];
+		int i = 0;
+
+		for (Device d : devices.inverse().keySet()) {
+			parts[i] = Parse.toString(":", d.getID(), d.getType());
+		}
+		
+		return String.join("/", parts);
 	}
 }
