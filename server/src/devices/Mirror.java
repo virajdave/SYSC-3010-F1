@@ -37,7 +37,7 @@ public class Mirror extends Device {
      */
     public String getTime() {
         long time = System.currentTimeMillis();
-        return "\"time\":{"+ time + "}";
+        return "{\"time\":{"+ time + "}}";
     }
 
 
@@ -103,10 +103,16 @@ public class Mirror extends Device {
     public void giveMessage(String msg) {
         String dataOut = "";
         if (msg.equals("Weather")) {
-            dataOut = getWeather();
+            try {
+				dataOut = getWeather();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else if (msg.equals("Time")) {
             dataOut = getTime();
         }
+        send(dataOut);
     }
 
     @java.lang.Override
@@ -123,4 +129,9 @@ public class Mirror extends Device {
     public String getInfo() {
         return null;
     }
+    
+    //public static void main(String [] args) throws IOException {
+	//	Mirror m = new Mirror();
+	//	System.out.println(m.getWeather());
+	//}
 }
