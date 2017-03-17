@@ -67,11 +67,8 @@ public class ServerTest {
 		byte[] sendData = "Testing message".getBytes("UTF-8");
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddr);
 		socket.send(sendPacket);
-		
-		// Give the server a chance to run.
-		Thread.sleep(10);
-		
-		Message m = server.recvMessage();
+
+		Message m = busyWaitMessage();
 		assertEquals("Testing message", m.getMessage());
 		assertEquals(socketAddr, m.getSocketAddress());
 	}
@@ -84,11 +81,8 @@ public class ServerTest {
 			socket.send(sendPacket);
 		}
 		
-		// Give the server a chance to run.
-		Thread.sleep(10);
-		
 		for (int i = 0; i < ITERATIONS; i++) {
-			Message m = server.recvMessage();
+			Message m = busyWaitMessage();
 			assertNotNull(m);
 			assertEquals("Test" + i, m.getMessage());
 			assertEquals(socketAddr, m.getSocketAddress());
@@ -102,10 +96,7 @@ public class ServerTest {
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddr);
 		socket.send(sendPacket);
 		
-		// Give the server a chance to run.
-		Thread.sleep(10);
-		
-		Message m = server.recvMessage();
+		Message m = busyWaitMessage();
 		assertNotNull(m);
 		assertEquals(new String(sendData, 0, 1500), m.getMessage());
 		assertEquals(socketAddr, m.getSocketAddress());
@@ -225,6 +216,18 @@ public class ServerTest {
 			server.sendMessage(null);
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException e) {}
+	}
+	
+	private Message busyWaitMessage() {
+		int i = 5;
+		Message m;
+		while ((m = server.recvMessage()) == null && i > 0) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
+		return m;
 	}
 
 }
