@@ -114,7 +114,7 @@ public class Web {
 		int i = 0;
 
 		for (Device d : devices.inverse().keySet()) {
-			parts[i] = Parse.toString(":", d.getID(), d.getType());
+			parts[i++] = Parse.toString(":", d.getID(), d.getType(), d.isDead());
 		}
 
 		return String.join("/", parts);
