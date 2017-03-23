@@ -10,9 +10,11 @@ import util.Codes;
 import util.Parse;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Steps {
 	public static final InetSocketAddress appAddr = new InetSocketAddress("localhost", 10);
@@ -66,7 +68,7 @@ public class Steps {
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.substring(0, 2));
 
 		int id = Integer.parseInt(msg.substring(2));
-		devices.put(name, new Dev(id, addr));
+		devices.put(name, new Dev(id, type, addr));
 	}
 
 	@When("^I turn '(on|off)' the (?:light|switch) '([^']+)' from the app$")
@@ -176,12 +178,43 @@ public class Steps {
 		}
 	}
 
+	@Then("^I should see the following list of devices in the app:$")
+	public void netInfo(DataTable dataTable) throws Throwable {
+		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_NETINF), appAddr));
+
+		String msg = server.getMessage(appAddr);
+		String code = msg.substring(0, 2);
+		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF), code);
+
+		// Split apart the info to use.
+		String[] split = msg.substring(2).split("/");
+		HashMap<Integer, String[]> info = new HashMap<>();
+		for (String i : split) {
+			String[] s = i.split(":");
+			info.put(Parse.toInt(s[0]), Arrays.copyOfRange(s, 1, s.length));
+		}
+		assertEquals("info must have duplicate IDs if hashmap size didn't match", info.size(), split.length);
+
+		List<List<String>> data = dataTable.raw();
+		for (List<String> row : data) {
+			Dev d = devices.get(row.get(0));
+			
+			String[] s = info.get(d.id);
+			assertNotNull("Device '" + row.get(0)  + "' was not in the network list", s);
+			assertEquals(Parse.toString(d.type), s[0]);
+			if (row.size() > 1) {
+				assertEquals(row.get(1).equalsIgnoreCase("true") ? "1" : "0", s[1]);
+			}
+		}
+	}
+
 	public class Dev {
-		public int id;
+		public int id, type;
 		public InetSocketAddress addr;
 
-		public Dev(int id, InetSocketAddress addr) {
+		public Dev(int id, int type, InetSocketAddress addr) {
 			this.id = id;
+			this.type = type;
 			this.addr = addr;
 		}
 	}
