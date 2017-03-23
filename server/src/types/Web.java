@@ -28,6 +28,12 @@ public class Web {
 		return device;
 	}
 
+	/**
+	 * Get a device by it's ID.
+	 * 
+	 * @param id
+	 * @return device
+	 */
 	public Device getByID(int id) {
 		for (Device d : devices.inverse().keySet()) {
 			if (d.hasID(id)) {
@@ -37,6 +43,11 @@ public class Web {
 		return null;
 	}
 	
+	/**
+	 * Get the set of addresses for each device.
+	 * 
+	 * @return addresses
+	 */
 	public Set<InetSocketAddress> addrList() {
 		return devices.keySet();
 	}
@@ -108,6 +119,9 @@ public class Web {
 		return devices.inverse().get(device);
 	}
 
+	/**
+	 * Converts the web information to a compact string.
+	 */
 	@Override
 	public String toString() {
 		String parts[] = new String[devices.size()];
