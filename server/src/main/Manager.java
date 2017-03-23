@@ -62,12 +62,11 @@ public class Manager extends Thread implements Observer {
 			if (code == Codes.T_BEAT) {
 				System.out.println("Going to add device.");
 				// Get the type from the message info.
-				String info = data[0];
 				int type = -1;
 				try {
-					type = Integer.parseInt(info);
+					type = Integer.parseInt(data[0]);
 				} catch (NumberFormatException e) {
-					System.out.println("Device type '" + info + "' unknown.");
+					System.out.println("Device type '" + data[0] + "' unknown.");
 					return;
 				} catch (Exception e) {
 					System.out.println("Couldn't parse info.");
@@ -93,6 +92,19 @@ public class Manager extends Thread implements Observer {
 		System.out.println("Message from device #" + d.getID() + ": " + msg.getMessage());
 
 		// Quick check device ID matches.
+		int id = -1;
+		try {
+			id = Integer.parseInt(data[0]);
+		} catch (NumberFormatException e) {
+			System.out.println("Device id '" + data[0] + "' is not an int.");
+			return;
+		} catch (Exception e) {
+			System.out.println("Couldn't parse device id.");
+			return;
+		}
+		if (!d.hasID(id)) {
+			// TODO: This would be a problem.
+		}
 
 		// Do different things depending on what the code is.
 		switch (code) {
@@ -103,7 +115,7 @@ public class Manager extends Thread implements Observer {
 			// TODO: implement ACK checking.
 			break;
 		case Codes.T_DATA:
-			// Send to device driver.
+			// Send data to device driver.
 			d.giveMessage(msg.getMessage().substring(2));
 			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 			break;
@@ -119,6 +131,7 @@ public class Manager extends Thread implements Observer {
 		int id;
 		switch (code) {
 		case Codes.T_NETINF:
+			// Give back the device network information.
 			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF, web.toString()),
 					msg.getSocketAddress()));
 			break;
@@ -126,15 +139,22 @@ public class Manager extends Thread implements Observer {
 			// Check if anything is waiting on an ack?
 			break;
 		case Codes.T_DEVINF:
+			// Give back requested device info by ID.
 			id = Parse.toInt(data[0]);
 			server.sendMessage(
 					new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()),
 							msg.getSocketAddress()));
 			break;
 		case Codes.T_DATA:
+			/* Parse data:
+			 * 0 - device being modified
+			 * 1 - what is changing
+			 * 2 - new value
+			 */
 			id = Parse.toInt(data[0]);
 			Data in = new Data(data[1], data[2]);
 			web.getByID(id).giveInput(in);
+			// Send back acknowledge.
 			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 			break;
 		default:
