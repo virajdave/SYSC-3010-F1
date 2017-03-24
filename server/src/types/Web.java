@@ -8,11 +8,11 @@ import util.BiMap;
 import util.Parse;
 
 public class Web {
-	private static int index;
+	private static int index = 0;
+	
 	private BiMap<InetSocketAddress, Device> devices;
 
 	public Web() {
-		index = 0;
 		devices = new BiMap<>();
 	}
 
