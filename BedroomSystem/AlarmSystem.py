@@ -26,11 +26,12 @@ class AlarmSystem:
     # Setup for the button
     GPIO.setup(7, GPIO.IN)
     def manageAlarm (self, h, m):
-        
         now = datetime.datetime.now()
+        print ("Current time h=", now.hour, "m = ", now.minute)
+        print ("Alarm time h=", h, "m = ", m)
         seconds = (h - now.hour) *360 + (m - now.minute)*60
         print ("Sleeping for " + str(seconds) )
-        sleep(3)
+        sleep(seconds)
         print ("Alarm Sounding")
         if (GPIO.input(7) == 1):
             self.lights (True)
