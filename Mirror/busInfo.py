@@ -1,5 +1,6 @@
 import urllib.request
 import json
+import re
 
 def urlBuilderBus(stop, route):
      key = "appID=7f6091d8&apiKey=4be816c142bfb4100421b9cbdef4fb9a"
@@ -12,14 +13,24 @@ def urlBuilderBus(stop, route):
 def getBusInfo (Fullurl):
      url = urllib.request.urlopen(Fullurl, timeout=10)
      output = url.read().decode('utf-8')
-     print(output)
-     #raw_api_dict = json.loads(output)
+     raw_api_dict = json.loads(output)
      url.close()
-     return output
+     return raw_api_dict
 
 def parseBusInfo(info):
-     print(info)
-     #print(info.get('GetRouteSummaryForStopResult').get('Routes'))
+	data = dict(
+		station = info.get('GetNextTripsForStopResult').get('StopLabel')
+    )
+	routeList = info.get('GetNextTripsForStopResult').get('Route').get('RouteDirection')
+	directionNum = 0
+	for route in routeList:
+		directionNum += 1
+		trips = route['Trips']
+		data['direction' + str(directionNum)] = dict(
+			dest = route['RouteLabel'],
+			firstBus = trips.get('Trip')[0].get('AdjustedScheduleTime') + ' mins',
+			secondBus = trips.get('Trip')[1].get('AdjustedScheduleTime') + ' mins',
+			thirdBus = trips.get('Trip')[2].get('AdjustedScheduleTime') + ' mins'
+		)
 
-
-parseBusInfo(getBusInfo(urlBuilderBus(3031, 104)))
+	return data
