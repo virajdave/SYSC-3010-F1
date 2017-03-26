@@ -21,14 +21,16 @@ def url_builder(city):
 
 
 def data_fetch(full_api_url):
-    url = urllib.request.urlopen(full_api_url, timeout=10)
-    output = url.read().decode('utf-8')
-    raw_api_dict = json.loads(output)
-    url.close()
-    return raw_api_dict
+	url = urllib.request.urlopen(full_api_url, timeout=10)
+	output = url.read().decode('utf-8')
+	#raw_api_dict = json.loads(output)
+	url.close()
+	return output
 
 
 def data_organizer(raw_api_dict):
+    print(raw_api_dict)
+    raw_api_dict = json.loads(raw_api_dict)
     data = dict(
         city=raw_api_dict.get('name'),
         country=raw_api_dict.get('sys').get('country'),

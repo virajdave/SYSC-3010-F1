@@ -61,17 +61,32 @@ class mirrorGUI:
 
 	def busUpdate (self, busInfo):
 		self.busStation.set("Station: " + busInfo['station'] )
-		self.firstDirectionTitle.set("Direction: " + busInfo['direction1']['dest'])
-		directionOneTimes = ( busInfo['direction1']['firstBus'] + '\n'  +
-											busInfo['direction1']['secondBus'] + '\n'  +
-											busInfo['direction1']['thirdBus'] )
-		self.firstDirectionTimes.set(directionOneTimes)
-		
-		self.secondDirectionTitle.set("Direction: " + busInfo['direction2']['dest'])
-		directionTwoTimes = ( busInfo['direction2']['firstBus'] + '\n'  +
-											busInfo['direction2']['secondBus'] + '\n'  +
-											busInfo['direction2']['thirdBus'] )
-		self.secondDirectionTimes.set(directionTwoTimes)
+		if 'direction1' in busInfo:
+			self.firstDirectionTitle.set("Direction: " + busInfo['direction1']['dest'])
+			directionOneTimes = ""
+			if 'busTime0' in busInfo['direction1']:
+				directionOneTimes +=   busInfo['direction1']['busTime0'] + '\n'
+			if 'busTime1' in busInfo['direction1']:
+				directionOneTimes +=   busInfo['direction1']['busTime1'] + '\n'
+			if 'busTime2' in busInfo['direction1']:
+				directionOneTimes +=   busInfo['direction1']['busTime2'] + '\n'
+			self.firstDirectionTimes.set(directionOneTimes)
+		else:
+			self.firstDirectionTitle.set("")
+			self.firstDirectionTimes.set("")
+		if 'direction2' in busInfo:
+			self.secondDirectionTitle.set("Direction: " + busInfo['direction2']['dest'])
+			directionTwoTimes = ""
+			if 'busTime0' in busInfo['direction2']:
+				directionTwoTimes +=   busInfo['direction2']['busTime0'] + '\n'
+			if 'busTime1' in busInfo['direction2']:
+				directionTwoTimes +=   busInfo['direction2']['busTime1'] + '\n'
+			if 'busTime2' in busInfo['direction2']:
+				directionTwoTimes +=   busInfo['direction2']['busTime2'] + '\n'
+			self.secondDirectionTimes.set(directionTwoTimes)
+		else:
+			self.secondDirectionTitle.set("")
+			self.secondDirectionTimes.set("")
 		
 		
 	# Customizers ###########################################################################

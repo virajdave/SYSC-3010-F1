@@ -27,10 +27,10 @@ def parseBusInfo(info):
 		directionNum += 1
 		trips = route['Trips']
 		data['direction' + str(directionNum)] = dict(
-			dest = str(route['RouteNo']) + ': ' + route['RouteLabel'],
-			firstBus = trips.get('Trip')[0].get('AdjustedScheduleTime') + ' mins',
-			secondBus = trips.get('Trip')[1].get('AdjustedScheduleTime') + ' mins',
-			thirdBus = trips.get('Trip')[2].get('AdjustedScheduleTime') + ' mins'
+				dest = str(route['RouteNo']) + ': ' + route['RouteLabel']
 		)
-
+		if len(trips) > 0:
+			for x in range(0,len(trips)):
+				data['direction' + str(directionNum)]['busTime' + str(x)] = trips.get('Trip')[x].get('AdjustedScheduleTime') + ' mins'
+		
 	return data

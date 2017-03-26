@@ -2,6 +2,7 @@ from mirror import *
 from dataPassingObject import *
 from weather import *
 from busInfo import *
+from mirrorNetwork import *
 from queue import *
 import _thread, time
 
@@ -36,7 +37,19 @@ def tellGUIToUpdateBusInfo():
 		busInfo = parseBusInfo(getBusInfo(urlBuilderBus(3031, 104)))
 		guiRecvQueue.put_nowait(message('bus', busInfo))
 		time.sleep(30)
-		
+	
+
+def watchRecvMessages()	:
+	while True:
+			if not recvQueue.empty():
+				while not recvQueue.empty():
+					message = recvQueue.get()
+					if (message.info[0] == 'w'):
+						weatherInfo = data_organizer(message.info[1:])
+						guiRecvQueue.put_nowait(message('weather', weatherInfo))
+			time.sleep(0.001)
+			
+			
 #Starts up the network, controller and gui threads
 def runController():
 	top = Tk() 	#used as the root for the tk window
@@ -46,6 +59,16 @@ def runController():
 	_thread.start_new_thread(tellGUIToUpdateTime, ())
 	_thread.start_new_thread(tellGUIToUpdateWeather, ())
 	_thread.start_new_thread(tellGUIToUpdateBusInfo, ())
+	
+	#_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
+	#_thread.start_new_thread(watchRecvMessages, ())
+	#time.sleep(1)
+	#_thread.start_new_thread(sendFakeWeather, ())
+	
+	
 	#Display the gui window
 	gui.showGUI()
+	
+	
+	
 runController()
