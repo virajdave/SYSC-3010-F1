@@ -53,15 +53,13 @@ class mirrorGUI:
 	
 	# Changes the Gui variable to adjust conditions data
 	def conditionsUpdate(self, weatherData):
-		conditions = weatherData['city'] + ', ' + weatherData['country'] + "\t   " + 
-					weatherData['sky'] + "    "
+		conditions = weatherData['city'] + ', ' + weatherData['country'] + "\t   " + weatherData['sky'] + "    "
 		self.conditionsVar.set(conditions)
 		
 	
 	# Changes the Gui variable to adjust min and max data
 	def minMaxlineUpdate(self, weatherData):
-		minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + 
-				str(weatherData['temp_min'])
+		minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
 		self.minmaxVar.set(minmax)
 		
 	# Changes GUI Variable to update the time based on system time
