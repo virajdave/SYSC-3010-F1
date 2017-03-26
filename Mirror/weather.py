@@ -29,7 +29,6 @@ def data_fetch(full_api_url):
 
 
 def data_organizer(raw_api_dict):
-    print(raw_api_dict)
     raw_api_dict = json.loads(raw_api_dict)
     data = dict(
         city=raw_api_dict.get('name'),

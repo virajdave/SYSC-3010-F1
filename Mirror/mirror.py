@@ -58,7 +58,8 @@ class mirrorGUI:
 	# Changes GUI Variables to update the date under the time
 	def dateUpdate(self, date):
 		self.dateVar.set(date)
-
+	
+	# Changes the gui to display bus info that could have anywhere from 0 to 3 trip times
 	def busUpdate (self, busInfo):
 		self.busStation.set("Station: " + busInfo['station'] )
 		if 'direction1' in busInfo:
