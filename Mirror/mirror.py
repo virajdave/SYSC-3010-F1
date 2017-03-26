@@ -63,7 +63,7 @@ class mirrorGUI:
 	def busUpdate (self, busInfo):
 		self.busStation.set("Station: " + busInfo['station'] )
 		if 'direction1' in busInfo:
-			self.firstDirectionTitle.set("Direction: " + busInfo['direction1']['dest'])
+			self.firstDirectionTitle.set(busInfo['direction1']['dest'])
 			directionOneTimes = ""
 			if 'busTime0' in busInfo['direction1']:
 				directionOneTimes +=   busInfo['direction1']['busTime0'] + '\n'
@@ -76,7 +76,7 @@ class mirrorGUI:
 			self.firstDirectionTitle.set("")
 			self.firstDirectionTimes.set("")
 		if 'direction2' in busInfo:
-			self.secondDirectionTitle.set("Direction: " + busInfo['direction2']['dest'])
+			self.secondDirectionTitle.set(busInfo['direction2']['dest'])
 			directionTwoTimes = ""
 			if 'busTime0' in busInfo['direction2']:
 				directionTwoTimes +=   busInfo['direction2']['busTime0'] + '\n'
