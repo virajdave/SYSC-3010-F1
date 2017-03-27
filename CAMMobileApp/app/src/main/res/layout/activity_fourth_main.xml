@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cam.cammobileapp.MainActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="160dp"
+        android:layout_height="202dp"
+        android:src="@drawable/cam"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Turn Lights On or Off"
+        android:textSize="25dp"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/alarmText"
+        android:layout_marginStart="33dp"
+        android:layout_marginEnd="33dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="42dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="43dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_alarm"
+        android:layout_width="98dp"
+        android:layout_height="101dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:onClick="alaramSettings"
+        android:scaleType="fitCenter"
+        android:src="@drawable/alarm"
+        android:layout_marginEnd="13dp"
+        app:layout_constraintRight_toLeftOf="@+id/alarmText"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        android:layout_marginBottom="52dp" />
+
+    <TextView
+        android:id="@+id/alarmText"
+        android:layout_width="148dp"
+        android:layout_height="0dp"
+        android:textSize="25dp"
+        android:text="Change Alarm Settings"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        android:layout_marginStart="62dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_alarm"
+        android:layout_marginEnd="62dp"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/btn_alarm" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cam.cammobileapp.MainActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="122dp"
+        android:layout_height="0dp"
+        android:src="@drawable/cam"
+        android:layout_marginStart="118dp"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/textView3"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_colour"
+        app:layout_constraintTop_toBottomOf="@+id/btn_colour"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="@+id/textView3">
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/btn_colour"
+        android:layout_width="98dp"
+        android:layout_height="101dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:onClick="changeColour"
+        android:scaleType="fitCenter"
+        android:src="@drawable/colorwheel"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="13dp"
+        app:layout_constraintRight_toLeftOf="@+id/textView3"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/btn_findLocation"
+        android:layout_marginTop="7dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:layout_width="98dp"
+        android:layout_height="101dp"
+        android:src="@drawable/pointer"
+        android:onClick="btnsetLocation"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/btn_findLocation"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintRight_toRightOf="@+id/btn_colour"
+        android:layout_marginTop="45dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="47dp"
+        app:layout_constraintLeft_toLeftOf="@+id/btn_colour" />
+
+    <ImageButton
+        android:layout_width="98dp"
+        android:layout_height="101dp"
+        android:id="@+id/btn_setTrans"
+        android:onClick="setTransportationStop"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/busandtrain"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/btn_findLocation"
+        android:layout_marginTop="21dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_findLocation"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="@+id/btn_findLocation" />
+
+    <TextView
+        android:id="@+id/loc"
+        android:layout_width="219dp"
+        android:layout_height="61dp"
+        android:text="Set Location"
+        android:textSize="25dp"
+        android:layout_marginStart="1dp"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/btn_setTrans"
+        android:layout_marginTop="44dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/btn_findLocation" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="219dp"
+        android:layout_height="61dp"
+        android:text="Set Bus/Train Stop"
+        android:textSize="25dp"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/imageView2"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="178dp"
+        app:layout_constraintLeft_toRightOf="@+id/imageView2" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="219dp"
+        android:layout_height="61dp"
+        android:text="Set Colour"
+        android:textSize="25dp"
+        android:layout_marginEnd="1dp"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/loc"
+        android:layout_marginTop="49dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>
