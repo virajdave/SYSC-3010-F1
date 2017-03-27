@@ -1,0 +1,25 @@
+language: python
+
+dist: trusty
+
+python:
+  - "3.6"
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+before_script:
+  - export JAVA_HOME="/usr/lib/jvm/java-8-oracle"
+  - export PATH="$PATH:/usr/lib/jvm/java-8-oracle/bin"
+  - update-alternatives --set java "/usr/lib/jvm/java-8-oracle/jre/bin/java"
+
+script:
+  - java -version
+  - python3 --version
+  - ant test
+  - pytest
+
+notifications:
+  email: false

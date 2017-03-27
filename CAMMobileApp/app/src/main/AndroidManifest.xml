@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cam.cammobileapp">
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+=======
+>>>>>>> 2df008bf5cf674af3a8094dcce31f02bd1bc56bc
 
     <application
         android:allowBackup="true"
@@ -25,6 +28,7 @@
 
         </activity>
 
+<<<<<<< HEAD
         <activity android:name=".ThirdMainActivity">
 
         </activity>
@@ -34,6 +38,8 @@
 
         </activity>
 
+=======
+>>>>>>> 2df008bf5cf674af3a8094dcce31f02bd1bc56bc
     </application>
 
 </manifest>
