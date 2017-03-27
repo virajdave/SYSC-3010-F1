@@ -20,11 +20,14 @@ public class HeartBeat extends Thread {
 	}
 
 	public void run() {
-		while (!Thread.interrupted()) {
-			doHeartBeat();
-			try {
-				Thread.sleep(rate);
-			} catch (InterruptedException e) {
+		if (rate > 0) {
+			while (!Thread.interrupted()) {
+				beat();
+				
+				try {
+					Thread.sleep(rate);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}
@@ -33,7 +36,7 @@ public class HeartBeat extends Thread {
 		// TODO: categorize devices that have sent messages so that we know which are working.
 	}
 
-	public void doHeartBeat() {
+	public void beat() {
 		for (InetSocketAddress addr : web.addrList()) {
 			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
 		}
