@@ -12,7 +12,7 @@ import util.Parse;
 public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
-	private HeartBeat beat;
+	private HeartBeat heart;
 	private int timeout;
 
 	public Manager(Server s) {
@@ -23,12 +23,12 @@ public class Manager extends Thread implements Observer {
 		web = new Web();
 		server = s;
 		this.timeout = timeout;
-		beat = new HeartBeat(server, web, beatrate);
+		heart = new HeartBeat(server, web, beatrate);
 	}
 
 	public void run() {
 		server.start();
-		beat.start();
+		heart.start();
 
 		while (!Thread.interrupted()) {
 			// Check for new incoming messages.
@@ -107,7 +107,7 @@ public class Manager extends Thread implements Observer {
 		case Codes.T_ACK:
 			// TODO: implement ACK checking.
 		case Codes.T_BEAT:
-			beat.recved(d);
+			heart.recved(d);
 			break;
 		case Codes.T_DATA:
 			// Send data to device driver.
@@ -155,6 +155,10 @@ public class Manager extends Thread implements Observer {
 		default:
 			System.out.println("unknown app T -> " + code);
 		}
+	}
+	
+	public void doHeartBeat() {
+		heart.beat();
 	}
 
 	@Override
