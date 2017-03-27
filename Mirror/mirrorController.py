@@ -43,10 +43,15 @@ def watchRecvMessages()	:
 	while True:
 			if not recvQueue.empty():
 				while not recvQueue.empty():
-					message = recvQueue.get()
-					if (message.info[0] == 'w'):
-						weatherInfo = data_organizer(message.info[1:])
+					messageRecv = recvQueue.get()
+					if (messageRecv.info[0] == 'w'):
+						weatherInfo = data_organizer(messageRecv.info[1:])
 						guiRecvQueue.put_nowait(message('weather', weatherInfo))
+					if (messageRecv.info[0] == 'b'):
+						busInfo = parseBusInfo(messageRecv.info[1:])
+						guiRecvQueue.put_nowait(message('bus', busInfo))
+					if (messageRecv.info[0] == 'c'):
+						guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
 			time.sleep(0.001)
 			
 			
@@ -57,13 +62,13 @@ def runController():
 	gui = mirrorGUI(top, guiRecvQueue)
 	_thread.start_new_thread(gui.runnerLoop, (guiRecvQueue,))
 	_thread.start_new_thread(tellGUIToUpdateTime, ())
-	_thread.start_new_thread(tellGUIToUpdateWeather, ())
-	_thread.start_new_thread(tellGUIToUpdateBusInfo, ())
+	#_thread.start_new_thread(tellGUIToUpdateWeather, ())
+	#_thread.start_new_thread(tellGUIToUpdateBusInfo, ())
 	
-	#_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
-	#_thread.start_new_thread(watchRecvMessages, ())
-	#time.sleep(1)
-	#_thread.start_new_thread(sendFakeWeather, ())
+	_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
+	_thread.start_new_thread(watchRecvMessages, ())
+	time.sleep(1)
+	_thread.start_new_thread(sendFakeData, ())
 	
 	
 	#Display the gui window

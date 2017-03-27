@@ -126,6 +126,8 @@ class mirrorGUI:
 						self.minMaxlineUpdate(message.info)
 					elif message.messageType == 'bus':
 						self.busUpdate(message.info)
+					elif message.messageType == 'colour':
+						self.changeColour(message.info)
 			time.sleep(0.1)
 
 			

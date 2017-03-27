@@ -1,9 +1,6 @@
 import socket, sys, time
 from dataPassingObject import *
 
-#For testing
-from weather import *
-
 
 def mirrorNetRecv(queue, textport):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -21,18 +18,38 @@ def mirrorNetRecv(queue, textport):
 	s.shutdown(1)
 	
 	
-def sendFakeWeather ():
+def sendFakeData ():
 	host = '127.0.0.1'
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	port = 8080
 	server_address = (host, port)
-
+	timeBetweenSends = 2
 	while 1:
-		#weather = open('weather.txt', 'r')
-		data = data_fetch(url_builder('Ottawa,Ca'))
-		#data = weather.read()
+		data ='c' + '#FF0000'
+		s.sendto(data.encode('utf-8'), server_address)	
+		time.sleep(timeBetweenSends)
+		
+		weather = open('weatherTest.txt', 'r')
+		data = weather.read()
+		weather.close()
+		data ='w' + data
 		s.sendto(data.encode('utf-8'), server_address)
-		time.sleep(900)
+		time.sleep(timeBetweenSends)
+		
+		data ='c' + '#00FF00'
+		s.sendto(data.encode('utf-8'), server_address)	
+		time.sleep(timeBetweenSends)
+		
+		bus = open('busTest.txt', 'r')
+		data = bus.read()
+		bus.close()
+		data ='b' + data
+		s.sendto(data.encode('utf-8'), server_address)	
+		time.sleep(timeBetweenSends)
+		
+		data ='c' + '#2E99A9'
+		s.sendto(data.encode('utf-8'), server_address)	
+		time.sleep(timeBetweenSends)
 
 	s.shutdown(1)

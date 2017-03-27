@@ -13,11 +13,13 @@ def urlBuilderBus(stop, route):
 def getBusInfo (Fullurl):
      url = urllib.request.urlopen(Fullurl, timeout=10)
      output = url.read().decode('utf-8')
-     raw_api_dict = json.loads(output)
+     #print(output)
+     #raw_api_dict = json.loads(output)
      url.close()
      return raw_api_dict
 
 def parseBusInfo(info):
+	info = json.loads(info)
 	data = dict(
 		station = info.get('GetNextTripsForStopResult').get('StopLabel')
     )
