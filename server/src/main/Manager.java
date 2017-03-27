@@ -12,28 +12,25 @@ import util.Parse;
 public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
-	private int beatrate;
+	private HeartBeat beat;
 	private int timeout;
 
 	public Manager(Server s) {
-		web = new Web();
-		server = s;
-		beatrate = 10;
-		timeout = 30;
+		this(s, 10, 30);
 	}
 
 	public Manager(Server s, int beatrate, int timeout) {
 		web = new Web();
 		server = s;
-		this.beatrate = beatrate;
 		this.timeout = timeout;
+		beat = new HeartBeat(server, web, beatrate);
 	}
 
 	public void run() {
 		server.start();
-		System.out.println("going");
+		beat.start();
 
-		while (true) {
+		while (!Thread.interrupted()) {
 			// Check for new incoming messages.
 			Message msg = server.recvWait();
 			if (msg != null) {
@@ -61,7 +58,7 @@ public class Manager extends Thread implements Observer {
 		if (d == null) {
 			if (code == Codes.T_BEAT) {
 				System.out.println("Going to add device.");
-				// Get the type from the message info.
+				// Get the device type from the message info.
 				int type = -1;
 				try {
 					type = Integer.parseInt(data[0]);
@@ -73,7 +70,7 @@ public class Manager extends Thread implements Observer {
 					return;
 				}
 
-				// Create device and watch for events.
+				// Create device and watch for outputs.
 				d = web.add(msg.getSocketAddress(), type);
 				d.addObserver(this);
 				System.out.println("Added device #" + d.getID() + " of type " + type);
@@ -82,8 +79,7 @@ public class Manager extends Thread implements Observer {
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()),
 						msg.getSocketAddress()));
 			} else {
-				System.out.println("Unknown device, sending back beat.");
-				// Don't know what this is, looking for info with a beat.
+				// Unknown device, looking for BEAT device info.
 				server.sendMessage(
 						new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), msg.getSocketAddress()));
 			}
@@ -91,7 +87,7 @@ public class Manager extends Thread implements Observer {
 		}
 		System.out.println("Message from device #" + d.getID() + ": " + msg.getMessage());
 
-		// Quick check device ID matches.
+		// Quick check device ID matches what we expect.
 		int id = -1;
 		try {
 			id = Integer.parseInt(data[0]);
@@ -108,11 +104,10 @@ public class Manager extends Thread implements Observer {
 
 		// Do different things depending on what the code is.
 		switch (code) {
-		case Codes.T_BEAT:
-			// Could be ignored.
-			break;
 		case Codes.T_ACK:
 			// TODO: implement ACK checking.
+		case Codes.T_BEAT:
+			beat.recved(d);
 			break;
 		case Codes.T_DATA:
 			// Send data to device driver.
@@ -136,7 +131,7 @@ public class Manager extends Thread implements Observer {
 					msg.getSocketAddress()));
 			break;
 		case Codes.T_ACK:
-			// Check if anything is waiting on an ack?
+			// TODO: implement ACK checking.
 			break;
 		case Codes.T_DEVINF:
 			// Give back requested device info by ID.
@@ -162,12 +157,6 @@ public class Manager extends Thread implements Observer {
 		}
 	}
 
-	public void doHeartBeat() {
-		for (InetSocketAddress addr : web.addrList()) {
-			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
-		}
-	}
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// Check correct types.
@@ -182,13 +171,6 @@ public class Manager extends Thread implements Observer {
 	}
 
 	public static void main(String[] args) {
-		// Check the arguments
-		if (args.length != 1) {
-			System.out.println("usage: java UDPSender host port");
-			return;
-		}
-		int port = Integer.parseInt(args[0]);
-
-		new Manager(new Server(port)).start();
+		new Manager(new Server(3010)).start();
 	}
 }
