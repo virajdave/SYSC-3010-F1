@@ -22,14 +22,6 @@ public class Mirror extends Device {
         currentColour = "#2E99A9";
     }
 
-    /**
-     * Create Mirror driver with a thermostat
-     * @param t
-     */
-    public Mirror(Thermostat t) {
-        this();
-        this.thermo = t;
-    }
 
     /**
      * Creates the JSON string with the time
@@ -37,7 +29,7 @@ public class Mirror extends Device {
      */
     public String getTime() {
         long time = System.currentTimeMillis();
-        return "{\"time\":{"+ time + "}}";
+        return "t"+ time;
     }
 
     public void setLoc() {
@@ -49,7 +41,7 @@ public class Mirror extends Device {
         InputStream is = new URL(url).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            return readAll(rd);
+            return 'w'+ readAll(rd);
         } finally {
             is.close();
         }
@@ -86,7 +78,7 @@ public class Mirror extends Device {
         Matcher m = r.matcher(colour);
         if (m.find( )) {
             this.currentColour = m.group(0);
-            returnString = "\"Colour\":{" + m.group(0) + "}";
+            returnString = "c" + m.group(0);
         }
         return returnString;
     }
