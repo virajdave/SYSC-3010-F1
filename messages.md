@@ -30,7 +30,7 @@ While adding a new device, the data is the device's new ID.
 ## DATA
 Needed to send any data from the device driver on the server.
 ```
-02 / Device ID / Data
+02 / Data
 ```
 # App <-> Server
 ## NETINF
