@@ -14,12 +14,16 @@ import types.Data;
 public class Mirror extends Device {
     private Thermostat thermo;
     private String currentColour;
+    private String currStop;
+    private String currRoute;
 
     /**
      * create blank mirror driver
      */
     public Mirror () {
         currentColour = "#2E99A9";
+        currStop = "3031";
+        currRoute = "104";
     }
 
 
@@ -36,6 +40,27 @@ public class Mirror extends Device {
 
     }
     
+    public String getBus() throws IOException {
+        String url = buildBusURL(currStop, currRoute);
+        InputStream is = new URL(url).openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            return 'b'+ readAll(rd);
+        } finally {
+            is.close();
+        }
+    }
+    
+    private String buildBusURL(String stop, String route) {
+    	String key = "appID=7f6091d8&apiKey=4be816c142bfb4100421b9cbdef4fb9a";
+    	String strStop = "&stopNo=" + stop;
+    	String strRoute = "&routeNo=" + route;
+    	String url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop?";
+    	String full_api_url = url + key + strRoute + strStop + "&format=json";
+        return full_api_url;
+    }
+    
+    
     public String getWeather() throws IOException {
         String url = buildWeatherURL("Ottawa,Ca");
         InputStream is = new URL(url).openStream();
@@ -45,6 +70,14 @@ public class Mirror extends Device {
         } finally {
             is.close();
         }
+    }
+    
+    private String buildWeatherURL(String city) {
+        String user_api = "b86f030e92681cb37afdbb0f336668ae";
+        String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
+        String api = "http://api.openweathermap.org/data/2.5/weather?q=";
+        String full_api_url = api + city + "&mode=json&units=" + unit + "&APPID=" + user_api;
+        return full_api_url;
     }
 
     /**
@@ -61,15 +94,6 @@ public class Mirror extends Device {
         }
         return sb.toString();
     }
-
-    private String buildWeatherURL(String city) {
-        String user_api = "b86f030e92681cb37afdbb0f336668ae";
-        String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
-        String api = "http://api.openweathermap.org/data/2.5/weather?q=";
-        String full_api_url = api + city + "&mode=json&units=" + unit + "&APPID=" + user_api;
-        return full_api_url;
-    }
-
 
     private String setColour(String colour) {
         String returnString = "";
@@ -98,15 +122,22 @@ public class Mirror extends Device {
     @java.lang.Override
     public void giveMessage(String msg) {
         String dataOut = "";
-        if (msg.equals("Weather")) {
+        if (msg.equals("weather")) {
             try {
 				dataOut = getWeather();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        } else if (msg.equals("Time")) {
+        } else if (msg.equals("time")) {
             dataOut = getTime();
+        } else if (msg.equals("bus")) {
+        	try {
+				dataOut = getBus();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         send(dataOut);
     }

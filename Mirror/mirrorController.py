@@ -29,14 +29,16 @@ def tellGUIToUpdateTime():
 # Every 15 mins fetches new weather data and gives the info to the gui to display
 def tellGUIToUpdateWeather():
 	while True :
-		weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
-		guiRecvQueue.put_nowait(message('weather', weatherData))
+		#weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
+		#guiRecvQueue.put_nowait(message('weather', weatherData))
+		sendQueue.put_nowait(message('data', 'weather'))
 		time.sleep(900)
 
 def tellGUIToUpdateBusInfo():
 	while True:
-		busInfo = parseBusInfo(getBusInfo(urlBuilderBus(3031, 104)))
-		guiRecvQueue.put_nowait(message('bus', busInfo))
+		#busInfo = parseBusInfo(getBusInfo(urlBuilderBus(3031, 104)))
+		#guiRecvQueue.put_nowait(message('bus', busInfo))
+		sendQueue.put_nowait(message('data', 'bus'))
 		time.sleep(30)
 	
 
@@ -54,6 +56,8 @@ def watchRecvMessages()	:
 							guiRecvQueue.put_nowait(message('bus', busInfo))
 						if (messageRecv.info[0] == 'c'):
 							guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
+						if (messageRecv.info[0] == 't'):
+							#TO-DO add changing system time
 					elif(messageRecv.type == 'id'):
 							id = messageRecv.info
 					elif(messageRecv.type == 'beat'):
@@ -68,13 +72,14 @@ def runController():
 	gui = mirrorGUI(top, guiRecvQueue)
 	_thread.start_new_thread(gui.runnerLoop, (guiRecvQueue,))
 	_thread.start_new_thread(tellGUIToUpdateTime, ())
-	#_thread.start_new_thread(tellGUIToUpdateWeather, ())
-	#_thread.start_new_thread(tellGUIToUpdateBusInfo, ())
+	_thread.start_new_thread(tellGUIToUpdateWeather, ())
+	_thread.start_new_thread(tellGUIToUpdateBusInfo, ())
 	
-	_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
+	#_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
 	_thread.start_new_thread(watchRecvMessages, ())
-	time.sleep(1)
-	_thread.start_new_thread(sendFakeData, ())
+	_thread.start_new_thread(networkInit, (recvQueue,sendQueue,))
+	#time.sleep(1)
+	#_thread.start_new_thread(sendFakeData, ())
 	
 	
 	#Display the gui window
