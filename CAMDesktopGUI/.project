@@ -18,7 +18,7 @@
 		<link>
 			<name>server</name>
 			<type>2</type>
-			<location>C:/Users/ben/OneDrive/Documents/SYSC3010/git/server/src</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/server/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
