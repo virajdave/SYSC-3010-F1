@@ -6,6 +6,7 @@ import java.util.Observer;
 import devices.Device;
 import types.*;
 import util.Codes;
+import util.Log;
 import util.Parse;
 
 public class Manager extends Thread implements Observer {
@@ -41,6 +42,8 @@ public class Manager extends Thread implements Observer {
 	public void run() {
 		server.start();
 		heart.start();
+		
+		Log.out("Server and heartbeat started, waiting to recv messages.");
 
 		while (!Thread.interrupted()) {
 			// Check for new incoming messages.
@@ -55,9 +58,36 @@ public class Manager extends Thread implements Observer {
 					app(msg);
 					break;
 				default:
-					System.out.println("unknown W -> " + msg.toString());
+					Log.warn("unknown W code -> " + msg.toString() + " coming from " + msg.toString());
 				}
 			}
+		}
+	}
+	
+	private void newDevice(Message msg, String[] data, char code) {
+		if (code == Codes.T_BEAT) {
+			System.out.println("Going to add device.");
+			// Get the device type from the message info.
+			try {
+				int type = Integer.parseInt(data[2]);
+
+				// Create device and watch for outputs.
+				Device d = web.add(msg.getSocketAddress(), type);
+				d.addObserver(this);
+				System.out.println("Added device #" + d.getID() + " of type " + type);
+
+				// Send ack back letting the device know it was connected.
+				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+			} catch (NumberFormatException e) {
+				System.out.println("Device type '" + data[2] + "' unknown.");
+				return;
+			} catch (Exception e) {
+				System.out.println("Couldn't parse info.");
+				return;
+			}
+		} else {
+			// Unknown device, looking for BEAT device info.
+			server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), msg.getSocketAddress()));
 		}
 	}
 
@@ -72,34 +102,10 @@ public class Manager extends Thread implements Observer {
 		// Get the device, if it doesn't exist try adding it.
 		Device d = web.get(msg.getSocketAddress());
 		if (d == null) {
-			if (code == Codes.T_BEAT) {
-				System.out.println("Going to add device.");
-				// Get the device type from the message info.
-				try {
-					int type = Integer.parseInt(data[2]);
-
-					// Create device and watch for outputs.
-					d = web.add(msg.getSocketAddress(), type);
-					d.addObserver(this);
-					System.out.println("Added device #" + d.getID() + " of type " + type);
-
-					// Send ack back letting the device know it was connected.
-					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()), msg.getSocketAddress()));
-				} catch (NumberFormatException e) {
-					System.out.println("Device type '" + data[2] + "' unknown.");
-					return;
-				} catch (Exception e) {
-					System.out.println("Couldn't parse info.");
-					return;
-				}
-			} else {
-				// Unknown device, looking for BEAT device info.
-				server.sendMessage(
-						new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), msg.getSocketAddress()));
-			}
+			newDevice(msg, data, code);
 			return;
 		}
-		System.out.println("Message from device #" + d.getID() + ": " + msg.getMessage());
+		Log.out("Message from device #" + d.getID() + ": " + msg.getMessage());
 
 		// Quick check device ID matches what we expect.
 		try {
@@ -109,10 +115,10 @@ public class Manager extends Thread implements Observer {
 				// TODO: This would be a problem.
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("Device id '" + data[1] + "' is not an int.");
+			Log.warn("Device id '" + data[1] + "' is not an int, from " + msg.toString());
 			return;
 		} catch (Exception e) {
-			System.out.println("Couldn't parse device id.");
+			Log.warn("Couldn't parse device id, from " + msg.toString());
 			return;
 		}
 
@@ -129,7 +135,7 @@ public class Manager extends Thread implements Observer {
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
-				System.out.println("unknown device T -> " + msg.toString());
+				Log.warn("unknown device T code -> " + msg.toString() + " from device #" + d.getID() +  " with  " + msg.toString());
 		}
 	}
 
@@ -156,9 +162,9 @@ public class Manager extends Thread implements Observer {
 					id = Parse.toInt(data[1]);
 					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
-					// Device ID is malformed.
+					Log.out("App giving malformed device ID, from " + msg.getMessage());
 				} catch (NullPointerException e) {
-					// Device with ID does not exist.
+					Log.out("App giving device ID which does not exist, from " + msg.getMessage());
 				}
 				break;
 			case Codes.T_DATA:
@@ -174,7 +180,7 @@ public class Manager extends Thread implements Observer {
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
-				System.out.println("unknown app T -> " + code);
+				Log.warn("unknown app T code -> " + msg.toString() + " from " + msg.toString());
 		}
 	}
 	
@@ -189,7 +195,7 @@ public class Manager extends Thread implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		// Check correct types.
 		if (!(arg0 instanceof Device) || !(arg1 instanceof String)) {
-			System.err.println("UH OH");
+			Log.err("UH OH");
 			return;
 		}
 
