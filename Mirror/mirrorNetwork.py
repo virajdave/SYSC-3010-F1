@@ -8,7 +8,7 @@ def networkInit(recvQueue, sendQueue):
 	localAddress = ('localhost', 0)
 	s.bind(localAddress)
 	_thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
-	_thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
+	_thread.start_new_thread(mirrorNetSend, (s,recvQueue,))
 	
 
 def mirrorNetRecv(s, queue):
@@ -24,7 +24,7 @@ def mirrorNetRecv(s, queue):
 		elif(stringdata[:2] == '02'):
 			queue.put_nowait(message('data', stringdata[3:]))
 		else:
-			recvError = open('RecvError.log', 'a')
+			recvError = open('/logs/RecvError.log', 'a')
 			recvError.write(stringdata)
 			recvError.close()
 	s.shutdown(1)
@@ -41,13 +41,26 @@ def mirrorNetSend(s, queue):
 					messageToSend = queue.get()
 					if(messageToSend.type == 'beat'):
 						heartBeat(s,messageToSend.info)
+					elif(messageToSend.type == 'data'):
+						data = '22/' + messageToSend.info
+						s.sendto(data.encode('utf-8'), server_address)
+					elif(messageToSend.type == 'ack'):
+						sendAck(s,messageToSend.info)
+					else:
+						sendError = open('/logs/sendError.log', 'a')
+						sendError.write(stringdata)
+						sendError.close()
 	s.shutdown(1)
 
 
 def heartBeat(s,id):
 	data = '20/' + id + '/2'
 	s.sendto(data.encode('utf-8'), server_address)
-	
+
+def sendAck(s,id):
+	data = '21/' + id + '/2'
+	s.sendto(data.encode('utf-8'), server_address)
+
 def sendFakeData ():
 	host = '127.0.0.1'
 
