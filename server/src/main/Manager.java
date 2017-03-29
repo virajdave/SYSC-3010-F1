@@ -1,6 +1,5 @@
 package main;
 
-import java.net.InetSocketAddress;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,7 +11,7 @@ import util.Parse;
 public class Manager extends Thread implements Observer {
 	private static final int BEATRATE = 10; // in minutes
 	private static final int TIMEOUT = 30;  // in seconds
-	
+
 	private Web web;
 	private Server server;
 	private HeartBeat heart;
@@ -67,8 +66,8 @@ public class Manager extends Thread implements Observer {
 	 * @param msg
 	 */
 	private void device(Message msg) {
-		char code = msg.getMessage().charAt(1);
-		String[] data = msg.getMessage().substring(2).split("/");
+		String[] data = msg.getMessage().split("/");
+		char code = data[0].charAt(1);
 
 		// Get the device, if it doesn't exist try adding it.
 		Device d = web.get(msg.getSocketAddress());
@@ -77,7 +76,7 @@ public class Manager extends Thread implements Observer {
 				System.out.println("Going to add device.");
 				// Get the device type from the message info.
 				try {
-					int type = Integer.parseInt(data[0]);
+					int type = Integer.parseInt(data[2]);
 
 					// Create device and watch for outputs.
 					d = web.add(msg.getSocketAddress(), type);
@@ -87,7 +86,7 @@ public class Manager extends Thread implements Observer {
 					// Send ack back letting the device know it was connected.
 					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
-					System.out.println("Device type '" + data[0] + "' unknown.");
+					System.out.println("Device type '" + data[2] + "' unknown.");
 					return;
 				} catch (Exception e) {
 					System.out.println("Couldn't parse info.");
@@ -104,13 +103,13 @@ public class Manager extends Thread implements Observer {
 
 		// Quick check device ID matches what we expect.
 		try {
-			int id = Integer.parseInt(data[0]);
+			int id = Integer.parseInt(data[1]);
 			
 			if (!d.hasID(id)) {
 				// TODO: This would be a problem.
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("Device id '" + data[0] + "' is not an int.");
+			System.out.println("Device id '" + data[1] + "' is not an int.");
 			return;
 		} catch (Exception e) {
 			System.out.println("Couldn't parse device id.");
@@ -126,7 +125,7 @@ public class Manager extends Thread implements Observer {
 				break;
 			case Codes.T_DATA:
 				// Send data to device driver.
-				d.giveMessage(msg.getMessage().substring(2));
+				d.giveMessage(msg.getMessage().substring(3));
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
@@ -139,8 +138,8 @@ public class Manager extends Thread implements Observer {
 	 * @param msg
 	 */
 	private void app(Message msg) {
-		char code = msg.getMessage().charAt(1);
-		String[] data = msg.getMessage().substring(2).split("/");
+		String[] data = msg.getMessage().split("/");
+		char code = data[0].charAt(1);
 
 		int id;
 		switch (code) {
@@ -153,8 +152,14 @@ public class Manager extends Thread implements Observer {
 				break;
 			case Codes.T_DEVINF:
 				// Give back requested device info by ID.
-				id = Parse.toInt(data[0]);
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
+				try {
+					id = Parse.toInt(data[1]);
+					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
+				} catch (NumberFormatException e) {
+					// Device ID is malformed.
+				} catch (NullPointerException e) {
+					// Device with ID does not exist.
+				}
 				break;
 			case Codes.T_DATA:
 				/* Parse data:
@@ -162,8 +167,8 @@ public class Manager extends Thread implements Observer {
 				 * 1 - what is changing
 				 * 2 - new value
 				 */
-				id = Parse.toInt(data[0]);
-				Data in = new Data(data[1], data[2]);
+				id = Parse.toInt(data[1]);
+				Data in = new Data(data[2], data[3]);
 				web.getByID(id).giveInput(in);
 				// Send back acknowledge.
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));

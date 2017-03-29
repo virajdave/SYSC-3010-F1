@@ -61,7 +61,7 @@ public class Steps {
 			fail("Unknown device type to connect.");
 		}
 
-		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("", Codes.W_DEVICE, Codes.T_BEAT, type));
+		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_BEAT, -1, type));
 
 		String msg = server.getMessage(addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.substring(0, 2));
@@ -74,7 +74,7 @@ public class Steps {
 	public void iSetLightSwitch(String set, String name) throws Throwable {
 		Dev d = devices.get(name);
 		boolean on = set.equals("on");
-		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DATA, d.id, "/set/", on), appAddr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DATA, d.id, "set", on), appAddr));
 
 		String msg = server.getMessage(appAddr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
@@ -84,7 +84,7 @@ public class Steps {
 	public void iSetSwitch(String set, String name) throws Throwable {
 		Dev d = devices.get(name);
 		boolean on = set.equals("on");
-		server.giveMessage(new Message(Parse.toString("", Codes.W_DEVICE, Codes.T_DATA, on), d.addr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_DATA, on), d.addr));
 
 		String msg = server.getMessage(d.addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
@@ -94,7 +94,7 @@ public class Steps {
 	public void iConnectLightToSwitch(String lightName, String switchName) throws Throwable {
 		Dev d = devices.get(switchName);
 		int id = devices.get(lightName).id;
-		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DATA, d.id, "/light/", id), appAddr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DATA, d.id, "light", id), appAddr));
 
 		String msg = server.getMessage(appAddr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
@@ -121,7 +121,7 @@ public class Steps {
 	@Then("^the light '([^']+)' should be:$")
 	public void lightShouldBe(String name, DataTable dataTable) throws Throwable {
 		Dev d = devices.get(name);
-		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DEVINF, d.id), appAddr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, d.id), appAddr));
 
 		String msg = server.getMessage(appAddr);
 		String code = msg.substring(0, 2);
@@ -147,7 +147,7 @@ public class Steps {
 	@Then("^the switch '([^']+)' should be:$")
 	public void switchShouldBe(String name, DataTable dataTable) throws Throwable {
 		Dev d = devices.get(name);
-		server.giveMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_DEVINF, d.id), appAddr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, d.id), appAddr));
 
 		String msg = server.getMessage(appAddr);
 		String code = msg.substring(0, 2);
