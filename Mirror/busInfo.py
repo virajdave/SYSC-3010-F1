@@ -11,7 +11,7 @@ def urlBuilderBus(stop, route):
      return fullURL
 
 def getBusInfo (Fullurl):
-     url = urllib.request.urlopen(Fullurl, timeout=10)
+     url = urllib.request.urlopen(Fullurl, timeout=10, verify=False)
      output = url.read().decode('utf-8')
      #print(output)
      #raw_api_dict = json.loads(output)

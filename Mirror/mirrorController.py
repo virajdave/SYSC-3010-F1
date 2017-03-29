@@ -6,7 +6,8 @@ from mirrorNetwork import *
 from queue import *
 import _thread, time
 
-
+#device id
+id = -1
 
 # Queue setup
 guiRecvQueue = Queue()
@@ -44,14 +45,19 @@ def watchRecvMessages()	:
 			if not recvQueue.empty():
 				while not recvQueue.empty():
 					messageRecv = recvQueue.get()
-					if (messageRecv.info[0] == 'w'):
-						weatherInfo = data_organizer(messageRecv.info[1:])
-						guiRecvQueue.put_nowait(message('weather', weatherInfo))
-					if (messageRecv.info[0] == 'b'):
-						busInfo = parseBusInfo(messageRecv.info[1:])
-						guiRecvQueue.put_nowait(message('bus', busInfo))
-					if (messageRecv.info[0] == 'c'):
-						guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
+					if (messageRecv.type == 'data'):
+						if (messageRecv.info[0] == 'w'):
+							weatherInfo = data_organizer(messageRecv.info[1:])
+							guiRecvQueue.put_nowait(message('weather', weatherInfo))
+						if (messageRecv.info[0] == 'b'):
+							busInfo = parseBusInfo(messageRecv.info[1:])
+							guiRecvQueue.put_nowait(message('bus', busInfo))
+						if (messageRecv.info[0] == 'c'):
+							guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
+					elif(messageRecv.type == 'id'):
+							id = messageRecv.info
+					elif(messageRecv.type == 'beat'):
+							sendQueue.put_nowait(message('beat', id))
 			time.sleep(0.001)
 			
 			

@@ -1,22 +1,52 @@
 import socket, sys, time
 from dataPassingObject import *
+import _thread
 
 
-def mirrorNetRecv(queue, textport):
+def networkInit(recvQueue, sendQueue):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	port = int(textport)
-	server_address = ('localhost', port)
-	s.bind(server_address)
+	localAddress = ('localhost', 0)
+	s.bind(localAddress)
+	_thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
+	_thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
+	
 
+def mirrorNetRecv(s, queue):
 	while True:
 		buf, address = s.recvfrom(port)
 		if not len(buf):
 			break
 		stringdata = buf.decode('utf-8')
-		queue.put_nowait(message('recv', stringdata))
-		
+		if(stringdata[:2] == '01'):
+			queue.put_nowait(message('id', stringdata[3:]))
+		elif(stringdata[:2] == '00'):
+			queue.put_nowait(message('beat', ''))
+		elif(stringdata[:2] == '02'):
+			queue.put_nowait(message('data', stringdata[3:]))
+		else:
+			recvError = open('RecvError.log', 'a')
+			recvError.write(stringdata)
+			recvError.close()
 	s.shutdown(1)
 	
+
+def mirrorNetSend(s, queue):
+	serverIp = '10.0.0.1'
+	servPort = 3010
+	server_address = (serverIp, servPort)
+	heartBeat(s,'-1')
+	while True:
+		if not queue.empty():
+				while not queue.empty():
+					messageToSend = queue.get()
+					if(messageToSend.type == 'beat'):
+						heartBeat(s,messageToSend.info)
+	s.shutdown(1)
+
+
+def heartBeat(s,id):
+	data = '20/' + id + '/2'
+	s.sendto(data.encode('utf-8'), server_address)
 	
 def sendFakeData ():
 	host = '127.0.0.1'
