@@ -207,7 +207,9 @@ public class Manager extends Thread implements Observer {
 		// Send out the message to the correct device.
 		Device d = (Device) arg0;
 		String msg = (String) arg1;
-		server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DATA, msg), web.get(d)));
+		Message m = new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DATA, msg), web.get(d));
+		server.sendMessage(m);
+		Log.out("Message to device #" + d.getID() + ": " + m.getMessage());
 	}
 
 	public static void main(String[] args) {
