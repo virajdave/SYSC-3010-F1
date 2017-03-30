@@ -7,7 +7,7 @@ Sent when the device is turned on and also in response to a server BEAT.
 ## ACK
 Used to acknowledge a message from the server.
 ```
-21 / (Potential data)
+21 / Device ID / (Potential data)
 ```
 ## DATA
 Needed to send any data to the device driver on the server.

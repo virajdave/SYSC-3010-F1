@@ -63,10 +63,10 @@ public class Steps {
 
 		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_BEAT, -1, type));
 
-		String msg = server.getMessage(addr);
-		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.substring(0, 2));
+		String[] msg = server.getMessage(addr).split("/");
+		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg[0]);
 
-		int id = Integer.parseInt(msg.substring(2));
+		int id = Integer.parseInt(msg[1]);
 		devices.put(name, new Dev(id, type, addr));
 	}
 
@@ -123,21 +123,19 @@ public class Steps {
 		Dev d = devices.get(name);
 		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, d.id), appAddr));
 
-		String msg = server.getMessage(appAddr);
-		String code = msg.substring(0, 2);
-		String[] split = msg.substring(2).split("/");
-		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);
-		assertEquals(3, split.length);
-		assertEquals(Parse.toString(d.id), split[0]);
+		String[] msg = server.getMessage(appAddr).split("/");
+		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), msg[0]);
+		assertEquals(4, msg.length);
+		assertEquals(Parse.toString(d.id), msg[1]);
 
 		List<List<String>> data = dataTable.raw();
 		for (List<String> row : data) {
 			if (row.get(0).equals("dead")) {
 				boolean dead = row.get(1).equals("true");
-				assertEquals(Parse.toString(dead), split[1]);
+				assertEquals(Parse.toString(dead), msg[2]);
 			} else if (row.get(0).equals("set")) {
 				boolean on = row.get(1).equals("on");
-				assertEquals(Parse.toString(on), split[2]);
+				assertEquals(Parse.toString(on), msg[3]);
 			} else {
 				fail("Unknown info row.");
 			}
@@ -149,27 +147,25 @@ public class Steps {
 		Dev d = devices.get(name);
 		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, d.id), appAddr));
 
-		String msg = server.getMessage(appAddr);
-		String code = msg.substring(0, 2);
-		String[] split = msg.substring(2).split("/");
-		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), code);
-		assertEquals(4, split.length);
-		assertEquals(Parse.toString(d.id), split[0]);
+		String[] msg = server.getMessage(appAddr).split("/");
+		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF), msg[0]);
+		assertEquals(5, msg.length);
+		assertEquals(Parse.toString(d.id), msg[1]);
 
 		List<List<String>> data = dataTable.raw();
 		for (List<String> row : data) {
 			if (row.get(0).equals("dead")) {
 				boolean dead = row.get(1).equals("true");
-				assertEquals(Parse.toString(dead), split[1]);
+				assertEquals(Parse.toString(dead), msg[2]);
 			} else if (row.get(0).equals("set")) {
 				boolean on = row.get(1).equals("on");
-				assertEquals(Parse.toString(on), split[2]);
+				assertEquals(Parse.toString(on), msg[3]);
 			} else if (row.get(0).equals("light")) {
 				if (row.get(1).equals("null")) {
-					assertEquals("-1", split[3]);
+					assertEquals("-1", msg[4]);
 				} else {
 					int id = devices.get(row.get(1)).id;
-					assertEquals(Parse.toString(id), split[3]);
+					assertEquals(Parse.toString(id), msg[4]);
 				}
 			} else {
 				fail("Unknown info row.");
@@ -186,7 +182,7 @@ public class Steps {
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF), code);
 
 		// Split apart the info to use.
-		String[] split = msg.substring(2).split("/");
+		String[] split = msg.substring(3).split("/");
 		HashMap<Integer, String[]> info = new HashMap<>();
 		for (String i : split) {
 			String[] s = i.split(":");

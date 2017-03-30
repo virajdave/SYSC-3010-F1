@@ -77,7 +77,7 @@ public class Manager extends Thread implements Observer {
 				System.out.println("Added device #" + d.getID() + " of type " + type);
 
 				// Send ack back letting the device know it was connected.
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+				server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, d.getID()), msg.getSocketAddress()));
 			} catch (NumberFormatException e) {
 				System.out.println("Device type '" + data[2] + "' unknown.");
 				return;
@@ -151,7 +151,7 @@ public class Manager extends Thread implements Observer {
 		switch (code) {
 			case Codes.T_NETINF:
 				// Give back the device network information.
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF, web.toString()), msg.getSocketAddress()));
+				server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_NETINF, web.toString()), msg.getSocketAddress()));
 				break;
 			case Codes.T_ACK:
 				// TODO: implement ACK checking.
@@ -160,7 +160,7 @@ public class Manager extends Thread implements Observer {
 				// Give back requested device info by ID.
 				try {
 					id = Parse.toInt(data[1]);
-					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
+					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
 					Log.out("App giving malformed device ID, from " + msg.getMessage());
 				} catch (NullPointerException e) {
@@ -202,7 +202,7 @@ public class Manager extends Thread implements Observer {
 		// Send out the message to the correct device.
 		Device d = (Device) arg0;
 		String msg = (String) arg1;
-		server.sendMessage(new Message(Codes.W_SERVER + Codes.T_DATA + msg, web.get(d)));
+		server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DATA, msg), web.get(d)));
 	}
 
 	public static void main(String[] args) {
