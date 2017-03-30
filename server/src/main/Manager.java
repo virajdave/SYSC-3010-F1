@@ -10,7 +10,7 @@ import util.Log;
 import util.Parse;
 
 public class Manager extends Thread implements Observer {
-	private static final int BEATRATE = 10; // in minutes
+	private static final double BEATRATE = 0.5; // in minutes
 	private static final int TIMEOUT = 30;  // in seconds
 
 	private Web web;
@@ -29,10 +29,10 @@ public class Manager extends Thread implements Observer {
 	/**
 	 * Create a new Manager.
 	 * @param s        Server to use for sending messages
-	 * @param beatrate Rate to send heartbeat (in minutes)
+	 * @param beatrate Rate to send heartbeat    (in miliseconds)
 	 * @param timeout  Time for message timeouts (in seconds)
 	 */
-	public Manager(Server s, int beatrate, int timeout) {
+	public Manager(Server s, double beatrate, int timeout) {
 		web = new Web();
 		server = s;
 		this.timeout = timeout;
@@ -66,7 +66,7 @@ public class Manager extends Thread implements Observer {
 	
 	private void newDevice(Message msg, String[] data, char code) {
 		if (code == Codes.T_BEAT) {
-			System.out.println("Going to add device.");
+			Log.out("Going to add device with inet " + msg.getSocketAddress().toString());
 			// Get the device type from the message info.
 			try {
 				int type = Integer.parseInt(data[2]);
@@ -74,15 +74,15 @@ public class Manager extends Thread implements Observer {
 				// Create device and watch for outputs.
 				Device d = web.add(msg.getSocketAddress(), type);
 				d.addObserver(this);
-				System.out.println("Added device #" + d.getID() + " of type " + type);
+				Log.out("Added device #" + d.getID() + " of type " + type);
 
 				// Send ack back letting the device know it was connected.
 				server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, d.getID()), msg.getSocketAddress()));
 			} catch (NumberFormatException e) {
-				System.out.println("Device type '" + data[2] + "' unknown.");
+				Log.warn("Device type '" + data[2] + "' malformed, from " + msg.toString());
 				return;
 			} catch (Exception e) {
-				System.out.println("Couldn't parse info.");
+				Log.warn("Couldn't parse info from " + msg.toString());
 				return;
 			}
 		} else {
@@ -112,6 +112,8 @@ public class Manager extends Thread implements Observer {
 			int id = Integer.parseInt(data[1]);
 			
 			if (!d.hasID(id)) {
+				Log.warn("Device #" + d.getID() + " gave ID " + id + ", suggesting the network has changed and this device should be reset.");
+				return;
 				// TODO: This would be a problem.
 			}
 		} catch (NumberFormatException e) {

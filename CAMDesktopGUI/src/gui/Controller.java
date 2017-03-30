@@ -36,7 +36,7 @@ public class Controller {
 		Message m = server.recvWait();
 		System.out.println(m.getMessage());
 		setDevices(m.getMessage());
-//		setDevices("003:12:0/25:2:0/0:0:1");
+//		setDevices("00/3:12:0/25:2:0/0:0:1");
 	}
 
     public void stop() throws InterruptedException {
@@ -45,7 +45,7 @@ public class Controller {
     }
 	
 	public void setDevices(String message) {
-		String[] list = message.substring(2).split("/");
+		String[] list = message.substring(3).split("/");
 		
 		devices.setCellFactory(new Callback<ListView<String>, 
             ListCell<String>>() {
