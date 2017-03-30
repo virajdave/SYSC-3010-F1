@@ -95,16 +95,15 @@ public class Mirror extends Device {
         return sb.toString();
     }
 
-    private String setColour(String colour) {
-        String returnString = "";
+    private void setColour(String colour) {
+    	// Check the new colour matches the required pattern.
         String HEX_PATTERN = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
         Pattern r = Pattern.compile(HEX_PATTERN);
         Matcher m = r.matcher(colour);
         if (m.find( )) {
+        	// Set the new colour.
             this.currentColour = m.group(0);
-            returnString = "c" + m.group(0);
         }
-        return returnString;
     }
     
     private String getColour() {
@@ -119,7 +118,7 @@ public class Mirror extends Device {
 
     }
 
-    @java.lang.Override
+    @Override
     public void giveMessage(String msg) {
         String dataOut = "";
         if (msg.equals("weather")) {
@@ -142,14 +141,16 @@ public class Mirror extends Device {
         send(dataOut);
     }
 
-    @java.lang.Override
+    @Override
     public void giveInput(Data in) {
     	if (in.is("colour")) {
+    		// Set the new colour and then send it out.
     		this.setColour(in.get());
+    		send("c" + currentColour);
     	}
     }
 
-    @java.lang.Override
+    @Override
     public Data requestOutput(Data in) {
     	Data dataOut = null;
     	if (in.is("colour")) {
@@ -158,13 +159,9 @@ public class Mirror extends Device {
         return dataOut;
     }
 
-    @java.lang.Override
+    @Override
     public String getInfo() {
         return null;
     }
-    
-    //public static void main(String [] args) throws IOException {
-	//	Mirror m = new Mirror();
-	//	System.out.println(m.getWeather());
-	//}
+
 }
