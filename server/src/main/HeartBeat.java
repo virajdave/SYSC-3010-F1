@@ -34,7 +34,9 @@ public class HeartBeat extends Thread {
 			try {
 				beat();
 				Thread.sleep(rate * 51);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				// EAT.
+			}
 		}
 	}
 
@@ -44,8 +46,10 @@ public class HeartBeat extends Thread {
 	 */
 	public void recved(Device d) {
 		// Remove from set of devices we are waiting on.
-		if (addrSet != null) {
-			addrSet.remove(web.get(d));
+		synchronized (addrSet) {
+			if (addrSet != null) {
+				addrSet.remove(web.get(d));
+			}
 		}
 		// Mark the device as reconnected.
 		if (d.isDead()) {
@@ -61,11 +65,15 @@ public class HeartBeat extends Thread {
 	 */
 	public void beat() {
 		try {
-			addrSet = new HashSet<>(web.addrList());
+			synchronized (addrSet) {
+				addrSet = new HashSet<>(web.addrList());
+			}
 			send();
-			for (InetSocketAddress addr : addrSet) {
-				if (web.get(addr).isDead()) {
-					addrSet.remove(addr);
+			synchronized (addrSet) {
+				for (InetSocketAddress addr : addrSet) {
+					if (web.get(addr).isDead()) {
+						addrSet.remove(addr);
+					}
 				}
 			}
 			Thread.sleep(rate * 3);
@@ -75,6 +83,7 @@ public class HeartBeat extends Thread {
 			Thread.sleep(rate * 3);
 			clean();
 		} catch (InterruptedException e) {
+			// EAT.
 		}
 	}
 
@@ -82,9 +91,11 @@ public class HeartBeat extends Thread {
 	 * Send a heartbeat to all devices in the set.
 	 */
 	private void send() {
-		if (addrSet != null) {
-			for (InetSocketAddress addr : addrSet) {
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
+		synchronized (addrSet) {
+			if (addrSet != null) {
+				for (InetSocketAddress addr : addrSet) {
+					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
+				}
 			}
 		}
 	}
@@ -93,16 +104,18 @@ public class HeartBeat extends Thread {
 	 * Send a heartbeat to all devices in the set.
 	 */
 	private void clean() {
-		if (addrSet != null) {
-			// Mark any remaining devices as disconnected.
-			for (InetSocketAddress addr : addrSet) {
-				Device d = web.get(addr);
-				if (!d.isDead()) {
-					d.setDead(true);
-					Log.out("Device #" + d.getID() + " has disconnected.");
+		synchronized (addrSet) {
+			if (addrSet != null) {
+				// Mark any remaining devices as disconnected.
+				for (InetSocketAddress addr : addrSet) {
+					Device d = web.get(addr);
+					if (!d.isDead()) {
+						d.setDead(true);
+						Log.out("Device #" + d.getID() + " has disconnected.");
+					}
 				}
+				addrSet = null;
 			}
-			addrSet = null;
 		}
 	}
 }
