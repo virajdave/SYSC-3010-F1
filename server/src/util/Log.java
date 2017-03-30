@@ -1,5 +1,6 @@
 package util;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.FileHandler;
@@ -10,7 +11,7 @@ import java.util.logging.Logger;
 public class Log {
 
 	private static final boolean DEBUG = true;
-	private static final String FILENAME = "server.log";
+	private static final String FILENAME = "server";
     private static Logger logger;
 	
     /**
@@ -27,8 +28,14 @@ public class Log {
 	    FileHandler fh;  
 
 	    try {
+		    // Check folder exists.
+		    File directory = new File("./logs");
+		    if (!directory.exists()) {
+		    	directory.mkdir();
+		    }
+		    
 	        // Setup the formatter
-	        fh = new FileHandler(file);
+	        fh = new FileHandler("./logs/" + file + "_" + Calendar.getInstance().getTime().getTime() + ".log");
 	        logger.addHandler(fh);
 	        fh.setFormatter(new Formatter() {
 	            @Override
