@@ -96,13 +96,21 @@ public abstract class Device extends Observable {
 	 */
 	public static Device createNew(int type, int id, Web web) {
 		Device d = null;
+		
 		try {
-			d = types[type].newInstance();
-			d.type = type;
-			d.id = id;
-			d.web = web;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			Log.warn("Device #" + id + " type '" + type + "' is out of range.");
+			// If out of range add a null device.
+			if (type > types.length - 2 || type < 0) {
+				Log.warn("Device #" + id + " type '" + type + "' is out of range, adding Null device.");
+				d = types[types.length - 1].newInstance();
+				d.type = type;
+				d.id = id;
+				d.web = web;
+			} else {
+				d = types[type].newInstance();
+				d.type = type;
+				d.id = id;
+				d.web = web;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,6 +124,7 @@ public abstract class Device extends Observable {
 		Switch.class,
 		Mirror.class,
 		Thermostat.class,
-		Bedroom.class
+		Bedroom.class,
+		Null.class
 	};
 }

@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import devices.Device;
+import devices.Null;
 import types.*;
 import util.Codes;
 import util.Log;
@@ -73,7 +74,7 @@ public class Manager extends Thread implements Observer {
 
 				// Create device and watch for outputs.
 				Device d = web.add(msg.getSocketAddress(), type);
-				if (d != null) {
+				if (!d.getClass().equals(Null.class)) {
 					d.addObserver(this);
 					Log.out("Added device #" + d.getID() + " of type " + type);
 	
