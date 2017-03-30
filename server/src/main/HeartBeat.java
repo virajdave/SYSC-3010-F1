@@ -15,6 +15,7 @@ public class HeartBeat extends Thread {
 	private Web web;
 	private long rate;
 	private HashSet<InetSocketAddress> addrSet;
+	private int sync;
 
 	public HeartBeat(Server s, Web w, double r) {
 		server = s;
@@ -46,7 +47,7 @@ public class HeartBeat extends Thread {
 	 */
 	public void recved(Device d) {
 		// Remove from set of devices we are waiting on.
-		synchronized (addrSet) {
+		synchronized (this) {
 			if (addrSet != null) {
 				addrSet.remove(web.get(d));
 			}
@@ -65,11 +66,11 @@ public class HeartBeat extends Thread {
 	 */
 	public void beat() {
 		try {
-			synchronized (addrSet) {
+			synchronized (this) {
 				addrSet = new HashSet<>(web.addrList());
 			}
 			send();
-			synchronized (addrSet) {
+			synchronized (this) {
 				for (InetSocketAddress addr : addrSet) {
 					if (web.get(addr).isDead()) {
 						addrSet.remove(addr);
@@ -91,7 +92,7 @@ public class HeartBeat extends Thread {
 	 * Send a heartbeat to all devices in the set.
 	 */
 	private void send() {
-		synchronized (addrSet) {
+		synchronized (this) {
 			if (addrSet != null) {
 				for (InetSocketAddress addr : addrSet) {
 					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_BEAT), addr));
@@ -104,7 +105,7 @@ public class HeartBeat extends Thread {
 	 * Send a heartbeat to all devices in the set.
 	 */
 	private void clean() {
-		synchronized (addrSet) {
+		synchronized (this) {
 			if (addrSet != null) {
 				// Mark any remaining devices as disconnected.
 				for (InetSocketAddress addr : addrSet) {
