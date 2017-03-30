@@ -84,7 +84,7 @@ public class Steps {
 	public void iSetSwitch(String set, String name) throws Throwable {
 		Dev d = devices.get(name);
 		boolean on = set.equals("on");
-		server.giveMessage(new Message(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_DATA, on), d.addr));
+		server.giveMessage(new Message(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_DATA, d.id, on), d.addr));
 
 		String msg = server.getMessage(d.addr);
 		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);

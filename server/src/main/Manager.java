@@ -133,7 +133,7 @@ public class Manager extends Thread implements Observer {
 				break;
 			case Codes.T_DATA:
 				// Send data to device driver.
-				d.giveMessage(msg.getMessage().substring(3));
+				d.giveMessage(msg.getMessage().substring(data[0].length() + data[1].length() + 2));
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
