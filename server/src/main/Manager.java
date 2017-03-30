@@ -73,11 +73,13 @@ public class Manager extends Thread implements Observer {
 
 				// Create device and watch for outputs.
 				Device d = web.add(msg.getSocketAddress(), type);
-				d.addObserver(this);
-				Log.out("Added device #" + d.getID() + " of type " + type);
-
-				// Send ack back letting the device know it was connected.
-				server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+				if (d != null) {
+					d.addObserver(this);
+					Log.out("Added device #" + d.getID() + " of type " + type);
+	
+					// Send ack back letting the device know it was connected.
+					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+				}
 			} catch (NumberFormatException e) {
 				Log.warn("Device type '" + data[2] + "' malformed, from " + msg.toString());
 				return;

@@ -24,7 +24,9 @@ public class Web {
 	 */
 	public Device add(InetSocketAddress addr, int type) {
 		Device device = Device.createNew(type, index++, this);
-		devices.put(addr, device);
+		if (device != null) {
+			devices.put(addr, device);
+		}
 		return device;
 	}
 

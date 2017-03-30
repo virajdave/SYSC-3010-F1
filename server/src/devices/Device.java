@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import types.Data;
 import types.Web;
+import util.Log;
 
 public abstract class Device extends Observable {
 	private int type = -1;
@@ -96,10 +97,12 @@ public abstract class Device extends Observable {
 	public static Device createNew(int type, int id, Web web) {
 		Device d = null;
 		try {
-			d = Device.types[type].newInstance();
+			d = types[type].newInstance();
 			d.type = type;
 			d.id = id;
 			d.web = web;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			Log.warn("Device #" + id + " type '" + type + "' is out of range.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,6 +115,7 @@ public abstract class Device extends Observable {
 		Lights.class,
 		Switch.class,
 		Mirror.class,
-		Thermostat.class
+		Thermostat.class,
+		Bedroom.class
 	};
 }
