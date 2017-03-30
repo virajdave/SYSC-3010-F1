@@ -10,7 +10,7 @@ import util.Log;
 import util.Parse;
 
 public class Manager extends Thread implements Observer {
-	private static final double BEATRATE = 0.5; // in minutes
+	private static final double BEATRATE = 0.15; // in minutes
 	private static final int TIMEOUT = 30;  // in seconds
 
 	private Web web;

@@ -1,6 +1,7 @@
 package main;
 
 import java.net.InetSocketAddress;
+import java.util.Iterator;
 import java.util.HashSet;
 
 import devices.Device;
@@ -15,7 +16,6 @@ public class HeartBeat extends Thread {
 	private Web web;
 	private long rate;
 	private HashSet<InetSocketAddress> addrSet;
-	private int sync;
 
 	public HeartBeat(Server s, Web w, double r) {
 		server = s;
@@ -33,8 +33,8 @@ public class HeartBeat extends Thread {
 		// Beat until the heart is interrupted.
 		while (!Thread.interrupted()) {
 			try {
-				beat();
 				Thread.sleep(rate * 51);
+				beat();
 			} catch (InterruptedException e) {
 				// EAT.
 			}
@@ -66,14 +66,17 @@ public class HeartBeat extends Thread {
 	 */
 	public void beat() {
 		try {
+			Log.out("hearbeat");
 			synchronized (this) {
 				addrSet = new HashSet<>(web.addrList());
 			}
 			send();
 			synchronized (this) {
-				for (InetSocketAddress addr : addrSet) {
+				Iterator<InetSocketAddress> iterator = addrSet.iterator();
+				while (iterator.hasNext()) {
+					InetSocketAddress addr = iterator.next();
 					if (web.get(addr).isDead()) {
-						addrSet.remove(addr);
+						iterator.remove();
 					}
 				}
 			}
