@@ -51,8 +51,8 @@ public class Mirror extends Device {
     	setDirection(temp[2]);
     	try {
 			String dataOut = getBus();
-			send(dataOut);
 			send("d" + this.currDirection);
+			send(dataOut);	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
