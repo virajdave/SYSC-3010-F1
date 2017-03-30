@@ -16,6 +16,7 @@ public class Mirror extends Device {
     private String currentColour;
     private String currStop;
     private String currRoute;
+    private String currDirection;
 
     /**
      * create blank mirror driver
@@ -24,6 +25,7 @@ public class Mirror extends Device {
         currentColour = "#2E99A9";
         currStop = "3031";
         currRoute = "104";
+        currDirection = "0";
     }
 
 
@@ -38,6 +40,47 @@ public class Mirror extends Device {
 
     public void setLoc() {
 
+    }
+    
+    public void changeRoute(String routeInfo) {
+    	String[] temp;
+        String delimeter = ",";
+        temp = routeInfo.split(delimeter);
+    	setStation(temp[0]);
+    	setRoute(temp[1]);
+    	setDirection(temp[2]);
+    	try {
+			String dataOut = getBus();
+			send(dataOut);
+			send("d" + this.currDirection);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    private void setStation (String station) {
+    	this.currStop = station;
+    }
+    
+    private void setRoute (String route) {
+    	this.currRoute = route;
+    }
+    
+    private void setDirection (String direction) {
+    	this.currDirection = direction;
+    }
+    
+    public String getStation () {
+    	return this.currStop;
+    }
+    
+    public String getRoute () {
+    	return this.currRoute;
+    }
+    
+    public String getDirection () {
+    	return this.currDirection;
     }
     
     public String getBus() throws IOException {
@@ -147,6 +190,8 @@ public class Mirror extends Device {
     		// Set the new colour and then send it out.
     		this.setColour(in.get());
     		send("c" + currentColour);
+    	} else if (in.is("route")) {
+    		this.changeRoute(in.get());
     	}
     }
 

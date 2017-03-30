@@ -1,6 +1,9 @@
 package devices;
 
 import static org.junit.Assert.*;
+
+import java.io.IOException;
+
 import types.Data;
 import org.junit.Test;
 
@@ -27,6 +30,5 @@ public class MirrorTest {
 		m.giveInput(new Data("colour",newColour));
 		assertNotEquals(newColour, m.requestOutput(new Data("colour")).get());
 	}
-
 	
 }
