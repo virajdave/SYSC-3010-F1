@@ -42,8 +42,18 @@ public class Mirror extends Device {
         return "t"+ time;
     }
 
-    public void setLoc() {
-
+    public void setLoc(String loc) {
+    	String[] temp;
+        String delimeter = ",";
+        temp = loc.split(delimeter);
+        lat = temp[0];
+        lon = temp[1];
+        try {
+			send(this.getWeather());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void changeRoute(String routeInfo) {
@@ -197,6 +207,8 @@ public class Mirror extends Device {
     		send("c" + currentColour);
     	} else if (in.is("route")) {
     		this.changeRoute(in.get());
+    	} else if (in.is("loc")) {
+    		this.setLoc(in.get());
     	}
     }
 
