@@ -1,9 +1,10 @@
 package devices;
 
 import types.Data;
+import util.Parse;
 
 public class Bedroom extends Device {
-
+	boolean lights;
 	@Override
 	public void giveMessage(String msg) {
 		
@@ -11,7 +12,10 @@ public class Bedroom extends Device {
 
 	@Override
 	public void giveInput(Data in) {
-		
+		send(in.getName() + "/" + in.get());
+		if (in.getName().equals("l")){
+			lights = Parse.toBool(in.get());
+		}
 	}
 
 	@Override
