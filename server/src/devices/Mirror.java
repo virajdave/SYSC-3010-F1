@@ -109,7 +109,7 @@ public class Mirror extends Device {
     
     
     public String getWeather() throws IOException {
-        String url = buildWeatherURL("Ottawa,Ca");
+        String url = buildWeatherURL();
         InputStream is = new URL(url).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -119,7 +119,7 @@ public class Mirror extends Device {
         }
     }
     
-    private String buildWeatherURL(String city) {
+    private String buildWeatherURL() {
         String user_api = "b86f030e92681cb37afdbb0f336668ae";
         String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
         String api = "http://api.openweathermap.org/data/2.5/weather?lat=";
