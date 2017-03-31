@@ -27,7 +27,7 @@
     <ImageButton
         android:id="@+id/btn_thermostat"
         android:layout_width="118dp"
-        android:layout_height="0dp"
+        android:layout_height="116dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="53dp"
@@ -137,7 +137,14 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bed_text"
-        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintVertical_bias="0.0" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline"
+        app:layout_constraintGuide_begin="20dp"
+        android:orientation="horizontal" />
 
 </android.support.constraint.ConstraintLayout>

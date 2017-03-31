@@ -1,7 +1,11 @@
 package com.cam.cammobileapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
+import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,39 +26,52 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
+import org.w3c.dom.Text;
+
 
 /**
  * Created by virajdave on 2017-03-24.
  */
 
-public class ThirdMainActivity extends Activity {
+public class ThirdMainActivity extends AppCompatActivity {
 
     final Context prev = this;
-    final LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
+    TextView theLatCoord, theLongCoord;
+    LocationManager locationManager;
+    LocationListener locationListener;
+    Location lastKnownLocation;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_third_main);
+        theLatCoord = (TextView) findViewById(R.id.latCoord);
+        theLongCoord = (TextView) findViewById(R.id.longCoord);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                theLatCoord.setText(location.getLatitude()+ "");
+                theLongCoord.setText(location.getLongitude() + "");
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+
         Intent intent = getIntent();
 
 
@@ -88,9 +105,54 @@ public class ThirdMainActivity extends Activity {
         imageButton6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final AlertDialog locationDialog = new AlertDialog.Builder(prev).create();
                 View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
-                //Button getLocation = (Button) location_layout.findViewById(R.id.turnOnGPS);
+                theLatCoord = (TextView) findViewById(R.id.latCoord);
+                theLongCoord = (TextView) findViewById(R.id.longCoord);
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                locationListener = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        theLatCoord.setText(location.getLatitude()+ "");
+                        theLongCoord.setText(location.getLongitude() + "");
+                    }
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                };
+                checkLocationPermissions();
+                if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                    if(Build.VERSION.SDK_INT>=23){
+                        requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+                    }
+
+                    else{
+                        ActivityCompat.requestPermissions((Activity)prev, new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+                    }
+                   // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000,0,locationListener);
+                }
+                else{
+                    Intent intent1 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent1);
+                }
+                Button getLocation = (Button) location_layout.findViewById(R.id.turnOnGPS);
                 final TextView longCoordinates = (TextView) location_layout.findViewById(R.id.viewLong);
                 final TextView latCoordinates = (TextView) location_layout.findViewById(R.id.viewLat);
 
@@ -162,4 +224,11 @@ public class ThirdMainActivity extends Activity {
 
 
     }
+    public boolean checkLocationPermissions(){
+        String thePermission = "android.permission.ACCESS_COARSE_LOCATION";
+        int check = this.checkCallingOrSelfPermission(thePermission);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
+
 }

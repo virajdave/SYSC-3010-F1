@@ -19,7 +19,7 @@ import android.widget.EditText;
  * Created by virajdave on 2017-03-26.
  */
 
-public class FourthMainActivity extends Activity {
+public class FourthMainActivity extends AppCompatActivity {
     final Context thisActivity = this;
 
     protected void onCreate(Bundle savedInstanceState) {

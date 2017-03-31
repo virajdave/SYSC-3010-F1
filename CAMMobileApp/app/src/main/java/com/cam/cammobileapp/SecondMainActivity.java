@@ -1,13 +1,12 @@
 package com.cam.cammobileapp;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
-<<<<<<< HEAD
 import android.widget.TextView;
-=======
->>>>>>> 2df008bf5cf674af3a8094dcce31f02bd1bc56bc
 import android.widget.Toast;
 import android.app.Activity;
 import android.content.Intent;
@@ -18,22 +17,17 @@ import android.view.MenuItem;
  * Created by virajdave on 2017-03-20.
  */
 
-public class SecondMainActivity extends Activity{
-<<<<<<< HEAD
+public class SecondMainActivity extends AppCompatActivity{
 
-
+    final Context theWindow = this;
     int numtest = 0;
-=======
-    @Override
->>>>>>> 2df008bf5cf674af3a8094dcce31f02bd1bc56bc
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second_main);
         Intent intent = getIntent();
-<<<<<<< HEAD
 
-        ImageButton imageButton4 = (ImageButton) findViewById(R.id.btn_up);
-        imageButton4.setOnClickListener(new View.OnClickListener(){
+        ImageButton upButton = (ImageButton) findViewById(R.id.btn_up);
+        upButton.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v) {
                 numtest+= 1;
@@ -42,11 +36,37 @@ public class SecondMainActivity extends Activity{
 
             }
         });
+
+        ImageButton downButton = (ImageButton) findViewById(R.id.btn_down);
+        downButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numtest-=1;
+                TextView t = (TextView) findViewById(R.id.currentTemp);
+                t.setText(numtest+"");
+            }
+        });
+
+        Button settingTemp = (Button) findViewById(R.id.setTemperature);
+        settingTemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(theWindow, "Successfully set temperature", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        Button resettingTemp = (Button) findViewById(R.id.resetTemp);
+        resettingTemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numtest = 0;
+                TextView t = (TextView) findViewById(R.id.currentTemp);
+                t.setText(numtest+"");
+                Toast.makeText(theWindow, "Successfully reset temperature", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
 
-=======
-    }
-
->>>>>>> 2df008bf5cf674af3a8094dcce31f02bd1bc56bc
 }
