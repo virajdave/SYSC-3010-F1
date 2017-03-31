@@ -17,6 +17,8 @@ public class Mirror extends Device {
     private String currStop;
     private String currRoute;
     private String currDirection;
+    private String lon;
+    private String lat;
 
     /**
      * create blank mirror driver
@@ -26,6 +28,8 @@ public class Mirror extends Device {
         currStop = "3031";
         currRoute = "104";
         currDirection = "0";
+        lon = "-75.6981200";
+        lat = "45.4111700";
     }
 
 
@@ -118,8 +122,9 @@ public class Mirror extends Device {
     private String buildWeatherURL(String city) {
         String user_api = "b86f030e92681cb37afdbb0f336668ae";
         String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
-        String api = "http://api.openweathermap.org/data/2.5/weather?q=";
-        String full_api_url = api + city + "&mode=json&units=" + unit + "&APPID=" + user_api;
+        String api = "http://api.openweathermap.org/data/2.5/weather?lat=";
+        
+        String full_api_url = api + lat + "&lon=" + lon + "&mode=json&units=" + unit + "&APPID=" + user_api;
         return full_api_url;
     }
 
