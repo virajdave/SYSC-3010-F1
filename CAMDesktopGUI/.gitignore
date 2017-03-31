@@ -1,1 +1,7 @@
 /bin/
+/build/build/
+/build/deploy/
+/build/dist/
+/build/externalLibs/
+/build/project/
+/build/projectRefs/

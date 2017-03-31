@@ -1,4 +1,5 @@
-package gui;
+package application;
+
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
