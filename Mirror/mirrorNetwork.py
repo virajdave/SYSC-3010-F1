@@ -16,7 +16,6 @@ def mirrorNetRecv(s, queue):
                 stringdata = buf.decode('utf-8')
                 print(stringdata)
                 if(stringdata[:2] == '01'):
-                        print('eloo')
                         queue.put_nowait(message('id', stringdata[3:]))
                 elif(stringdata[:2] == '00'):
                         queue.put_nowait(message('beat', ''))
@@ -34,7 +33,6 @@ def mirrorNetSend(s, queue):
         servPort = 3010
         server_address = (serverIp, servPort)
         heartBeat(s,'-1')
-        print('outloop')
         while True:
                 if not queue.empty():
                         while not queue.empty():

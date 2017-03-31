@@ -3,6 +3,7 @@ from dataPassingObject import *
 from weather import *
 from busInfo import *
 from mirrorNetwork import *
+from systemTime import *
 from queue import *
 import _thread, time
 
@@ -29,23 +30,34 @@ def tellGUIToUpdateTime():
 # Every 15 mins fetches new weather data and gives the info to the gui to display
 def tellGUIToUpdateWeather():
         global id
+        sleep = 1
         while True :
-        #weatherData = data_organizer(data_fetch(url_builder('Ottawa,Ca')))
-        #guiRecvQueue.put_nowait(message('weather', weatherData))
                 if (id != '-1'):
+                        sleep = 900
                         sendQueue.put_nowait(message('data', id + '/weather'))
-                time.sleep(900)
+                time.sleep(sleep)
 
+# Every 30 seconds it sends out to get updated bus info 
 def tellGUIToUpdateBusInfo():
         global id
+        sleep = 1
         while True:
-        #busInfo = parseBusInfo(getBusInfo(urlBuilderBus(3031, 104)))
-        #guiRecvQueue.put_nowait(message('bus', busInfo))
                 if (id != '-1'):
+                        sleep = 30
                         sendQueue.put_nowait(message('data', id + '/bus'))
-                time.sleep(30)
-    
+                time.sleep(sleep)
 
+
+def timeSync():
+        global id
+        sleep = 1
+        while True:
+            if (id != '-1'):
+                sleep = 600
+                sendQueue.put_nowait(message('data', id + '/time'))
+            time.sleep(sleep)
+            
+# Watches the recv queue for messages then ditributes them   
 def watchRecvMessages():
         global id
         while True:
@@ -61,12 +73,14 @@ def watchRecvMessages():
                                                 guiRecvQueue.put_nowait(message('bus', busInfo))
                                         if (messageRecv.info[0] == 'c'):
                                                 guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
+                                        if (messageRecv.info[0] == 'd'):
+                                                guiRecvQueue.put_nowait(message('direction', messageRecv.info[1:]))
+                                        if (messageRecv.info[0] == 't'):
+                                                linux_set_time(messageRecv.info[1:])
                                 elif(messageRecv.messageType == 'id'):
                                         if (id == '-1'):
                                                 id = messageRecv.info
-                                                print('id: ' + id)
                                 elif(messageRecv.messageType == 'beat'):
-                                        print('thing:' + id)
                                         sendQueue.put_nowait(message('beat', id))
                         time.sleep(0.001)
             
@@ -80,6 +94,7 @@ def runController():
     _thread.start_new_thread(tellGUIToUpdateTime, ())
     _thread.start_new_thread(tellGUIToUpdateWeather, ())
     _thread.start_new_thread(tellGUIToUpdateBusInfo, ())
+    _thread.start_new_thread(timeSync, ())
     
     #_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
     _thread.start_new_thread(watchRecvMessages, ())

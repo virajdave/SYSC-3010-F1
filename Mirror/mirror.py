@@ -17,31 +17,31 @@ import time
 class mirrorGUI:
 	
 	def __init__(self, root, guiRecvQueue):
-		self.top = root
+                self.top = root
 		# DATA ###########################################################################
 		# colours
-		self.mirrorBg = 'black'
-		self.mirrorFg = '#2E99A9'  # Match the logo color
+                self.mirrorBg = 'black'
+                self.mirrorFg = '#2E99A9'  # Match the logo color
 		# Font settings
-		self.fontType = "Helvetica"
-		self.largeFontSize = 80
-		self.medFontSize = 25
-		self.smallFontSize = 20
-
+                self.fontType = "Helvetica"
+                self.largeFontSize = 80
+                self.medFontSize = 25
+                self.smallFontSize = 20
+                self.direction = 0
 		# Base GUI needs
 		#
-		self.timeVar = StringVar()
-		self.dateVar = StringVar()
-		self.tempVar = StringVar()
-		self.conditionsVar = StringVar()
-		self.minmaxVar = StringVar()
-		self.busStation = StringVar()
-		self.firstDirectionTitle = StringVar()
-		self.firstDirectionTimes = StringVar()
-		self.secondDirectionTitle = StringVar()
-		self.secondDirectionTimes = StringVar()
-		self.widgets= []
-		self.createWidgets()
+                self.timeVar = StringVar()
+                self.dateVar = StringVar()
+                self.tempVar = StringVar()
+                self.conditionsVar = StringVar()
+                self.minmaxVar = StringVar()
+                self.busStation = StringVar()
+                self.firstDirectionTitle = StringVar()
+                self.firstDirectionTimes = StringVar()
+                self.secondDirectionTitle = StringVar()
+                self.secondDirectionTimes = StringVar()
+                self.widgets= []
+                self.createWidgets()
 		
 		
 	# GUI widget display Updators ########################################################
@@ -72,33 +72,33 @@ class mirrorGUI:
 	
 	# Changes the gui to display bus info that could have anywhere from 0 to 3 trip times
 	def busUpdate (self, busInfo):
-		self.busStation.set("Station: " + busInfo['station'] )
-		if 'direction1' in busInfo:
-			self.firstDirectionTitle.set(busInfo['direction1']['dest'])
-			directionOneTimes = ""
-			if 'busTime0' in busInfo['direction1']:
-				directionOneTimes +=   busInfo['direction1']['busTime0'] + '\n'
-			if 'busTime1' in busInfo['direction1']:
-				directionOneTimes +=   busInfo['direction1']['busTime1'] + '\n'
-			if 'busTime2' in busInfo['direction1']:
-				directionOneTimes +=   busInfo['direction1']['busTime2'] + '\n'
-			self.firstDirectionTimes.set(directionOneTimes)
-		else:
-			self.firstDirectionTitle.set("")
-			self.firstDirectionTimes.set("")
-		if 'direction2' in busInfo:
-			self.secondDirectionTitle.set(busInfo['direction2']['dest'])
-			directionTwoTimes = ""
-			if 'busTime0' in busInfo['direction2']:
-				directionTwoTimes +=   busInfo['direction2']['busTime0'] + '\n'
-			if 'busTime1' in busInfo['direction2']:
-				directionTwoTimes +=   busInfo['direction2']['busTime1'] + '\n'
-			if 'busTime2' in busInfo['direction2']:
-				directionTwoTimes +=   busInfo['direction2']['busTime2'] + '\n'
-			self.secondDirectionTimes.set(directionTwoTimes)
-		else:
-			self.secondDirectionTitle.set("")
-			self.secondDirectionTimes.set("")
+                self.busStation.set("Station: " + busInfo['station'] )
+                if(self.direction == 1 or self.direction == 0 and 'direction1' in busInfo):
+                        self.firstDirectionTitle.set(busInfo['direction1']['dest'])
+                        directionOneTimes = ""
+                        if 'busTime0' in busInfo['direction1']:
+                                directionOneTimes +=   busInfo['direction1']['busTime0'] + '\n'
+                        if 'busTime1' in busInfo['direction1']:
+                                directionOneTimes +=   busInfo['direction1']['busTime1'] + '\n'
+                        if 'busTime2' in busInfo['direction1']:
+                                directionOneTimes +=   busInfo['direction1']['busTime2'] + '\n'
+                        self.firstDirectionTimes.set(directionOneTimes)
+                else:
+                        self.firstDirectionTitle.set("")
+                        self.firstDirectionTimes.set("")
+                if (self.direction == 2 or self.direction == 0 and 'direction2' in busInfo):
+                        self.secondDirectionTitle.set(busInfo['direction2']['dest'])
+                        directionTwoTimes = ""
+                        if 'busTime0' in busInfo['direction2']:
+                                directionTwoTimes +=   busInfo['direction2']['busTime0'] + '\n'
+                        if 'busTime1' in busInfo['direction2']:
+                                directionTwoTimes +=   busInfo['direction2']['busTime1'] + '\n'
+                        if 'busTime2' in busInfo['direction2']:
+                                directionTwoTimes +=   busInfo['direction2']['busTime2'] + '\n'
+                        self.secondDirectionTimes.set(directionTwoTimes)
+                else:
+                        self.secondDirectionTitle.set("")
+                        self.secondDirectionTimes.set("")
 		
 		
 	# Customizers ########################################################################
@@ -128,6 +128,8 @@ class mirrorGUI:
 						self.busUpdate(message.info)
 					elif message.messageType == 'colour':
 						self.changeColour(message.info)
+					elif message.messageType == 'direction':
+                                                self.direction = int(message.info)
 			time.sleep(0.1)
 
 			
@@ -137,9 +139,9 @@ class mirrorGUI:
 	#main gui creator
 	def createWidgets(self):
 		self.top.configure(background=self.mirrorBg)
-		#w, h = self.top.winfo_screenwidth(), self.top.winfo_screenheight()
-		#self.top.overrideredirect(1)
-		#self.top.geometry("%dx%d+0+0" % (w, h))
+		w, h = self.top.winfo_screenwidth(), self.top.winfo_screenheight()
+		self.top.overrideredirect(1)
+		self.top.geometry("%dx%d+0+0" % (w, h))
 		self.setUpTimeWidget()		
 		self.setUpWeatherWidget()
 		self.setUpBusWidget()
