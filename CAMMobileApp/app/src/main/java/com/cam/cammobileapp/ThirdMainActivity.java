@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +26,9 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 
-import org.w3c.dom.Text;
+
 
 
 /**
@@ -100,7 +102,7 @@ public class ThirdMainActivity extends AppCompatActivity {
 
             }
         });
-
+        /*
         final ImageButton imageButton6 = (ImageButton) findViewById(R.id.btn_findLocation);
         imageButton6.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,8 +203,6 @@ public class ThirdMainActivity extends AppCompatActivity {
 
                 }); */
 
-            }
-        });
 
 
         final ImageButton imageButton7 = (ImageButton) findViewById(R.id.btn_colour);
@@ -210,25 +210,34 @@ public class ThirdMainActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                final AlertDialog colourDialog = new AlertDialog.Builder(prev).create();
-                View colour_layout = getLayoutInflater().inflate(R.layout.colour_layout, null);
-                ProgressBar workingInProgress = (ProgressBar) colour_layout.findViewById(R.id.workInProgressColour);
+                final ColorPicker cp = new ColorPicker(ThirdMainActivity.this, 0,0,0);
+                cp.show();
+                Button colourConfirmed = (Button)cp.findViewById(R.id.okColorButton);
+                colourConfirmed.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick (View v){
+                        //selctedColourR = cp.getRed();
+                        //selectedColourG = cp.getGreen();
+                        //selectedColourB = cp.getBlue();
 
-                colourDialog.setView(colour_layout);
-                colourDialog.show();
-
+                        cp.dismiss();
+                    }
+                });
                         Toast.makeText(prev, "Need to insert Colour wheel shortly", Toast.LENGTH_LONG).show();
                     }
                 });
 
 
+                    }
+                }
 
-    }
-    public boolean checkLocationPermissions(){
+
+
+    /*public boolean checkLocationPermissions(){
         String thePermission = "android.permission.ACCESS_COARSE_LOCATION";
         int check = this.checkCallingOrSelfPermission(thePermission);
         return (check == PackageManager.PERMISSION_GRANTED);
-    }
+    } */
 
 
-}
+

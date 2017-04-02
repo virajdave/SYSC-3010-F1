@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:gravity="center">
         <ImageButton
-            android:id="@+id/btn_color"
+            android:id="@+id/btn_colour"
             android:src="@drawable/colorwheel"
             android:layout_width="118dp"
             android:layout_height="116dp"
