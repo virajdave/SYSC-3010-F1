@@ -1,3 +1,14 @@
+#==============================================================================
+#title          			:busInfo.py
+#description    	:Helper functions for dealing with bus info
+#author          		:Dillon Verhaeghe
+#date           		:20170326
+#version         		:0.4
+#usage           		:python3 mirrorController.py
+#notes           		:Parses and can get the bus information from the OCTranspo APi
+#python_version :3 
+#==============================================================================
+
 import urllib.request
 import json
 import re

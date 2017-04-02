@@ -1,3 +1,15 @@
+#==============================================================================
+#title           		:mirrorNetwork.py
+#description     	:Preforms the networking for the mirror
+#author          	:Dillon Verhaeghe
+#date            	:20170326
+#version         	:0.4
+#usage           	:python3 mirrorController.py
+#notes           	:Should only be invoked from the mirrorController script
+#python_version:3 
+#==============================================================================
+
+
 import socket, sys, time
 from dataPassingObject import *
 import _thread

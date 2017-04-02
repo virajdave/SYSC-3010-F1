@@ -1,3 +1,14 @@
+#==============================================================================
+#title           		:mirrorController.py
+#description     	:Starts up and sets up everything for the mirror
+#author          		:Dillon Verhaeghe
+#date            		:20170326
+#version         		:0.4
+#usage           		:python3 mirrorController.py
+#python_version :3 
+#==============================================================================
+
+
 from mirror import *
 from dataPassingObject import *
 from weather import *

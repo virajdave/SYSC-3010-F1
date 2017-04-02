@@ -1,12 +1,12 @@
 #==============================================================================
-#title           :mirror.py
-#description     :GUI for the Smart Mirror
-#author          :Dillon Verhaeghe
-#date            :20170326
-#version         :0.4
-#usage           :python3 mirrorController.py
-#notes           :Should only be invoked from the mirrorController script
-#python_version  :3 
+#title          			:mirror.py
+#description     	:GUI for the Smart Mirror
+#author          		:Dillon Verhaeghe
+#date            		:20170326
+#version         		:0.4
+#usage           		:python3 mirrorController.py
+#notes           		:Should only be invoked from the mirrorController script
+#python_version :3 
 #==============================================================================
 
 from tkinter import *
