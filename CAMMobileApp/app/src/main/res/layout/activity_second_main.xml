@@ -1,31 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cam.cammobileapp.MainActivity"
-    tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:gravity="center">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="142dp"
 
-        android:layout_height="0dp"
-        android:src="@drawable/cam"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/frameLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,164 +21,136 @@
         android:layout_marginBottom="9dp"
         app:layout_constraintLeft_toRightOf="@+id/IncTemp">
 
-    </FrameLayout>
+    </FrameLayout> -->
 
+    <LinearLayout
+        android:id="@+id/LinLay2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
     <ImageButton
         android:id="@+id/btn_up"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_width="118dp"
+        android:layout_height="116dp"
         android:adjustViewBounds="true"
         android:maxHeight="42dp"
         android:maxWidth="42dp"
         android:onClick="increaseTemp"
         android:scaleType="fitCenter"
         android:src="@drawable/arrowup"
-
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/currentTemp"
-        app:layout_constraintRight_toRightOf="@+id/btn_down"
         android:layout_marginTop="14dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/btn_down"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinLay3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="14dp"
+        android:layout_below="@id/LinLay2">
 
 
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:weightSum="1"
+        android:id="@+id/LayOut1"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/IncTemp"
+        android:layout_below="@id/LinLay3">
     <ImageButton
         android:id="@+id/btn_down"
-        android:layout_width="0dp"
-        android:layout_height="101dp"
+        android:layout_width="118dp"
+        android:layout_height="116dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="12dp"
         android:adjustViewBounds="true"
-        android:maxHeight="42dp"
-        android:maxWidth="42dp"
         android:onClick="decreaseTemp"
         android:scaleType="fitCenter"
-
         android:src="@drawable/arrowdown"
         android:layout_marginStart="12dp"
-        app:layout_constraintRight_toLeftOf="@+id/imageView2"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:layout_marginTop="162dp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_up"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="162dp" />
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="140dp"
+        android:layout_height="200dp"
+        android:paddingTop="60dp"
+        android:src="@drawable/cam"
+        android:layout_marginBottom="22dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/IncTemp"
-        android:layout_width="151dp"
-        android:layout_height="76dp"
-
-        android:text="Current Temperature"
-        android:textSize="25dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/textView4"
-        app:layout_constraintRight_toRightOf="@+id/btn_down"
-        android:layout_marginTop="70dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="68dp"
-        app:layout_constraintTop_toTopOf="@+id/currentTemp"
-        app:layout_constraintLeft_toRightOf="@+id/btn_down" />
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:layout_weight="0.13"
+        android:text="Increase the Temperature"
+        android:textSize="15dp"
+        android:layout_marginStart="14dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/LinLay2" />
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="151dp"
-
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Decrease the Temperature"
-        android:textSize="25dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_down"
-        app:layout_constraintRight_toRightOf="@+id/frameLayout1"
-        android:layout_marginTop="36dp"
-        app:layout_constraintTop_toBottomOf="@+id/setTemperature"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="41dp"
-        app:layout_constraintLeft_toRightOf="@+id/frameLayout1" />
+        android:textSize="15dp"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/IncTemp" />
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="151dp"
-
-        android:layout_height="0dp"
-        android:text="Increase the Temperature"
-        android:textSize="25dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="14dp"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/resetTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Reset Temperature"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/currentTemp"
-        android:layout_width="0dp"
+        android:layout_width="40dp"
         android:layout_height="64dp"
         android:gravity="center"
         android:text=""
         android:textSize="50dp"
-        app:layout_constraintRight_toLeftOf="@+id/setTemperature"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/setTemperature"
-        android:layout_marginEnd="1dp"
-        android:layout_marginTop="49dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="54dp"
-        app:layout_constraintLeft_toLeftOf="@+id/IncTemp" />
+        android:layout_alignBottom="@+id/LinLay3"
+        android:layout_alignStart="@+id/IncTemp"
+        android:layout_marginStart="25dp"
+        android:layout_alignEnd="@+id/textView4" />
 
     <Button
         android:id="@+id/setTemperature"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/imageView"
+        android:text="Set Temperature" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Temperature"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="193dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Current Temperature"
+        android:id="@+id/CurrentTempTitle"
+        android:layout_below="@+id/LinLay3"
+        android:layout_toEndOf="@+id/setTemperature" />
 
-    <android.support.constraint.Guideline
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/guideline"
-        app:layout_constraintGuide_begin="20dp"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteY="20dp"
-        tools:layout_editor_absoluteX="0dp" />
 
-    <Button
-        android:id="@+id/resetTemp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Reset Temperature"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        android:layout_marginStart="15dp"
-        app:layout_constraintBottom_toBottomOf="@+id/currentTemp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_up"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/frameLayout1" />
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
