@@ -53,7 +53,7 @@ public class ThirdMainActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                theLatCoord.setText(location.getLatitude()+ "");
+                theLatCoord.setText(location.getLatitude() + "");
                 theLongCoord.setText(location.getLongitude() + "");
             }
 
@@ -102,8 +102,35 @@ public class ThirdMainActivity extends AppCompatActivity {
 
             }
         });
-        /*
-        final ImageButton imageButton6 = (ImageButton) findViewById(R.id.btn_findLocation);
+
+
+        final ImageButton imageButton7 = (ImageButton) findViewById(R.id.btn_colour);
+        imageButton7.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                final ColorPicker cp = new ColorPicker(ThirdMainActivity.this, 0,0,0);
+                cp.show();
+                Button colourConfirmed = (Button)cp.findViewById(R.id.okColorButton);
+                colourConfirmed.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick (View v){
+                        //selctedColourR = cp.getRed();
+                        //selectedColourG = cp.getGreen();
+                        //selectedColourB = cp.getBlue();
+
+                        cp.dismiss();
+                    }
+                });
+                Toast.makeText(prev, "Need to insert Colour wheel shortly", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+
+
+        final ImageButton imageButton6 = (ImageButton) findViewById(R.id.btn_setLocation);
         imageButton6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,12 +141,13 @@ public class ThirdMainActivity extends AppCompatActivity {
                 theLongCoord = (TextView) findViewById(R.id.longCoord);
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                locationListener = new LocationListener() {
+                /*locationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-                        theLatCoord.setText(location.getLatitude()+ "");
+                        theLatCoord.setText(location.getLatitude() + "");
                         theLongCoord.setText(location.getLongitude() + "");
                     }
+
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -136,23 +164,23 @@ public class ThirdMainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 };
-                checkLocationPermissions();
-                if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                    if(Build.VERSION.SDK_INT>=23){
-                        requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
-                    }
 
-                    else{
-                        ActivityCompat.requestPermissions((Activity)prev, new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+
+                checkLocationPermissions(); */
+                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        //\\requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                //Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET, 10);
                     }
-                   // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000,0,locationListener);
-                }
-                else{
+                    /* else {
+                       ActivityCompat.requestPermissions((Activity) prev, new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);}
+                    // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000,0,locationListener);
+                } */else {
                     Intent intent1 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent1);
+                }
                 }
                 Button getLocation = (Button) location_layout.findViewById(R.id.turnOnGPS);
                 final TextView longCoordinates = (TextView) location_layout.findViewById(R.id.viewLong);
@@ -163,13 +191,20 @@ public class ThirdMainActivity extends AppCompatActivity {
 
                 Button sendLocation = (Button) location_layout.findViewById(R.id.sendGPS);
                 //getLocation.setOnClickListener(new View.OnClickListener() {
-                    sendLocation.setOnClickListener(new View.OnClickListener() {
+                sendLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         locationDialog.dismiss();
                         Toast.makeText(prev, "Permissions still have to be set", Toast.LENGTH_SHORT).show();
                     }
                 });
+                    }
+                });
+            }
+       }
+
+
+
 
                 /*getLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -203,41 +238,6 @@ public class ThirdMainActivity extends AppCompatActivity {
 
                 }); */
 
-
-
-        final ImageButton imageButton7 = (ImageButton) findViewById(R.id.btn_colour);
-        imageButton7.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                final ColorPicker cp = new ColorPicker(ThirdMainActivity.this, 0,0,0);
-                cp.show();
-                Button colourConfirmed = (Button)cp.findViewById(R.id.okColorButton);
-                colourConfirmed.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick (View v){
-                        //selctedColourR = cp.getRed();
-                        //selectedColourG = cp.getGreen();
-                        //selectedColourB = cp.getBlue();
-
-                        cp.dismiss();
-                    }
-                });
-                        Toast.makeText(prev, "Need to insert Colour wheel shortly", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-
-                    }
-                }
-
-
-
-    /*public boolean checkLocationPermissions(){
-        String thePermission = "android.permission.ACCESS_COARSE_LOCATION";
-        int check = this.checkCallingOrSelfPermission(thePermission);
-        return (check == PackageManager.PERMISSION_GRANTED);
-    } */
 
 
 
