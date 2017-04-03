@@ -5,54 +5,52 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View implements Observer {
-	private JButton resetButton, setButton;
+	private JPanel sidebar;
 	private JLabel deviceLabel;
 	private JList<String> deviceList;
 	private JTextField counterField, valueField;
 
 	public View() {
-		// Make the frame with a border layout.
+		// Make the frame.
 		JFrame frame = new JFrame("CAM");
-		Container contentPane = frame.getContentPane();
-		contentPane.setLayout(new BorderLayout());
 
-		// Create panels.
-		JPanel devicePanel = new JPanel();
-		devicePanel.setLayout(new BorderLayout());
-		JPanel infoPanel = new JPanel();
-		contentPane.add("West", devicePanel);
-		contentPane.add("East", infoPanel);
-
-		final DefaultListModel<String> fruitsName = new DefaultListModel<>();
+		final DefaultListModel<String> devices = new DefaultListModel<>();
 		
-		fruitsName.addElement("Apple");
-		fruitsName.addElement("Grapes");
-		fruitsName.addElement("Mango");
-		fruitsName.addElement("Peer");
+		devices.addElement("Apple");
+		devices.addElement("Grapes");
+		devices.addElement("Mango");
+		devices.addElement("Peer");
 		
-		deviceList = new JList<>(fruitsName);
-		devicePanel.add("Center", deviceList);
+		deviceList = new JList<>(devices);
 		
 		// Setup device label + list.
 		deviceLabel = new JLabel("Loading...");
-		devicePanel.add("East", deviceLabel);
-		deviceLabel.setVisible(false);
+
+		// Create panels and set the content pane.
+		sidebar = new JPanel();
+		sidebar.setLayout(new BorderLayout());
+		sidebar.add(deviceLabel);
+		JScrollPane left = new JScrollPane(sidebar);
+		JScrollPane right = new JScrollPane();
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
+		frame.setContentPane(splitPane);
 
 		// Set size and make the window visible.
-		frame.setSize(600, 800);
+		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
 		// Exit the program when the frame closes.
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	}
+	
+	private void showDeviceList(boolean show) {
+		if (show) {
+			sidebar.add(deviceList);
+		} else {
+			sidebar.add(deviceLabel);
 		}
-		deviceLabel.setVisible(true);
+		sidebar.revalidate();
 	}
 
 	@Override
@@ -68,29 +66,6 @@ public class View implements Observer {
 	 * @param controller
 	 */
 	public void addListeners(Controller controller) {
-		resetButton.addActionListener(controller);
-		setButton.addActionListener(controller);
-	}
-
-	/**
-	 * Check if the passed object is the reset button.
-	 * 
-	 * @param obj
-	 *            button
-	 * @return boolean
-	 */
-	public boolean isResetButton(Object obj) {
-		return resetButton.equals(obj);
-	}
-
-	/**
-	 * Check if the passed object is the set button.
-	 * 
-	 * @param obj
-	 * @return boolean
-	 */
-	public boolean isSetButton(Object obj) {
-		return resetButton.equals(obj);
 	}
 
 	/**
