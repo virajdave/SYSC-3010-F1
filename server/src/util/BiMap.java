@@ -1,20 +1,20 @@
 package util;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class BiMap<K, V> extends HashMap<K, V> implements Map<K, V> {
+public class BiMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
 
 	private static final long serialVersionUID = -3397417736449682169L;
 	private Map<K, V> keys;
 	private Map<V, K> values;
 
 	public BiMap() {
-		this.keys = new HashMap<>();
-		this.values = new HashMap<>();
+		this.keys = new LinkedHashMap<>();
+		this.values = new LinkedHashMap<>();
 	}
 
 	public BiMap(Map<K, V> map) {

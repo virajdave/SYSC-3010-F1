@@ -96,8 +96,7 @@ public class WebTest {
 	
 	@Test
 	public void toAString() {
-		// TODO: this test is totally incosistent and needs to be replaced.
-		//assertEquals((index-1) + ":1:0/" + (index-2) + ":0:0/" + (index-3) + ":0:0", web.toString());
+		assertEquals((index-3) + ":0:0/" + (index-2) + ":0:0/" + (index-1) + ":1:0", web.toString());
 	}
 
 }
