@@ -16,86 +16,81 @@ from busInfo import *
 from mirrorNetwork import *
 from systemTime import *
 from queue import *
-from serverMock import *
 import _thread, time
 
 #device id
 id = '-1'
 
-# Queue setup
-guiRecvQueue = Queue()
-sendQueue = Queue()
-recvQueue = Queue()
-
 # Continuly runs to make sure the gui updates time and date independent of everything else
-def tellGUIToUpdateTime():
+def tellGUIToUpdateTime(queue):
     while True :
         hour = str(int(strftime("%I")))
         minute = strftime("%M")
         curTime = hour + ':' + minute
-        guiRecvQueue.put_nowait(message('time', curTime))
+        queue.put_nowait(message('time', curTime))
         
         date = strftime("%A, %B %d %Y")
-        guiRecvQueue.put_nowait(message('date', date))
+        queue.put_nowait(message('date', date))
         time.sleep(0.5)
 
 # Every 15 mins fetches new weather data and gives the info to the gui to display
-def tellGUIToUpdateWeather():
+def tellGUIToUpdateWeather(queue):
         global id
         sleep = 1
+        print(id)
         while True :
                 if (id != '-1'):
                         sleep = 900
-                        sendQueue.put_nowait(message('data', id + '/weather'))
+                        queue.put_nowait(message('data', id + '/weather'))
                 time.sleep(sleep)
 
 # Every 30 seconds it sends out to get updated bus info 
-def tellGUIToUpdateBusInfo():
+def tellGUIToUpdateBusInfo(queue):
         global id
         sleep = 1
         while True:
                 if (id != '-1'):
                         sleep = 30
-                        sendQueue.put_nowait(message('data', id + '/bus'))
+                        queue.put_nowait(message('data', id + '/bus'))
                 time.sleep(sleep)
 
 
-def timeSync():
+def timeSync(queue):
         global id
         sleep = 1
         while True:
             if (id != '-1'):
                 sleep = 600
-                sendQueue.put_nowait(message('data', id + '/time'))
+                queue.put_nowait(message('data', id + '/time'))
             time.sleep(sleep)
             
 # Watches the recv queue for messages then ditributes them   
-def watchRecvMessages():
+def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
         global id
         while True:
-                if not recvQueue.empty():
-                        while not recvQueue.empty():
-                                messageRecv = recvQueue.get()
+                if not recvedQueue.empty():
+                        while not recvedQueue.empty():
+                                messageRecv = recvedQueue.get()
                                 if (messageRecv.messageType == 'data'):
                                         if (messageRecv.info[0] == 'w'):
                                                 weatherInfo = data_organizer(messageRecv.info[1:])
-                                                guiRecvQueue.put_nowait(message('weather', weatherInfo))
+                                                guiQueue.put_nowait(message('weather', weatherInfo))
                                         if (messageRecv.info[0] == 'b'):
                                                 busInfo = parseBusInfo(messageRecv.info[1:])
-                                                guiRecvQueue.put_nowait(message('bus', busInfo))
+                                                guiQueue.put_nowait(message('bus', busInfo))
                                         if (messageRecv.info[0] == 'c'):
-                                                guiRecvQueue.put_nowait(message('colour', messageRecv.info[1:]))
+                                                guiQueue.put_nowait(message('colour', messageRecv.info[1:]))
                                         if (messageRecv.info[0] == 'd'):
-                                                guiRecvQueue.put_nowait(message('direction', messageRecv.info[1:]))
+                                                guiQueue.put_nowait(message('direction', messageRecv.info[1:]))
                                         if (messageRecv.info[0] == 't'):
                                                 linux_set_time(messageRecv.info[1:])
                                 elif(messageRecv.messageType == 'id'):
                                         if (id == '-1'):
                                                 id = messageRecv.info
                                 elif(messageRecv.messageType == 'beat'):
-                                        sendQueue.put_nowait(message('beat', id))
+                                        sendingQueue.put_nowait(message('beat', id))
                 if (id == '-1'):
-                    sendQueue.put_nowait(message('beat', id))
+                    sendingQueue.put_nowait(message('beat', id))
                     time.sleep(10)
                                                  
                 time.sleep(0.001)
@@ -105,16 +100,22 @@ def watchRecvMessages():
 def runController(server, port):
     global gui
     top = Tk()     #used as the root for the tk window
+	
+	# Queue setup
+    guiRecvQueue = Queue()
+    sendQueue = Queue()
+    recvQueue = Queue()
+	
     #Start up threads 
     gui = mirrorGUI(top, guiRecvQueue)
     _thread.start_new_thread(gui.runnerLoop, (guiRecvQueue,))
-    _thread.start_new_thread(tellGUIToUpdateTime, ())
-    _thread.start_new_thread(tellGUIToUpdateWeather, ())
-    _thread.start_new_thread(tellGUIToUpdateBusInfo, ())
-    _thread.start_new_thread(timeSync, ())
+    _thread.start_new_thread(tellGUIToUpdateTime, (guiRecvQueue,))
+    _thread.start_new_thread(tellGUIToUpdateWeather, (sendQueue,))
+    _thread.start_new_thread(tellGUIToUpdateBusInfo, (sendQueue,))
+    _thread.start_new_thread(timeSync, (sendQueue,))
     
     #_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
-    _thread.start_new_thread(watchRecvMessages, ())
+    _thread.start_new_thread(watchRecvMessages, (recvQueue,sendQueue,guiRecvQueue,))
     _thread.start_new_thread(networkInit, (server,port,recvQueue,sendQueue,))
     #time.sleep(1)
     #_thread.start_new_thread(sendFakeData, ())

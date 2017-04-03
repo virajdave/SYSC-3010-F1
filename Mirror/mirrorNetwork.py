@@ -1,5 +1,5 @@
 #==============================================================================
-#title           		:mirrorNetwork.py
+#title           	:mirrorNetwork.py
 #description     	:Preforms the networking for the mirror
 #author          	:Dillon Verhaeghe
 #date            	:20170326
@@ -18,13 +18,13 @@ import _thread
 def networkInit(server, port,recvQueue, sendQueue):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         localAddress = ('', 0)
-        _thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
+        _thread.start_new_thread(mirrorNetRecv, (port, s,recvQueue,))
         _thread.start_new_thread(mirrorNetSend, (server,port,s,sendQueue,))
     
 
-def mirrorNetRecv(s, queue):
+def mirrorNetRecv(port, s, queue):
         while True:
-                buf, address = s.recvfrom(3010)
+                buf, address = s.recvfrom(port)
                 stringdata = buf.decode('utf-8')
                 print(stringdata)
                 if(stringdata[:2] == '01'):
@@ -34,7 +34,7 @@ def mirrorNetRecv(s, queue):
                 elif(stringdata[:2] == '02'):
                         queue.put_nowait(message('data', stringdata[3:]))
                 else:
-                        recvError = open('RecvError.log', 'a')
+                        recvError = open('logs/RecvError.log', 'a')
                         recvError.write(stringdata)
                         recvError.close()
         s.shutdown(1)
@@ -59,7 +59,7 @@ def mirrorNetSend(serverIp, servPort, s, queue):
                                 elif(messageToSend.messageType == 'ack'):
                                         sendAck(serverIp,servPort,s,messageToSend.info)
                                 else:
-                                        sendError = open('sendError.log', 'a')
+                                        sendError = open('logs/sendError.log', 'a')
                                         sendError.write(messageToSend.messageType + ':' + messageToSend.info + '\n')
                                         sendError.close()
         s.shutdown(1)
@@ -81,38 +81,3 @@ def sendAck(host, port, s,id):
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
-def sendFakeData ():
-    host = '127.0.0.1'
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    port = 8080
-    server_address = (host, port)
-    timeBetweenSends = 2
-    while 1:
-        data ='c' + '#FF0000'
-        s.sendto(data.encode('utf-8'), server_address)    
-        time.sleep(timeBetweenSends)
-        
-        weather = open('weatherTest.txt', 'r')
-        data = weather.read()
-        weather.close()
-        data ='w' + data
-        s.sendto(data.encode('utf-8'), server_address)
-        time.sleep(timeBetweenSends)
-        
-        data ='c' + '#00FF00'
-        s.sendto(data.encode('utf-8'), server_address)    
-        time.sleep(timeBetweenSends)
-        
-        bus = open('busTest.txt', 'r')
-        data = bus.read()
-        bus.close()
-        data ='b' + data
-        s.sendto(data.encode('utf-8'), server_address)    
-        time.sleep(timeBetweenSends)
-        
-        data ='c' + '#2E99A9'
-        s.sendto(data.encode('utf-8'), server_address)    
-        time.sleep(timeBetweenSends)
-
-    s.shutdown(1)

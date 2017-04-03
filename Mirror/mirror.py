@@ -253,7 +253,7 @@ class mirrorGUI:
 	
 	# Creates and places the Bottom left hand of GUI which is Logo
 	def setUpLogoWidget(self):
-		self.canvas_image = PhotoImage(file='CAM.png')
+		self.canvas_image = PhotoImage(file='logo/CAM.png')
 		self.logoLab = Label(self.top,
 							image=self.canvas_image,
 							bg=self.mirrorFg,
