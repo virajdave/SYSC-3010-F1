@@ -66,7 +66,7 @@ public class HeartBeat extends Thread {
 	 */
 	public void beat() {
 		try {
-			Log.out("hearbeat");
+			Log.out("heartbeat");
 			synchronized (this) {
 				addrSet = new HashSet<>(web.addrList());
 			}
