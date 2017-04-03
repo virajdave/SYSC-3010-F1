@@ -15,11 +15,11 @@ from dataPassingObject import *
 import _thread
 
 
-def networkInit(recvQueue, sendQueue):
+def networkInit(server, port,recvQueue, sendQueue):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         localAddress = ('', 0)
         _thread.start_new_thread(mirrorNetRecv, (s,recvQueue,))
-        _thread.start_new_thread(mirrorNetSend, (s,sendQueue,))
+        _thread.start_new_thread(mirrorNetSend, (server,port,s,sendQueue,))
     
 
 def mirrorNetRecv(s, queue):
@@ -40,24 +40,24 @@ def mirrorNetRecv(s, queue):
         s.shutdown(1)
     
 
-def mirrorNetSend(s, queue):
-        serverIp = '10.0.0.1'
-        servPort = 3010
-        server_address = (serverIp, servPort)
-        heartBeat(s,'-1')
+def mirrorNetSend(serverIp, servPort, s, queue):
+        #serverIp = '10.0.0.1'
+        #servPort = 3010
+        server_address = (serverIp, int(servPort))
+        heartBeat(serverIp,servPort,s,'-1')
         while True:
                 if not queue.empty():
                         while not queue.empty():
                                 messageToSend = queue.get()
                                 if(messageToSend.messageType == 'beat'):
                                         print(messageToSend.info)
-                                        heartBeat(s,messageToSend.info)
+                                        heartBeat(serverIp,servPort,s,messageToSend.info)
                                 elif(messageToSend.messageType == 'data'):
                                         data = '22/' + messageToSend.info
                                         print('Sending: ' + data)
                                         s.sendto(data.encode('utf-8'), server_address)
                                 elif(messageToSend.messageType == 'ack'):
-                                        sendAck(s,messageToSend.info)
+                                        sendAck(serverIp,servPort,s,messageToSend.info)
                                 else:
                                         sendError = open('sendError.log', 'a')
                                         sendError.write(messageToSend.messageType + ':' + messageToSend.info + '\n')
@@ -65,18 +65,19 @@ def mirrorNetSend(s, queue):
         s.shutdown(1)
 
 
-def heartBeat(s,id):
-        host = '10.0.0.1'
-        port = 3010
-        server_address = (host, port)
+def heartBeat(host,port,s,id):
+        #host = '10.0.0.1'
+        #port = 3010
+        server_address = (host,int(port))
         data = '20/' + id + '/2'
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
-def sendAck(s,id):
-        host = '10.0.0.1'
-        port = 3010
+def sendAck(host, port, s,id):
+        #host = '10.0.0.1'
+        #port = 3010
         data = '21/' + id + '/2'
+        server_address = (host,int(port))
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 

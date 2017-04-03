@@ -1,6 +1,6 @@
 #==============================================================================
 #title           		:mirrorController.py
-#description     	:Starts up and sets up everything for the mirror
+#description     	        :Starts up and sets up everything for the mirror
 #author          		:Dillon Verhaeghe
 #date            		:20170326
 #version         		:0.4
@@ -93,11 +93,15 @@ def watchRecvMessages():
                                                 id = messageRecv.info
                                 elif(messageRecv.messageType == 'beat'):
                                         sendQueue.put_nowait(message('beat', id))
-                        time.sleep(0.001)
+                if (id == '-1'):
+                    sendQueue.put_nowait(message('beat', id))
+                    time.sleep(10)
+                                                 
+                time.sleep(0.001)
             
             
 #Starts up the network, controller and gui threads
-def runController():
+def runController(server, port):
     top = Tk()     #used as the root for the tk window
     #Start up threads 
     gui = mirrorGUI(top, guiRecvQueue)
@@ -109,7 +113,7 @@ def runController():
     
     #_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
     _thread.start_new_thread(watchRecvMessages, ())
-    _thread.start_new_thread(networkInit, (recvQueue,sendQueue,))
+    _thread.start_new_thread(networkInit, (server,port,recvQueue,sendQueue,))
     #time.sleep(1)
     #_thread.start_new_thread(sendFakeData, ())
     
@@ -117,6 +121,7 @@ def runController():
     #Display the gui window
     gui.showGUI()
     
+server = sys.argv[1]
+port = sys.argv[2]   
     
-    
-runController()
+runController(server, port)
