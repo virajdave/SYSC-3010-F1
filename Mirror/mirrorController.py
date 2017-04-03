@@ -16,6 +16,7 @@ from busInfo import *
 from mirrorNetwork import *
 from systemTime import *
 from queue import *
+from serverMock import *
 import _thread, time
 
 #device id
@@ -102,6 +103,7 @@ def watchRecvMessages():
             
 #Starts up the network, controller and gui threads
 def runController(server, port):
+    global gui
     top = Tk()     #used as the root for the tk window
     #Start up threads 
     gui = mirrorGUI(top, guiRecvQueue)
@@ -120,8 +122,8 @@ def runController(server, port):
     
     #Display the gui window
     gui.showGUI()
-    
+
+gui = ''    
 server = sys.argv[1]
 port = sys.argv[2]   
-    
 runController(server, port)
