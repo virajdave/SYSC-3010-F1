@@ -8,13 +8,13 @@ public class View implements Observer {
 	private JPanel sidebar;
 	private JLabel deviceLabel;
 	private JList<String> deviceList;
-	private JTextField counterField, valueField;
+	private final DefaultListModel<String> devices;
 
 	public View() {
 		// Make the frame.
 		JFrame frame = new JFrame("CAM");
 
-		final DefaultListModel<String> devices = new DefaultListModel<>();
+		devices = new DefaultListModel<>();
 		
 		devices.addElement("Apple");
 		devices.addElement("Grapes");
@@ -22,9 +22,10 @@ public class View implements Observer {
 		devices.addElement("Peer");
 		
 		deviceList = new JList<>(devices);
+		deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Setup device label + list.
-		deviceLabel = new JLabel("Loading...");
+		deviceLabel = new JLabel("                                                  ");
 
 		// Create panels and set the content pane.
 		sidebar = new JPanel();
@@ -33,6 +34,7 @@ public class View implements Observer {
 		JScrollPane left = new JScrollPane(sidebar);
 		JScrollPane right = new JScrollPane();
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
+		splitPane.setResizeWeight(0.2);
 		frame.setContentPane(splitPane);
 
 		// Set size and make the window visible.
@@ -44,20 +46,34 @@ public class View implements Observer {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
+	public DefaultListModel<String> getDeviceModel() {
+		return devices;
+	}
+	
 	private void showDeviceList(boolean show) {
 		if (show) {
 			sidebar.add(deviceList);
+			sidebar.remove(deviceLabel);
 		} else {
 			sidebar.add(deviceLabel);
+			sidebar.remove(deviceList);
 		}
 		sidebar.revalidate();
 	}
 
 	@Override
 	public void update(Observable model, Object obj) {
-		int value = (int) obj;
-
-		counterField.setText(Integer.toString(value));
+		if (obj instanceof String) {
+			String s = (String)obj;
+			
+			deviceLabel.setText(s);
+			if (devices.isEmpty()) {
+				deviceLabel.setText("No devices.");
+				showDeviceList(false);
+			} else {
+				showDeviceList(s.length() == 0);
+			}
+		}
 	}
 
 	/**
@@ -66,15 +82,7 @@ public class View implements Observer {
 	 * @param controller
 	 */
 	public void addListeners(Controller controller) {
-	}
-
-	/**
-	 * Get the value field text.
-	 * 
-	 * @return String
-	 */
-	public String getValueField() {
-		return valueField.getText();
+		deviceList.addListSelectionListener(controller);
 	}
 
 }

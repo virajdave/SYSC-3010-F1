@@ -1,5 +1,6 @@
 import java.awt.event.*;
 
+import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -10,7 +11,7 @@ public class Controller implements ActionListener, ListSelectionListener {
 	public Controller(Model model, View view) {
 		this.model = model;
 		this.view = view;
-		model.updateNetInfo();
+		view.addListeners(this);
 	}
 
 	@Override
@@ -30,8 +31,10 @@ public class Controller implements ActionListener, ListSelectionListener {
 //		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void valueChanged(ListSelectionEvent change) {
+	public void valueChanged(ListSelectionEvent event) {
+		model.selectDevice(((JList<String>)event.getSource()).getSelectedIndex());
 	}
 
 }

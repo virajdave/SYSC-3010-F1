@@ -2,12 +2,18 @@
 public class Main {
 
 	public static void main(String[] args) {
-		Model model = new Model();
 		View view = new View();
+		Model model = new Model(view.getDeviceModel());
 
 		model.addObserver(view);
 		Controller controller = new Controller(model, view);
-		view.addListeners(controller);
+		
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		model.start();
 	}
 
 }
