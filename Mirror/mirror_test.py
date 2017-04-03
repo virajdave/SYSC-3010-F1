@@ -14,17 +14,17 @@ from queue import *
 from dataPassingObject import *
 
 
-def test_updateWeather():
-	global id 
-	id = 10
-	testQueue = Queue()
-	t = threading.Thread(tellGUIToUpdateTime(testQueue))
-	t.daemon = True
-	t.start()
-	time.sleep(1)
-	returned = testQueue.get()
-	assert returned.messageType == 'data'
-	assert returned.info == '10/weather'
+# def test_updateWeather():
+	# global id 
+	# id = 10
+	# testQueue = Queue()
+	# t = threading.Thread(tellGUIToUpdateTime(testQueue))
+	# t.daemon = True
+	# t.start()
+	# time.sleep(1)
+	# returned = testQueue.get()
+	# assert returned.messageType == 'data'
+	# assert returned.info == '10/weather'
 	
 	
 
