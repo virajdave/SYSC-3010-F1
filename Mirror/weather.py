@@ -1,10 +1,10 @@
 #==============================================================================
 #title           		:weather.py
-#description    	:Collects and parses weather information
+#description    		:Collects and parses weather information
 #author          		:Dillon Verhaeghe
 #date            		:20170326
 #version         		:0.4
-#usage           		:python3 mirrorController.py
+#usage           		:python3 mirrorRunner.py 10.0.0.1 3010
 #notes           		:Pases and can also collect info from the open weather API
 #python_version :3 
 #==============================================================================

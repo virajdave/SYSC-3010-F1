@@ -1,6 +1,6 @@
 #==============================================================================
 #title           		:dataPassingObject.py
-#description    	:Messaging stucture
+#description    		:Messaging stucture
 #author          		:Dillon Verhaeghe
 #date            		:20170326
 #version         		:0.4

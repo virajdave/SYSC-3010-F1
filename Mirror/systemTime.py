@@ -1,3 +1,14 @@
+#==============================================================================
+#title           		:systemTime.py
+#description    		:Changes the system time on linux machines
+#author          		:Dillon Verhaeghe
+#date            		:20170326
+#version         		:0.4
+#usage           		:python3 mirrorRunner.py 10.0.0.1 3010
+#notes           		
+#python_version 		:3 
+#==============================================================================
+
 import sys
 import datetime
 import os

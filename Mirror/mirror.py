@@ -1,10 +1,10 @@
 #==============================================================================
-#title          			:mirror.py
-#description     	:GUI for the Smart Mirror
+#title          		:mirror.py
+#description     		:GUI for the Smart Mirror
 #author          		:Dillon Verhaeghe
 #date            		:20170326
 #version         		:0.4
-#usage           		:python3 mirrorController.py
+#usage           		:python3 mirrorRunner.py 10.0.0.1 3010
 #notes           		:Should only be invoked from the mirrorController script
 #python_version :3 
 #==============================================================================
