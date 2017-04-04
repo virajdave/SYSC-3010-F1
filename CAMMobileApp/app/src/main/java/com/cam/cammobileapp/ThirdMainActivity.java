@@ -39,18 +39,18 @@ public class ThirdMainActivity extends AppCompatActivity {
 
     final Context prev = this;
     TextView theLatCoord, theLongCoord;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    Location lastKnownLocation;
+    public LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location lastKnownLocation;
+    public double longitude;
+    public double latitude;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_third_main);
-        theLatCoord = (TextView) findViewById(R.id.latCoord);
-        theLongCoord = (TextView) findViewById(R.id.longCoord);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+
+        /*locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 theLatCoord.setText(location.getLatitude() + "");
@@ -72,7 +72,7 @@ public class ThirdMainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
-        };
+        }; */
 
         Intent intent = getIntent();
 
@@ -109,39 +109,124 @@ public class ThirdMainActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                final ColorPicker cp = new ColorPicker(ThirdMainActivity.this, 0,0,0);
+                final ColorPicker cp = new ColorPicker(ThirdMainActivity.this, 0, 0, 0);
                 cp.show();
-                Button colourConfirmed = (Button)cp.findViewById(R.id.okColorButton);
-                colourConfirmed.setOnClickListener(new View.OnClickListener(){
+                Button colourConfirmed = (Button) cp.findViewById(R.id.okColorButton);
+                colourConfirmed.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick (View v){
+                    public void onClick(View v) {
                         //selctedColourR = cp.getRed();
                         //selectedColourG = cp.getGreen();
                         //selectedColourB = cp.getBlue();
 
                         cp.dismiss();
+                        Toast.makeText(prev, "Colour Selected to send to Mirror", Toast.LENGTH_LONG).show();
                     }
                 });
-                Toast.makeText(prev, "Need to insert Colour wheel shortly", Toast.LENGTH_LONG).show();
             }
         });
 
 
-
-
-
         final ImageButton imageButton6 = (ImageButton) findViewById(R.id.btn_setLocation);
         imageButton6.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
+                Toast.makeText(prev, "Need to show the location coordinates", Toast.LENGTH_LONG).show();
                 final AlertDialog locationDialog = new AlertDialog.Builder(prev).create();
                 View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
+                locationDialog.setView(location_layout);
+                locationDialog.show();
+
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                final LocationListener listenerForLocation = new ListenerForLocation();
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
+
+
+                Button enableLocation = (Button) locationDialog.findViewById(R.id.turnOnGPS);
+                Button sendLocation = (Button) locationDialog.findViewById(R.id.sendGPS);
+
                 theLatCoord = (TextView) findViewById(R.id.latCoord);
                 theLongCoord = (TextView) findViewById(R.id.longCoord);
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                /*locationListener = new LocationListener() {
+                enableLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        longitude = theCoord.getLatitude();
+                        latitude = theCoord.getLatitude();
+
+                    theLatCoord.setText(Double.toString(latitude));
+                    theLongCoord.setText(Double.toString(longitude));
+                    }
+                });
+
+
+
+                sendLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        locationDialog.dismiss();
+                        Toast.makeText(prev, "Location sent to Magic Mirror", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+
+            }
+        });
+    }
+
+    /*protected void retrieveLocation() {
+        Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        longitude = theCoord.getLatitude();
+        latitude = theCoord.getLatitude();
+
+        theLatCoord.setText(Double.toString(latitude));
+        theLongCoord.setText(Double.toString(longitude));
+
+    }
+    */
+
+
+    class ListenerForLocation implements LocationListener {
+        //TextView theLatCoord, theLongCoord;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            // TODO Auto-generated method stub
+            theLatCoord.setText(Double.toString(location.getLatitude()));
+            theLongCoord.setText(Double.toString(location.getLongitude()));
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+}
+
+                /*
+                locationListener = new LocationListener() {
+
                     @Override
                     public void onLocationChanged(Location location) {
                         theLatCoord.setText(location.getLatitude() + "");
@@ -166,18 +251,20 @@ public class ThirdMainActivity extends AppCompatActivity {
                 };
 
 
-                checkLocationPermissions(); */
+                checkLocationPermissions();
+
                 if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+
                     if (Build.VERSION.SDK_INT >= 23) {
-                        //\\requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                                 //Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET, 10);
                     }
-                    /* else {
+                    else {
                        ActivityCompat.requestPermissions((Activity) prev, new String[]{
                                 Manifest.permission.ACCESS_FINE_LOCATION,
                                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);}
-                    // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000,0,locationListener);
-                } */else {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000,0,locationListener);
+                } else {
                     Intent intent1 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent1);
                 }
@@ -190,7 +277,7 @@ public class ThirdMainActivity extends AppCompatActivity {
                 locationDialog.show();
 
                 Button sendLocation = (Button) location_layout.findViewById(R.id.sendGPS);
-                //getLocation.setOnClickListener(new View.OnClickListener() {
+                getLocation.setOnClickListener(new View.OnClickListener() {
                 sendLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -203,10 +290,7 @@ public class ThirdMainActivity extends AppCompatActivity {
             }
        }
 
-
-
-
-                /*getLocation.setOnClickListener(new View.OnClickListener() {
+                getLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         LocationManager locationManger = (LocationManager)prev.getSystemService(Context.LOCATION_SERVICE);
@@ -236,8 +320,6 @@ public class ThirdMainActivity extends AppCompatActivity {
                         latCoordinates.setText(Double.toString(latitude));
                     }
 
-                }); */
-
-
-
+                });
+                */
 

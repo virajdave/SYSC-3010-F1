@@ -10,6 +10,7 @@ package com.cam.cammobileapp;
         import java.util.LinkedList;
         import java.util.Queue;
         import java.util.Scanner;
+        import android.util.Log;
 
 public class ServerOnApp extends Thread {
     protected static final int PACKET_SIZE = 1500;
@@ -44,6 +45,7 @@ public class ServerOnApp extends Thread {
                 socket = new DatagramSocket();
                 port = socket.getLocalPort();
             }
+            Log.i("Server","is started");
 
             // Receive.
             while (!Thread.interrupted()) {
