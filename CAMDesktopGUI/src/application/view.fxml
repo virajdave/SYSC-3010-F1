@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ListView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1">
+	<left>
+		<StackPane>
+			<Label fx:id="devicesLabel">Loading...</Label>
+			<ListView fx:id="devices" visible="false"/>
+		</StackPane>
+	</left>
+	<right>
+	</right>
+</BorderPane>
+
