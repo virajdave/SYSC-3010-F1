@@ -96,8 +96,8 @@ def test_recv_error():
     recvSock.close()
     sendSock.close()
     data = 'Error Message: ' + data + '\n'
-    log = open('./logs/RecvError.log', 'r')
-    errorMessage = log.readlines()[-1]
-    assert (errorMessage == data), 'Recv network did not log the error correctly'
+    with open(os.path.join(os.path.dirname(__file__), 'logs/RecvError.log'), 'r') as log:
+        errorMessage = log.readlines()[-1]
+        assert (errorMessage == data), 'Recv network did not log the error correctly'
     
 
