@@ -1,6 +1,6 @@
 #==============================================================================
-#title           		:mirror_test.py
-#description    		:tests features of the mirror
+#title           		:mirrorController_test.py
+#description    	:tests features of the mirror
 #author          		:Dillon Verhaeghe
 #date            		:20170403
 #version         		:0.0
@@ -117,3 +117,47 @@ def test_RecvMessages_direction():
     returned = testgui.get_nowait()
     assert (returned.messageType == 'direction'), 'Recved message did not give message of type direction back'
     assert (returned.info == direct), 'Recved messaged did not give the correct direction data back'    
+ 
+def test_RecvMessages_beat():
+    testRecv = Queue()
+    testSend = Queue()
+    testgui = Queue()
+    id = '10'
+    setId(id)
+    run()
+    _thread.start_new_thread(watchRecvMessages, (testRecv,testSend,testgui,))
+    testRecv.put_nowait(message('beat', ''))
+    time.sleep(1)
+    stop()
+    returned = testSend.get_nowait()
+    assert (returned.messageType == 'beat'), 'Recved message did not give message of type beat back'
+    assert (returned.info == id), 'Recved messaged did not give the correct id (10) data back'  
+
+def test_RecvMessages_id():
+    testRecv = Queue()
+    testSend = Queue()
+    testgui = Queue()
+    setId('-1')
+    id = '99'
+    run()
+    testRecv.put_nowait(message('id', id))
+    testRecv.put_nowait(message('beat', ''))
+    _thread.start_new_thread(watchRecvMessages, (testRecv,testSend,testgui,))
+    time.sleep(1)
+    stop()
+    returned = testSend.get_nowait()
+    assert (returned.messageType == 'beat'), 'Recved message did not give message of type beat when setting id '
+    assert (returned.info == id), 'Recved messaged did not give the correct id (99) data back'      
+    
+def test_RecvMessages_serverConnect():
+    testRecv = Queue()
+    testSend = Queue()
+    testgui = Queue()
+    setId('-1')
+    run()
+    _thread.start_new_thread(watchRecvMessages, (testRecv,testSend,testgui,))
+    time.sleep(1)
+    stop()
+    returned = testSend.get_nowait()
+    assert (returned.messageType == 'beat'), 'Recved message did not give message of type beat when autoConnect to server '
+    assert (returned.info == '-1'), 'Recved messaged did not give the correct id (-1) data back'  
