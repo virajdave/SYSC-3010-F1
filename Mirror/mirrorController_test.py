@@ -64,8 +64,7 @@ def test_RecvMessages_weather():
     testgui = Queue()
     run()
     _thread.start_new_thread(watchRecvMessages, (testRecv,testSend,testgui,))
-    weatherDataFile = open('testData/weatherTest.txt', 'r')
-    weatherData = weatherDataFile.read()
+    weatherData = '{"coord":{"lon":-75.7,"lat":45.41},"weather":[{"id":801,"main":"Clouds","description":"few clouds","icon":"02d"}],"base":"stations","main":{"temp":2.51,"pressure":1030,"humidity":51,"temp_min":2,"temp_max":3},"visibility":24140,"wind":{"speed":1.5,"deg":230},"clouds":{"all":20},"dt":1490482800,"sys":{"type":1,"id":3694,"message":0.0039,"country":"CA","sunrise":1490439242,"sunset":1490484206},"id":6094817,"name":"Ottawa","cod":200}'
     testRecv.put_nowait(message('data', 'w' + weatherData))
     time.sleep(1)
     stop()
@@ -80,8 +79,7 @@ def test_RecvMessages_bus():
     testgui = Queue()
     run()
     _thread.start_new_thread(watchRecvMessages, (testRecv,testSend,testgui,))
-    busDataFile = open('testData/busTest.txt', 'r')
-    busData = busDataFile.read()
+    busData = '{"GetNextTripsForStopResult":{"StopNo":"3031","StopLabel":"SMYTH","Error":"","Route":{"RouteDirection":[{"RouteNo":104,"RouteLabel":"Place d\'Orl\u00e9ans","Direction":"Eastbound","Error":"","RequestProcessingTime":"20170326194147","Trips":{"Trip":[{"TripDestination":"Place d\'Orl\u00e9ans","TripStartTime":"19:38","AdjustedScheduleTime":"9","AdjustmentAge":"0.86","LastTripOfSchedule":false,"BusType":"6EB - 60","Latitude":"45.384907","Longitude":"-75.694578","GPSSpeed":"20.3"},{"TripDestination":"Place d\'Orl\u00e9ans","TripStartTime":"20:08","AdjustedScheduleTime":"37","AdjustmentAge":"-1","LastTripOfSchedule":false,"BusType":"6EB - 60","Latitude":"","Longitude":"","GPSSpeed":""},{"TripDestination":"Place d\'Orl\u00e9ans","TripStartTime":"20:38","AdjustedScheduleTime":"67","AdjustmentAge":"-1","LastTripOfSchedule":false,"BusType":"6EB - 60","Latitude":"","Longitude":"","GPSSpeed":""}]}},{"RouteNo":104,"RouteLabel":"Carleton","Direction":"Westbound","Error":"","RequestProcessingTime":"20170326194147","Trips":{"Trip":[{"TripDestination":"Carleton","TripStartTime":"19:31","AdjustedScheduleTime":"16","AdjustmentAge":"0.71","LastTripOfSchedule":false,"BusType":"6E - 60","Latitude":"45.451344","Longitude":"-75.584719","GPSSpeed":"13.7"},{"TripDestination":"Carleton","TripStartTime":"20:01","AdjustedScheduleTime":"44","AdjustmentAge":"-1","LastTripOfSchedule":false,"BusType":"6EB - 60","Latitude":"","Longitude":"","GPSSpeed":""},{"TripDestination":"Carleton","TripStartTime":"20:31","AdjustedScheduleTime":"74","AdjustmentAge":"-1","LastTripOfSchedule":false,"BusType":"6EB - 60","Latitude":"","Longitude":"","GPSSpeed":""}]}}]}}}'
     testRecv.put_nowait(message('data', 'b' + busData))
     time.sleep(1)
     stop()
