@@ -14,7 +14,7 @@ from queue import *
 
 def test_recv_id():
     testQueue = Queue()
-    port = '3010'
+    port = '9999'
     self_address = ('127.0.0.1', int(port))
     data = '01/10'
     networkRun()
@@ -35,7 +35,7 @@ def test_recv_id():
     
 def test_recv_beat():
     testQueue = Queue()
-    port = '3010'
+    port = '9999'
     self_address = ('127.0.0.1', int(port))
     data = '00'
     networkRun()
@@ -56,7 +56,7 @@ def test_recv_beat():
     
 def test_recv_data():
     testQueue = Queue()
-    port = '3010'
+    port = '9999'
     self_address = ('127.0.0.1', int(port))
     data = '02/somedataHere'
     networkRun()
@@ -78,7 +78,7 @@ def test_recv_data():
 def test_recv_error():
     #os.remove("logs/RecvError.log")
     testQueue = Queue()
-    port = '3010'
+    port = '9999'
     self_address = ('127.0.0.1', int(port))
     data = 'blablabla'
     networkRun()
