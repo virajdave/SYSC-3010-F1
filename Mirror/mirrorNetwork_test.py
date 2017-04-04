@@ -14,14 +14,14 @@ from queue import *
 
 def test_recv_id():
     testQueue = Queue()
-    port = '9999'
-    self_address = ('127.0.0.1', int(port))
     data = '01/10'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', int(port)))
+    recvSock.bind(('127.0.0.1', 0))
+    recvPort = recvSock.getsockname()[1]
+    self_address = ('127.0.0.1', recvPort)
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
+    _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
     time.sleep(1)
     sendSock.sendto(data.encode('utf-8'), self_address)
     time.sleep(1)
@@ -35,14 +35,14 @@ def test_recv_id():
     
 def test_recv_beat():
     testQueue = Queue()
-    port = '9999'
-    self_address = ('127.0.0.1', int(port))
     data = '00'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', int(port)))
+    recvSock.bind(('127.0.0.1', 0))
+    recvPort = recvSock.getsockname()[1]
+    self_address = ('127.0.0.1', recvPort)
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
+    _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
     time.sleep(1)
     sendSock.sendto(data.encode('utf-8'), self_address)
     time.sleep(1)
@@ -56,14 +56,14 @@ def test_recv_beat():
     
 def test_recv_data():
     testQueue = Queue()
-    port = '9999'
-    self_address = ('127.0.0.1', int(port))
     data = '02/somedataHere'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', int(port)))
+    recvSock.bind(('127.0.0.1', 0))
+    recvPort = recvSock.getsockname()[1]
+    self_address = ('127.0.0.1', recvPort)
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
+    _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
     time.sleep(1)
     sendSock.sendto(data.encode('utf-8'), self_address)
     time.sleep(1)
@@ -76,16 +76,15 @@ def test_recv_data():
     assert (returned.info == 'somedataHere'), 'Recv network did not have the random data in the info'
     
 def test_recv_error():
-    #os.remove("logs/RecvError.log")
     testQueue = Queue()
-    port = '9999'
-    self_address = ('127.0.0.1', int(port))
     data = 'blablabla'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', int(port)))
+    recvSock.bind(('127.0.0.1', 0))
+    recvPort = recvSock.getsockname()[1]
+    self_address = ('127.0.0.1', recvPort)
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
+    _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
     time.sleep(1)
     sendSock.sendto(data.encode('utf-8'), self_address)
     time.sleep(1)
