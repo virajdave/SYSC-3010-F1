@@ -19,7 +19,7 @@ def test_recv_id():
     data = '01/10'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', 3010))
+    recvSock.bind(('127.0.0.1', int(port)))
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
     time.sleep(1)
@@ -40,7 +40,7 @@ def test_recv_beat():
     data = '00'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', 3010))
+    recvSock.bind(('127.0.0.1', int(port)))
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
     time.sleep(1)
@@ -61,7 +61,7 @@ def test_recv_data():
     data = '02/somedataHere'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', 3010))
+    recvSock.bind(('127.0.0.1', int(port)))
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
     time.sleep(1)
@@ -83,7 +83,7 @@ def test_recv_error():
     data = 'blablabla'
     networkRun()
     recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    recvSock.bind(('127.0.0.1', 3010))
+    recvSock.bind(('127.0.0.1', int(port)))
     sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     _thread.start_new_thread(mirrorNetRecv, (port, recvSock,testQueue,))
     time.sleep(1)
