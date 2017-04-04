@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidUDP.iml" filepath="$PROJECT_DIR$/AndroidUDP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/udp.iml" filepath="$PROJECT_DIR$/udp.iml" />
     </modules>
   </component>
 </project>

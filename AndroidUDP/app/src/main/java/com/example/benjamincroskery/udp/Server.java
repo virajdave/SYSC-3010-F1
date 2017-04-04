@@ -2,11 +2,12 @@ package com.example.benjamincroskery.udp;
 
 import android.util.Log;
 
+import com.example.benjamincroskery.udp.util.Net;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 
 public class Server extends Thread {
     protected static final int PACKET_SIZE = 1500;
@@ -20,7 +21,7 @@ public class Server extends Thread {
     public Server() {
         recvQueue = new LinkedList<>();
         socket = null;
-        addr = new InetSocketAddress("10.0.0.0", 3010);
+        addr = new InetSocketAddress("10.0.0.1", 3010);
     }
 
     /**
@@ -90,6 +91,38 @@ public class Server extends Thread {
                         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, addr);
                         socket.send(sendPacket);
                         Log.i("Server",  "sent -> " + data);
+                    } else {
+                        Log.d("Server", "not running, cannot send message.");
+                    }
+                } catch (IOException e) {
+                    Log.e("Server", "send error", e);
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * Send a message over broadcast.
+     *
+     * @param message
+     */
+    public void sendBroadcast(String message) {
+
+        new Thread(new MyRunnable(message) {
+            public void run() {
+                if (bcast == null) {
+                    // Get the bcast address if it hasn't been set yet.
+                    bcast = Net.getBroadcast();
+                    Log.i("Net", "broadcast set to " + bcast.toString());
+                }
+
+                try {
+                    if (socket != null) {
+                        // Convert message data to bytes, create the packet and send it.
+                        byte[] sendData = data.getBytes("UTF-8");
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, bcast, addr.getPort());
+                        socket.send(sendPacket);
+                        Log.i("Server",  "b.sent -> " + data);
                     } else {
                         Log.d("Server", "not running, cannot send message.");
                     }

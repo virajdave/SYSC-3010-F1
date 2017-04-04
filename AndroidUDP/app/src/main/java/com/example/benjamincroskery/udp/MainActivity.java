@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView log;
     private ScrollView logScroll;
     private String lastMessage;
+    private boolean useBroadcast = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,22 +52,34 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(View view) {
         EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = editText.getText().toString();
-        server.sendMessage(message);
+        if (useBroadcast) {
+            server.sendBroadcast(message);
+        } else {
+            server.sendMessage(message);
+        }
     }
 
     /** Called when the user clicks the Set button */
     public void setAddr(View view) {
-        try {
-            EditText editPort = (EditText) findViewById(R.id.edit_port);
-            String[] split = editPort.getText().toString().split("/");
-            if (split.length == 1) {
-                server.setAddr(new InetSocketAddress(split[0], server.getAddr().getPort()));
-            } else if (split.length == 2) {
-                server.setAddr(new InetSocketAddress(split[0], Integer.parseInt(split[1])));
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    EditText editPort = (EditText) findViewById(R.id.edit_port);
+                    String[] split = editPort.getText().toString().split("/");
+                    if (split.length == 1) {
+                        useBroadcast = true;
+                        server.setAddr(new InetSocketAddress(split[0], server.getAddr().getPort()));
+                    } else if (split.length == 2) {
+                        useBroadcast = false;
+                        server.setAddr(new InetSocketAddress(split[0], Integer.parseInt(split[1])));
+                    }
+                } catch (Exception e) {
+                    Log.e("FAIL", "wat", e);
+                }
             }
-        } catch (Exception e) {
-            Log.e("FAIL", "wat", e);
-        }
+        }).start();
     }
 
     private Runnable updateLog = new Runnable() {
