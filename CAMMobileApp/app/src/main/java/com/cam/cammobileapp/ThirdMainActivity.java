@@ -138,10 +138,6 @@ public class ThirdMainActivity extends AppCompatActivity {
                 locationDialog.setView(location_layout);
                 locationDialog.show();
 
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                final LocationListener listenerForLocation = new ListenerForLocation();
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
 
 
                 Button enableLocation = (Button) locationDialog.findViewById(R.id.turnOnGPS);
@@ -153,6 +149,13 @@ public class ThirdMainActivity extends AppCompatActivity {
                 enableLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        final LocationListener listenerForLocation = new ListenerForLocation();
+
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
+
+                        theLatCoord = (TextView) findViewById(R.id.latCoord);
+                        theLongCoord = (TextView) findViewById(R.id.longCoord);
                         Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         longitude = theCoord.getLatitude();
                         latitude = theCoord.getLatitude();

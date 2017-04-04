@@ -1,16 +1,13 @@
 package com.cam.cammobileapp;
 
-/**
- * Created by virajdave on 2017-03-31.
- */
+import android.util.Log;
 
+import com.cam.cammobileapp.Net;
 
-        import java.io.IOException;
-        import java.net.*;
-        import java.util.LinkedList;
-        import java.util.Queue;
-        import java.util.Scanner;
-        import android.util.Log;
+import java.io.IOException;
+import java.net.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ServerOnApp extends Thread {
     protected static final int PACKET_SIZE = 1500;
@@ -19,33 +16,24 @@ public class ServerOnApp extends Thread {
     private DatagramSocket socket;
     private Integer port;
     private InetAddress bcast = null;
-    private static final InetSocketAddress socketAddress = new InetSocketAddress("10.0.0.0", 3010);
-    public ServerOnApp() {
-        this(null);
-    }
+    private InetSocketAddress addr;
 
-    public ServerOnApp(Integer _port) {
+    public ServerOnApp() {
         recvQueue = new LinkedList<>();
         socket = null;
-        port = _port;
+        addr = new InetSocketAddress("10.0.0.1", 3010);
     }
 
     /**
      * Start up the server.
      */
     public void run() {
+
         try {
             // Create socket.
-            if (port != null) {
-                socket = new DatagramSocket(port);
-                // socket.setReuseAddress(true);
-                // InetSocketAddress t = new InetSocketAddress(UDP_SERVER_PORT);
-                // socket.bind(t);
-            } else {
-                socket = new DatagramSocket();
-                port = socket.getLocalPort();
-            }
-            Log.i("Server","is started");
+            socket = new DatagramSocket();
+            port = socket.getLocalPort();
+            Log.i("Server",  "using port " + port);
 
             // Receive.
             while (!Thread.interrupted()) {
@@ -56,6 +44,7 @@ public class ServerOnApp extends Thread {
                 // Create a message from the packet and add it to the queue,
                 // notify any waiting receives.
                 String message = new String(packet.getData(), 0, packet.getLength());
+                Log.i("Server",  "recv -> " + message);
                 synchronized (recvQueue) {
                     recvQueue.add(message);
                     recvQueue.notifyAll();
@@ -66,9 +55,9 @@ public class ServerOnApp extends Thread {
             if (e.getMessage().toLowerCase().equals("socket closed") && Thread.interrupted()) {
                 return;
             }
-            e.printStackTrace();
+            Log.e("Server", "socket error", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Server", "socket error", e);
         } finally {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
@@ -83,6 +72,7 @@ public class ServerOnApp extends Thread {
     public void interrupt() {
         super.interrupt();
         socket.close();
+        Log.i("Server", "interrupted");
     }
 
     /**
@@ -91,21 +81,57 @@ public class ServerOnApp extends Thread {
      * @param message
      */
     public void sendMessage(String message) {
-        try {
-            if (socket != null) {
-                // Convert message data to bytes, create the packet and send it.
-                byte[] sendData = message.getBytes("UTF-8");
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, socketAddress);
-                socket.send(sendPacket);
-            } else {
-                System.err.println("Server not running, cannot send message.");
+
+        new Thread(new MyRunnable(message) {
+            public void run() {
+                try {
+                    if (socket != null) {
+                        // Convert message data to bytes, create the packet and send it.
+                        byte[] sendData = data.getBytes("UTF-8");
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, addr);
+                        socket.send(sendPacket);
+                        Log.i("Server",  "sent -> " + data);
+                    } else {
+                        Log.d("Server", "not running, cannot send message.");
+                    }
+                } catch (IOException e) {
+                    Log.e("Server", "send error", e);
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
+    /**
+     * Send a message over broadcast.
+     *
+     * @param message
+     */
+    public void sendBroadcast(String message) {
 
+        new Thread(new MyRunnable(message) {
+            public void run() {
+                if (bcast == null) {
+                    // Get the bcast address if it hasn't been set yet.
+                    bcast = Net.getBroadcast();
+                    Log.i("Net", "broadcast set to " + bcast.toString());
+                }
+
+                try {
+                    if (socket != null) {
+                        // Convert message data to bytes, create the packet and send it.
+                        byte[] sendData = data.getBytes("UTF-8");
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, bcast, addr.getPort());
+                        socket.send(sendPacket);
+                        Log.i("Server",  "b.sent -> " + data);
+                    } else {
+                        Log.d("Server", "not running, cannot send message.");
+                    }
+                } catch (IOException e) {
+                    Log.e("Server", "send error", e);
+                }
+            }
+        }).start();
+    }
 
     /**
      * Check for a received message, waiting if the queue is empty.
@@ -142,5 +168,18 @@ public class ServerOnApp extends Thread {
         return port;
     }
 
+    public InetSocketAddress getAddr() {
+        return addr;
+    }
 
+    public void setAddr(InetSocketAddress address) {
+        addr = address;
+    }
+
+    public abstract class MyRunnable implements Runnable {
+        protected String data;
+        public MyRunnable(String data) {
+            this.data = data;
+        }
+    }
 }
