@@ -47,20 +47,30 @@ public class Manager extends Thread implements Observer {
 		Log.out("Server and heartbeat started, waiting to recv messages.");
 
 		while (!Thread.interrupted()) {
-			// Check for new incoming messages.
-			Message msg = server.recvWait();
-			if (msg != null) {
-				char who = msg.getMessage().charAt(0);
-				switch (who) {
-				case Codes.W_DEVICE:
-					device(msg);
-					break;
-				case Codes.W_APP:
-					app(msg);
-					break;
-				default:
-					Log.warn("unknown W code -> " + msg.toString() + " coming from " + msg.toString());
-				}
+			// Wait for incoming messages and deal with them.
+			gotMessage(server.recvWait());
+		}
+	}
+	
+	public void gotMessage(Message msg) {
+		if (msg != null) {
+			try {
+				Parse.toInt(msg.getMessage().substring(0, 2));
+			} catch (Exception e) {
+				Log.warn("Received invalid OPCode in message: " + msg.toString());
+				return;
+			}
+			
+			char who = msg.getMessage().charAt(0);
+			switch (who) {
+			case Codes.W_DEVICE:
+				device(msg);
+				break;
+			case Codes.W_APP:
+				app(msg);
+				break;
+			default:
+				Log.warn("unknown W code -> " + msg.toString());
 			}
 		}
 	}
@@ -144,7 +154,7 @@ public class Manager extends Thread implements Observer {
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
-				Log.warn("unknown device T code -> " + msg.toString() + " from device #" + d.getID() +  " with  " + msg.toString());
+				Log.warn("unknown device T code -> " + msg.getMessage().toString() + " from device #" + d.getID() +  " with  " + msg.toString());
 		}
 	}
 
@@ -172,8 +182,15 @@ public class Manager extends Thread implements Observer {
 				try {
 					id = Parse.toInt(data[1]);
 					String info = "";
+					
+					Device d = web.getByID(id);
+					if (d == null) {
+						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
+						return;
+					}
+					
 					try {
-						info = web.getByID(id).getInfo();
+						info = d.getInfo();
 					} catch (Exception e) {
 						Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
 					}
@@ -196,20 +213,29 @@ public class Manager extends Thread implements Observer {
 				try {
 					id = Parse.toInt(data[1]);
 					Data in = new Data(data[2], data[3]);
+					
+					Device d = web.getByID(id);
+					if (d == null) {
+						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
+						return;
+					}
+
 					boolean worked = false;
 					try {
-						worked = web.getByID(id).giveInput(in);
+						worked = d.giveInput(in);
 					} catch (Exception e) {
 						Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
 					}
 					// Send back acknowledge.
 					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, worked), msg.getSocketAddress()));
+				}  catch (NumberFormatException e) {
+					Log.warn("App giving malformed device ID, from " + msg.getMessage());
 				} catch (ArrayIndexOutOfBoundsException e) {
 					Log.warn("App message missing device ID, from " + msg.getMessage());
 				}
 				break;
 			default:
-				Log.warn("unknown app T code -> " + msg.toString() + " from " + msg.toString());
+				Log.warn("unknown app T code -> " + msg.toString());
 		}
 	}
 	
