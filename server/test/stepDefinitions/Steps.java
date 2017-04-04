@@ -77,7 +77,7 @@ public class Steps {
 		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DATA, d.id, "set", on), appAddr));
 
 		String msg = server.getMessage(appAddr);
-		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
+		assertEquals(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, true), msg);
 	}
 
 	@When("^I turn '(on|off)' the switch '([^']+)'$")
@@ -97,7 +97,7 @@ public class Steps {
 		server.giveMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DATA, d.id, "light", id), appAddr));
 
 		String msg = server.getMessage(appAddr);
-		assertEquals(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg);
+		assertEquals(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, true), msg);
 	}
 
 	@Then("^the light '([^']+)' should be turned '(on|off)'$")

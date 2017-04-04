@@ -9,7 +9,7 @@ import java.util.HashMap;
 import types.Message;
 
 public class ServerStub extends Server {
-	private static final int TIMEOUT = 5;
+	private static final int TIMEOUT = 10;
 
 	private Queue<Message> recvQueue;
 	private HashMap<InetSocketAddress, Queue<String>> sendQueue;
