@@ -11,9 +11,10 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class Log {
-
-	private static final boolean DEBUG = true;
 	private static final String FILENAME = "server";
+
+	private static boolean ONLY_ERR = false;
+	private static boolean DEBUG = true;
     private static Logger logger;
 	
     /**
@@ -21,7 +22,6 @@ public class Log {
      * @param file
      */
 	public static void init(String file) {
-		
 		if (file.length() == 0) {
 			file = FILENAME;
 		}
@@ -56,6 +56,10 @@ public class Log {
 	    }
 	}
 	
+	public static void onlyError(boolean on) {
+		ONLY_ERR = on;
+	}
+	
 	private static void checkStarted() {
 		if (logger == null) {
 			init("");
@@ -67,11 +71,13 @@ public class Log {
 	 * @param message
 	 */
 	public static void out(String message) {
-		checkStarted();
-		if (DEBUG) {
-			System.out.println("INFO: " + message);
+		if (!ONLY_ERR) {
+			checkStarted();
+			if (DEBUG) {
+				System.out.println("INFO: " + message);
+			}
+			logger.info(message);
 		}
-		logger.info(message);
 	}
 
 	
@@ -80,11 +86,13 @@ public class Log {
 	 * @param message
 	 */
 	public static void warn(String message) {
-		checkStarted();
-		if (DEBUG) {
-			System.out.println("WARN: " + message);
+		if (!ONLY_ERR) {
+			checkStarted();
+			if (DEBUG) {
+				System.out.println("WARN: " + message);
+			}
+			logger.warning(message);
 		}
-		logger.warning(message);
 	}
 	
 	/**
@@ -103,7 +111,7 @@ public class Log {
 	 * Log an error message and stack trace.
 	 * @param message
 	 */
-	public static void err(String message, Throwable e) {		
+	public static void err(String message, Throwable e) {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		String err = sw.toString();
