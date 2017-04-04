@@ -136,7 +136,11 @@ public class Manager extends Thread implements Observer {
 				break;
 			case Codes.T_DATA:
 				// Send data to device driver.
-				d.giveMessage(msg.getMessage().substring(data[0].length() + data[1].length() + 2));
+				try {
+					d.giveMessage(msg.getMessage().substring(data[0].length() + data[1].length() + 2));
+				} catch (Exception e) {
+					Log.err("Exception in 'giveMessage' for device driver " + d.getClass(), e);
+				}
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
@@ -151,6 +155,8 @@ public class Manager extends Thread implements Observer {
 	private void app(Message msg) {
 		String[] data = msg.getMessage().split("/");
 		char code = data[0].charAt(1);
+
+		Log.out("Message from app: " + msg.getMessage());
 
 		int id;
 		switch (code) {
@@ -167,9 +173,11 @@ public class Manager extends Thread implements Observer {
 					id = Parse.toInt(data[1]);
 					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
-					Log.out("App giving malformed device ID, from " + msg.getMessage());
+					Log.warn("App giving malformed device ID, from " + msg.getMessage());
 				} catch (NullPointerException e) {
-					Log.out("App giving device ID which does not exist, from " + msg.getMessage());
+					Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
+				} catch (ArrayIndexOutOfBoundsException e) {
+					Log.warn("App message missing device ID, from " + msg.getMessage());
 				}
 				break;
 			case Codes.T_DATA:
@@ -178,11 +186,19 @@ public class Manager extends Thread implements Observer {
 				 * 1 - what is changing
 				 * 2 - new value
 				 */
-				id = Parse.toInt(data[1]);
-				Data in = new Data(data[2], data[3]);
-				web.getByID(id).giveInput(in);
-				// Send back acknowledge.
-				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
+				try {
+					id = Parse.toInt(data[1]);
+					Data in = new Data(data[2], data[3]);
+					try {
+						web.getByID(id).giveInput(in);
+					} catch (Exception e) {
+						Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
+					}
+					// Send back acknowledge.
+					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					Log.warn("App message missing device ID, from " + msg.getMessage());
+				}
 				break;
 			default:
 				Log.warn("unknown app T code -> " + msg.toString() + " from " + msg.toString());

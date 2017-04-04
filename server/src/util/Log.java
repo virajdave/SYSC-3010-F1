@@ -1,6 +1,8 @@
 package util;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.FileHandler;
@@ -95,6 +97,18 @@ public class Log {
 			System.err.println("ERROR: " + message);
 		}
 		logger.severe(message);
+	}
+	
+	/**
+	 * Log an error message and stack trace.
+	 * @param message
+	 */
+	public static void err(String message, Throwable e) {		
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		String err = sw.toString();
+		
+		err(message + " -> " + err);
 	}
 	
 }
