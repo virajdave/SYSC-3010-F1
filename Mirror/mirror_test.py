@@ -14,6 +14,16 @@ from queue import *
 from dataPassingObject import *
 
 
+def test_guiUpdateTime():
+	testQueue = Queue()
+	setId('10')
+	run()
+	_thread.start_new_thread(tellGUIToUpdateTime, (testQueue,))
+	time.sleep(0.01)
+	stop()
+	returned = testQueue.get_nowait()
+	assert returned.messageType == 'time', "time update did not have type time"
+
 def test_updateWeather():
 	testQueue = Queue()
 	setId('10')
@@ -36,7 +46,17 @@ def test_updateBusInfo():
 	assert returned.messageType == 'data', "Bus update did not have type data"
 	assert returned.info == '10/bus', "Bus update did not have info 10/bus"
 	
-
+	
+def test_timeSync():
+	testQueue = Queue()
+	setId('10')
+	run()
+	_thread.start_new_thread(timeSync, (testQueue,))
+	time.sleep(1)
+	stop()
+	returned = testQueue.get_nowait()
+	assert returned.messageType == 'data', "Sync  did not have type data"
+	assert returned.info == '10/time', "Sync  did not have info 10/time"
 
     
 
