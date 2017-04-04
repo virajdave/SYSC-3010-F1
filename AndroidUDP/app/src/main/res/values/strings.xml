@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">udp</string>
+    <string name="edit_message">message</string>
+    <string name="edit_port">inet/port</string>
+    <string name="button_send">Send</string>
+    <string name="button_set">Set</string>
+</resources>
