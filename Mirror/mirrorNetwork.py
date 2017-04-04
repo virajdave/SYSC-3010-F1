@@ -8,12 +8,11 @@
 #notes           	:Should only be invoked from the mirrorController script
 #python_version:3 
 #==============================================================================
-
-
 import socket, sys, time
 from dataPassingObject import *
 import _thread
 
+networkStop = 0
 
 def networkInit(server, port, recvQueue, sendQueue):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -23,8 +22,11 @@ def networkInit(server, port, recvQueue, sendQueue):
     
 
 def mirrorNetRecv(port, s, queue):
+        global networkStop
         portInt = int(port)
         while True:
+                if networkStop:
+                    return
                 buf, address = s.recvfrom(portInt)
                 stringdata = buf.decode('utf-8')
                 print(stringdata)
@@ -36,22 +38,22 @@ def mirrorNetRecv(port, s, queue):
                         queue.put_nowait(message('data', stringdata[3:]))
                 else:
                         recvError = open('logs/RecvError.log', 'a')
-                        recvError.write(stringdata)
+                        recvError.write('Error Message: ' + stringdata + '\n')
                         recvError.close()
-        s.shutdown(1)
     
 
 def mirrorNetSend(serverIp, servPort, s, queue):
-        #serverIp = '10.0.0.1'
-        #servPort = 3010
+        global networkStop
         server_address = (serverIp, int(servPort))
-        heartBeat(serverIp,servPort,s,'-1')
+        #heartBeat(serverIp,servPort,s,'-1')
         while True:
+                if networkStop:
+                    return
                 if not queue.empty():
                         while not queue.empty():
                                 messageToSend = queue.get()
                                 if(messageToSend.messageType == 'beat'):
-                                        print(messageToSend.info)
+                                        print('Sending: ' + messageToSend.info)
                                         heartBeat(serverIp,servPort,s,messageToSend.info)
                                 elif(messageToSend.messageType == 'data'):
                                         data = '22/' + messageToSend.info
@@ -63,22 +65,24 @@ def mirrorNetSend(serverIp, servPort, s, queue):
                                         sendError = open('logs/sendError.log', 'a')
                                         sendError.write(messageToSend.messageType + ':' + messageToSend.info + '\n')
                                         sendError.close()
-        s.shutdown(1)
 
 
 def heartBeat(host,port,s,id):
-        #host = '10.0.0.1'
-        #port = 3010
         server_address = (host,int(port))
         data = '20/' + id + '/2'
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
 def sendAck(host, port, s,id):
-        #host = '10.0.0.1'
-        #port = 3010
         data = '21/' + id + '/2'
         server_address = (host,int(port))
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
+def networkRun():
+    global networkStop
+    networkStop = 0
+    
+def networkStop():
+    global networkStop
+    networkStop = 1
