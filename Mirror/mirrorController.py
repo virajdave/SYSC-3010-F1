@@ -21,9 +21,14 @@ import _thread, time
 #device id
 id = '-1'
 
+stopFlag = 0
+
 # Continuly runs to make sure the gui updates time and date independent of everything else
 def tellGUIToUpdateTime(queue):
+    global stopFlag
     while True :
+        if stopFlag == 1:
+            return
         hour = str(int(strftime("%I")))
         minute = strftime("%M")
         curTime = hour + ':' + minute
@@ -36,19 +41,26 @@ def tellGUIToUpdateTime(queue):
 # Every 15 mins fetches new weather data and gives the info to the gui to display
 def tellGUIToUpdateWeather(queue):
         global id
+        global stopFlag
         sleep = 1
         print(id)
         while True :
-                if (id != '-1'):
-                        sleep = 900
-                        queue.put_nowait(message('data', id + '/weather'))
-                time.sleep(sleep)
+            print(stopFlag)
+            if stopFlag == 1:
+                return
+            if (id != '-1'):
+                sleep = 900
+                queue.put_nowait(message('data', id + '/weather'))
+            time.sleep(sleep)
 
 # Every 30 seconds it sends out to get updated bus info 
 def tellGUIToUpdateBusInfo(queue):
         global id
+        global stopFlag
         sleep = 1
         while True:
+                if stopFlag == 1:
+                        return
                 if (id != '-1'):
                         sleep = 30
                         queue.put_nowait(message('data', id + '/bus'))
@@ -57,8 +69,11 @@ def tellGUIToUpdateBusInfo(queue):
 
 def timeSync(queue):
         global id
+        global stopFlag
         sleep = 1
         while True:
+            if stopFlag == 1:
+                return
             if (id != '-1'):
                 sleep = 600
                 queue.put_nowait(message('data', id + '/time'))
@@ -66,8 +81,10 @@ def timeSync(queue):
             
 # Watches the recv queue for messages then ditributes them   
 def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
-        global id
+        global stopFlag
         while True:
+                if stopFlag == 1:
+                    return
                 if not recvedQueue.empty():
                         while not recvedQueue.empty():
                                 messageRecv = recvedQueue.get()
@@ -86,7 +103,7 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                                 linux_set_time(messageRecv.info[1:])
                                 elif(messageRecv.messageType == 'id'):
                                         if (id == '-1'):
-                                                id = messageRecv.info
+                                                setId(messageRecv.info)
                                 elif(messageRecv.messageType == 'beat'):
                                         sendingQueue.put_nowait(message('beat', id))
                 if (id == '-1'):
@@ -99,6 +116,7 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
 #Starts up the network, controller and gui threads
 def runController(server, port):
     global gui
+    global stopFlag
     top = Tk()     #used as the root for the tk window
 	
 	# Queue setup
@@ -114,14 +132,23 @@ def runController(server, port):
     _thread.start_new_thread(tellGUIToUpdateBusInfo, (sendQueue,))
     _thread.start_new_thread(timeSync, (sendQueue,))
     
-    #_thread.start_new_thread(mirrorNetRecv, (recvQueue,8080,))
+    # Start up networking side
     _thread.start_new_thread(watchRecvMessages, (recvQueue,sendQueue,guiRecvQueue,))
     _thread.start_new_thread(networkInit, (server,port,recvQueue,sendQueue,))
-    #time.sleep(1)
-    #_thread.start_new_thread(sendFakeData, ())
+    
     
     
     #Display the gui window
     gui.showGUI()
 
+def setId(num):
+    global id
+    id = num
 
+def run():
+    global stopFlag
+    stopFlag = 0
+    
+def stop():
+    global stopFlag
+    stopFlag = 1

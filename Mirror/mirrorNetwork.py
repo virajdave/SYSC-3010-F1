@@ -15,7 +15,7 @@ from dataPassingObject import *
 import _thread
 
 
-def networkInit(server, port,recvQueue, sendQueue):
+def networkInit(server, port, recvQueue, sendQueue):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         localAddress = ('', 0)
         _thread.start_new_thread(mirrorNetRecv, (port, s,recvQueue,))
@@ -23,8 +23,9 @@ def networkInit(server, port,recvQueue, sendQueue):
     
 
 def mirrorNetRecv(port, s, queue):
+        portInt = int(port)
         while True:
-                buf, address = s.recvfrom(port)
+                buf, address = s.recvfrom(portInt)
                 stringdata = buf.decode('utf-8')
                 print(stringdata)
                 if(stringdata[:2] == '01'):
