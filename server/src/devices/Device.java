@@ -22,7 +22,7 @@ public abstract class Device extends Observable {
 	 * Give a data input from another device.
 	 * @param in
 	 */
-	public abstract void giveInput(Data in);
+	public abstract boolean giveInput(Data in);
 	
 	
 	/**

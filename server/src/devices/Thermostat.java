@@ -14,9 +14,10 @@ public class Thermostat extends Device {
     }
 
     @Override //input to device
-    public void giveInput(Data in) {
+    public boolean giveInput(Data in) {
     	int temp =  Parse.toInt(in.get());
     	send(in.get());
+    	return true;
     }
 
     @Override // for other drivers requests

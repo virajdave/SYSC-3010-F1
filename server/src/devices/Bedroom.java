@@ -11,11 +11,14 @@ public class Bedroom extends Device {
 	}
 
 	@Override
-	public void giveInput(Data in) {
+	public boolean giveInput(Data in) {
 		send(in.getName() + "/" + in.get());
 		if (in.getName().equals("l")){
 			lights = Parse.toBool(in.get());
+		} else {
+			return false;
 		}
+		return true;
 	}
 
 	@Override

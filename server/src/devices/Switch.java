@@ -33,7 +33,7 @@ public class Switch extends Device {
 	}
 
 	@Override
-	public void giveInput(Data in) {
+	public boolean giveInput(Data in) {
 		// From app.
 		if (in.is("set")) {
 			set(Parse.toBool(in.get()));
@@ -43,8 +43,10 @@ public class Switch extends Device {
 				light = d;
 				updateFromLight();
 			}
+		} else {
+			return false;
 		}
-
+		return true;
 	}
 
 	@Override

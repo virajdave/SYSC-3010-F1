@@ -171,7 +171,14 @@ public class Manager extends Thread implements Observer {
 				// Give back requested device info by ID.
 				try {
 					id = Parse.toInt(data[1]);
-					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DEVINF, web.getByID(id).getInfo()), msg.getSocketAddress()));
+					String info = "";
+					try {
+						info = web.getByID(id).getInfo();
+					} catch (Exception e) {
+						Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
+					}
+					// Yes an empty string will be sent back, this is represented as the error code back to the app.
+					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DEVINF, info), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
 					Log.warn("App giving malformed device ID, from " + msg.getMessage());
 				} catch (NullPointerException e) {
@@ -189,13 +196,14 @@ public class Manager extends Thread implements Observer {
 				try {
 					id = Parse.toInt(data[1]);
 					Data in = new Data(data[2], data[3]);
+					boolean worked = false;
 					try {
-						web.getByID(id).giveInput(in);
+						worked = web.getByID(id).giveInput(in);
 					} catch (Exception e) {
 						Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
 					}
 					// Send back acknowledge.
-					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
+					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, worked), msg.getSocketAddress()));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					Log.warn("App message missing device ID, from " + msg.getMessage());
 				}

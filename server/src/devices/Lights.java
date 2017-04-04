@@ -28,11 +28,13 @@ public class Lights extends Device {
 	}
 
 	@Override
-	public void giveInput(Data in) {
+	public boolean giveInput(Data in) {
 		if (in.is("set")) {
 			set(Parse.toBool(in.get()));
+		} else {
+			return false;
 		}
-
+		return true;
 	}
 
 	@Override

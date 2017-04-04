@@ -200,7 +200,7 @@ public class Mirror extends Device {
     }
 
     @Override
-    public void giveInput(Data in) {
+    public boolean giveInput(Data in) {
     	if (in.is("colour")) {
     		// Set the new colour and then send it out.
     		this.setColour(in.get());
@@ -209,7 +209,10 @@ public class Mirror extends Device {
     		this.changeRoute(in.get());
     	} else if (in.is("loc")) {
     		this.setLoc(in.get());
+    	} else {
+    		return false;
     	}
+    	return true;
     }
 
     @Override

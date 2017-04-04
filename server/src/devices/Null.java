@@ -11,8 +11,9 @@ public class Null extends Device {
 	}
 
 	@Override
-	public void giveInput(Data in) {
+	public boolean giveInput(Data in) {
 		Log.out("Null device #" + getID() + " with type " + getType() + " was given input '" + in.getName() + "/" + in.get() + "'");
+		return false;
 	}
 
 	@Override
