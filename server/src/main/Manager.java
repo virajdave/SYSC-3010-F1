@@ -184,17 +184,16 @@ public class Manager extends Thread implements Observer {
 					String info = "";
 					
 					Device d = web.getByID(id);
-					if (d == null) {
+					if (d != null) {
+						try {
+							info = d.getInfo();
+						} catch (Exception e) {
+							Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
+						}
+					} else {
 						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
-						return;
 					}
-					
-					try {
-						info = d.getInfo();
-					} catch (Exception e) {
-						Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
-					}
-					// Yes an empty string will be sent back, this is represented as the error code back to the app.
+					// Yes an empty string could be sent back, this is represented as the error code back to the app.
 					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DEVINF, info), msg.getSocketAddress()));
 				} catch (NumberFormatException e) {
 					Log.warn("App giving malformed device ID, from " + msg.getMessage());
@@ -215,16 +214,15 @@ public class Manager extends Thread implements Observer {
 					Data in = new Data(data[2], data[3]);
 					
 					Device d = web.getByID(id);
-					if (d == null) {
-						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
-						return;
-					}
-
 					boolean worked = false;
-					try {
-						worked = d.giveInput(in);
-					} catch (Exception e) {
-						Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
+					if (d != null) {
+						try {
+							worked = d.giveInput(in);
+						} catch (Exception e) {
+							Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
+						}
+					} else {
+						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
 					}
 					// Send back acknowledge.
 					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, worked), msg.getSocketAddress()));
