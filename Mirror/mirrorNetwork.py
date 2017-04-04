@@ -37,7 +37,7 @@ def mirrorNetRecv(port, s, queue):
                 elif(stringdata[:2] == '02'):
                         queue.put_nowait(message('data', stringdata[3:]))
                 else:
-                        recvError = open('logs/RecvError.log', 'a')
+                        recvError = open('./logs/RecvError.log', 'a')
                         recvError.write('Error Message: ' + stringdata + '\n')
                         recvError.close()
     

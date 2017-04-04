@@ -78,26 +78,26 @@ def test_recv_data():
     
     # This test is removed since the automated git software testing cant read the seperate file to check for the error
     
-# def test_recv_error():
-    # testQueue = Queue()
-    # data = 'blablabla'
-    # networkRun()
-    # recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # recvSock.bind(('127.0.0.1', 0))
-    # recvPort = recvSock.getsockname()[1]
-    # self_address = ('127.0.0.1', recvPort)
-    # sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
-    # time.sleep(1)
-    # sendSock.sendto(data.encode('utf-8'), self_address)
-    # time.sleep(1)
-    # networkStop()
-    # time.sleep(2)
-    # recvSock.close()
-    # sendSock.close()
-    # data = 'Error Message: ' + data + '\n'
-    # log = open('logs/RecvError.log', 'r')
-    # errorMessage = log.readlines()[-1]
-    # assert (errorMessage == data), 'Recv network did not log the error correctly'
+def test_recv_error():
+    testQueue = Queue()
+    data = 'blablabla'
+    networkRun()
+    recvSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    recvSock.bind(('127.0.0.1', 0))
+    recvPort = recvSock.getsockname()[1]
+    self_address = ('127.0.0.1', recvPort)
+    sendSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    _thread.start_new_thread(mirrorNetRecv, (recvPort, recvSock,testQueue,))
+    time.sleep(1)
+    sendSock.sendto(data.encode('utf-8'), self_address)
+    time.sleep(1)
+    networkStop()
+    time.sleep(2)
+    recvSock.close()
+    sendSock.close()
+    data = 'Error Message: ' + data + '\n'
+    log = open('./logs/RecvError.log', 'r')
+    errorMessage = log.readlines()[-1]
+    assert (errorMessage == data), 'Recv network did not log the error correctly'
     
 
