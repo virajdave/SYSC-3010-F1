@@ -280,6 +280,8 @@ public class Mirror extends Device {
 			}
         } else if (msg.equals("thermo")) {
         	dataOut = thermoTemp();
+        } else {
+        	dataOut = "N";
         }
         send(dataOut);
     }
