@@ -11,13 +11,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.location.Criteria;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
+import android.provider.Settings;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +30,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
+
 
 
 
@@ -148,9 +152,6 @@ public class ThirdMainActivity extends AppCompatActivity {
                 View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
                 locationDialog.setView(location_layout);
                 locationDialog.show();
-
-
-
                 Button enableLocation = (Button) locationDialog.findViewById(R.id.turnOnGPS);
                 Button sendLocation = (Button) locationDialog.findViewById(R.id.sendGPS);
 
@@ -160,23 +161,56 @@ public class ThirdMainActivity extends AppCompatActivity {
                 enableLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        grabLocation gettingGPS = new grabLocation(prev);
+                        longitude = gettingGPS.getTheLongitude();
+                        latitude = gettingGPS.getTheLatitude();
+                        /*
+                        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        Criteria accurateCriteria = new Criteria();
+                        accurateCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+                        String provider = locationManager.getBestProvider(accurateCriteria, false);
+
+                        LocationListener theListener = new LocationListener() {
+                            @Override
+                            public void onLocationChanged(Location location) {
+                                getLocation(location, theLatCoord, theLongCoord);
+                            }
+
+                            @Override
+                            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                            }
+
+                            @Override
+                            public void onProviderEnabled(String provider) {
+
+                            }
+
+                            @Override
+                            public void onProviderDisabled(String provider) {
+
+                            }
+                        };
+
+                        locationManager.requestLocationUpdates(provider,0,0,theListener);
+                        getLocation(locationManager.getLastKnownLocation(provider), theLatCoord, theLongCoord);
+                        */
+
+                        /* Code that isn't working yet
+
                         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                         final LocationListener listenerForLocation = new ListenerForLocation();
-
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
-
                         theLatCoord = (TextView) findViewById(R.id.latCoord);
                         theLongCoord = (TextView) findViewById(R.id.longCoord);
                         Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         longitude = theCoord.getLatitude();
                         latitude = theCoord.getLatitude();
-
-                    theLatCoord.setText(Double.toString(latitude));
-                    theLongCoord.setText(Double.toString(longitude));
+                        theLatCoord.setText(Double.toString(latitude));
+                        theLongCoord.setText(Double.toString(longitude));
+                        */
                     }
                 });
-
-
 
                 sendLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -192,6 +226,18 @@ public class ThirdMainActivity extends AppCompatActivity {
         });
     }
 
+    private void getLocation(Location location, TextView text1, TextView text2){
+
+        if(location == null){
+            return;
+        }
+        else {
+            text1.setText(Double.toString(location.getLatitude()));
+            text2.setText(Double.toString(location.getLongitude()));
+        }
+
+    }
+
     /*protected void retrieveLocation() {
         Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         longitude = theCoord.getLatitude();
@@ -202,6 +248,7 @@ public class ThirdMainActivity extends AppCompatActivity {
 
     }
     */
+
 
 
     class ListenerForLocation implements LocationListener {
@@ -235,6 +282,7 @@ public class ThirdMainActivity extends AppCompatActivity {
 
         }
     }
+
 
 }
 

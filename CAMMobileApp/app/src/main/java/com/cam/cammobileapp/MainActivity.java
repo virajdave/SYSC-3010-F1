@@ -13,7 +13,6 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     public static ServerOnApp server = new ServerOnApp();
-    private boolean useBroadcast = true;
 
 
     @Override
@@ -30,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
         Intent intent = new Intent(MainActivity.this, SecondMainActivity.class);
         startActivity(intent);
+            /*
+            Fill in code to show available thermostats
+             */
 
 
             }
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
                 startActivity(intent2);
+                /*
+                Fill in code to show available Magic Mirrors
+                 */
+
 
             }
         });
@@ -52,6 +58,18 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent3 = new Intent(MainActivity.this, FourthMainActivity.class);
                 startActivity(intent3);
 
+                /*
+                Fill in code to show available alarms
+                 */
+
+            }
+        });
+
+        ImageButton refreshButton = (ImageButton) findViewById(R.id.btn_refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage();
             }
         });
 
@@ -59,14 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage(){
         String message = "10";
-        if(useBroadcast){
             server.sendBroadcast(message);
-        }
-
-        else {
-            server.sendBroadcast(message);
-        }
-
-
     }
 }

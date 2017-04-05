@@ -138,12 +138,12 @@ public class ServerOnApp extends Thread {
      *
      * @return Message
      */
-    public String recvWait() {
+    public String recvWait(int timeout) {
         // Wait if the queue is empty.
         synchronized (recvQueue) {
             if (recvQueue.isEmpty()) {
                 try {
-                    recvQueue.wait();
+                    recvQueue.wait(timeout);
                     return recvQueue.poll();
                 } catch (InterruptedException e) {
                 }

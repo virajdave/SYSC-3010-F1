@@ -51,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Magic Mirror" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -83,7 +84,28 @@
         android:layout_height="200dp"
         android:paddingTop="60dp"
         android:src="@drawable/cam"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/main_l3" />
+        android:layout_marginTop="47dp"
+        android:layout_alignTop="@+id/btn_refresh"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:id="@+id/btn_refresh"
+        android:src="@drawable/refresh"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="29dp"
+        android:layout_below="@+id/main_l2"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh Devices"
+        android:layout_below="@+id/btn_refresh"
+        android:layout_toEndOf="@+id/imageView" />
 
 </RelativeLayout>
