@@ -43,9 +43,7 @@ def tellGUIToUpdateWeather(queue):
         global id
         global stopFlag
         sleep = 1
-        print(id)
         while True :
-            print(stopFlag)
             if stopFlag == 1:
                 return
             if (id != '-1'):
@@ -133,6 +131,7 @@ def runController(server, port):
     _thread.start_new_thread(timeSync, (sendQueue,))
     
     # Start up networking side
+    networkRun()
     _thread.start_new_thread(watchRecvMessages, (recvQueue,sendQueue,guiRecvQueue,))
     _thread.start_new_thread(networkInit, (server,port,recvQueue,sendQueue,))
     
