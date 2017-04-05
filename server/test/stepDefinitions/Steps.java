@@ -30,7 +30,7 @@ public class Steps {
 		manager.start();
 
 		// Sleep to allow threads to start up and get going.
-		Thread.sleep(5);
+		Thread.sleep(10);
 	}
 
 	@Given("^the manager sends a heartbeat$")
@@ -60,7 +60,6 @@ public class Steps {
 		} else {
 			fail("Unknown device type to connect.");
 		}
-		wait(10);
 
 		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_BEAT, -1, type));
 

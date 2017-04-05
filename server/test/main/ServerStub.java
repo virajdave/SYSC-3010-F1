@@ -32,6 +32,7 @@ public class ServerStub extends Server {
 	/**
 	 * Start up the server.
 	 */
+	@Override
 	public void run() {
 		started = true;
 	}
@@ -50,6 +51,7 @@ public class ServerStub extends Server {
 	 * 
 	 * @param message
 	 */
+	@Override
 	public void sendMessage(Message message) {
 		if (message.getMessage().length() > PACKET_SIZE) {
 			throw new BufferOverflowException();
@@ -69,6 +71,7 @@ public class ServerStub extends Server {
 	 * 
 	 * @param message
 	 */
+	@Override
 	public void sendBroadcast(Message message) {
 		sendMessage(message);
 	}
@@ -78,14 +81,15 @@ public class ServerStub extends Server {
 	 * 
 	 * @return Message
 	 */
-	public Message recvWait() {
+	public Message recvWait(int timeout) {
 		// Wait if the queue is empty.
 		synchronized (recvQueue) {
 			if (recvQueue.isEmpty()) {
 				try {
-					recvQueue.wait();
+					recvQueue.wait(timeout);
 					return recvQueue.poll();
 				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 			return recvQueue.poll();
@@ -97,6 +101,7 @@ public class ServerStub extends Server {
 	 * 
 	 * @return Message or null if the queue is empty
 	 */
+	@Override
 	public Message recvMessage() {
 		// Grab the first message and return it.
 		synchronized (recvQueue) {
@@ -104,6 +109,7 @@ public class ServerStub extends Server {
 		}
 	}
 
+	@Override
 	public Integer getPort() {
 		return port;
 	}
