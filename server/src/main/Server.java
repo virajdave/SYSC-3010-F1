@@ -132,14 +132,15 @@ public class Server extends Thread {
 	 * 
 	 * @return Message
 	 */
-	public Message recvWait() {
+	public Message recvWait(int timeout) {
 		// Wait if the queue is empty.
 		synchronized (recvQueue) {
 			if (recvQueue.isEmpty()) {
 				try {
-					recvQueue.wait();
+					recvQueue.wait(timeout);
 					return recvQueue.poll();
 				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 			return recvQueue.poll();
@@ -181,7 +182,7 @@ public class Server extends Thread {
 			@Override
 			public void run() {
 				while (true) {
-					Message msg = s.recvWait();
+					Message msg = s.recvWait(0);
 					if (msg != null) {
 						System.out.println(msg.toString());
 					}

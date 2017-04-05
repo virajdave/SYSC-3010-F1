@@ -60,6 +60,7 @@ public class Steps {
 		} else {
 			fail("Unknown device type to connect.");
 		}
+		wait(10);
 
 		InetSocketAddress addr = server.giveMessageNewAddr(Parse.toString("/", Codes.W_DEVICE + "" + Codes.T_BEAT, -1, type));
 

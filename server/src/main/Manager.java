@@ -48,7 +48,7 @@ public class Manager extends Thread implements Observer {
 
 		while (!Thread.interrupted()) {
 			// Wait for incoming messages and deal with them.
-			gotMessage(server.recvWait());
+			gotMessage(server.recvWait(0));
 		}
 	}
 	

@@ -19,6 +19,7 @@ import types.Message;
 
 public class ServerTest {
 	private final static int ITERATIONS = 100;
+	private final static int TIMEOUT = 500;
 	
 	private Server server;
 	private InetSocketAddress serverAddr;
@@ -141,7 +142,7 @@ public class ServerTest {
 		}).start();
 		
 		long startTime = System.currentTimeMillis();
-		Message m = server.recvWait();
+		Message m = server.recvWait(TIMEOUT);
 		long endTime   = System.currentTimeMillis();
 		assertNotNull(m);
 		assertEquals("Testing message", m.getMessage());
@@ -190,7 +191,7 @@ public class ServerTest {
         }).start();
 
 		for (int x = 0; x < ITERATIONS; x++) {
-			Message m = server.recvWait();
+			Message m = server.recvWait(TIMEOUT);
 			assertNotNull(m);
 			assertEquals("Test" + x, m.getMessage());
 			assertEquals(socketAddr, m.getSocketAddress());
