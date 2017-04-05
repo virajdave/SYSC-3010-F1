@@ -190,6 +190,10 @@ public class Manager extends Thread implements Observer {
 						} catch (Exception e) {
 							Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
 						}
+						if (info == null) {
+							Log.err("Returned null from 'getInfo' for device driver " + web.getByID(id).getClass());
+							info = "";
+						}
 					} else {
 						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
 					}
