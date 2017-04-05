@@ -51,6 +51,19 @@ def tellGUIToUpdateWeather(queue):
                 queue.put_nowait(message('data', id + '/weather'))
             time.sleep(sleep)
 
+# Every 15 mins fetches new weather data and gives the info to the gui to display
+def tellGUIToUpdateThermo(queue):
+        global id
+        global stopFlag
+        sleep = 1
+        while True :
+            if stopFlag == 1:
+                return
+            if (id != '-1'):
+                sleep = 60
+                queue.put_nowait(message('data', id + '/thermo'))
+            time.sleep(sleep)			
+			
 # Every 30 seconds it sends out to get updated bus info 
 def tellGUIToUpdateBusInfo(queue):
         global id
@@ -139,6 +152,7 @@ def runController(server, port):
     _thread.start_new_thread(tellGUIToUpdateTime, (guiRecvQueue,))
     _thread.start_new_thread(tellGUIToUpdateWeather, (sendQueue,))
     _thread.start_new_thread(tellGUIToUpdateBusInfo, (sendQueue,))
+	_thread.start_new_thread(tellGUIToUpdateThermo, (sendQueue,))
     _thread.start_new_thread(timeSync, (sendQueue,))
     
     # Start up networking side

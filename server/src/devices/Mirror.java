@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import types.Data;
+import util.Parse;
 
 public class Mirror extends Device {
     private Thermostat thermo;
@@ -30,6 +31,7 @@ public class Mirror extends Device {
         currDirection = "0";
         lon = "-75.6981200";
         lat = "45.4111700";
+        thermo = null;
     }
 
 
@@ -230,12 +232,31 @@ public class Mirror extends Device {
     	return this.currentColour;
     }
     
+    /**
+     * Gets the termo temp and sends to mirror
+     * @return string to send to mirror
+     */
     public String thermoTemp() {
-        return "";
+    	String sendString = "h";
+    	try{
+    		if (thermo != null) {
+    			Data temp = thermo.requestOutput(new Data("temp", ""));
+    			if (temp != null) {
+    				sendString += temp.get();
+    			}
+    		}
+    		
+    	} catch (Exception e) {
+    		System.out.println("No thermo Device");
+    	}
+        return sendString;
     }
     
-    public void setThermoDevice() {
-
+    /**
+     * Sets the thermostat the mirror is concerned with
+     */
+    public void setThermoDevice(Thermostat t) {
+    	this.thermo = t;
     }
 
     @Override
@@ -257,6 +278,8 @@ public class Mirror extends Device {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        } else if (msg.equals("thermo")) {
+        	send(thermoTemp());
         }
         send(dataOut);
     }
@@ -271,6 +294,9 @@ public class Mirror extends Device {
     		this.changeRoute(in.get());
     	} else if (in.is("loc")) {
     		this.setLoc(in.get());
+    	} else if (in.is("thermo")) {
+    		Thermostat d = (Thermostat) getDevice(Parse.toInt(in.get()));
+    		this.setThermoDevice(d);
     	} else {
     		return false;
     	}

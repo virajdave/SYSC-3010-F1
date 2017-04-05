@@ -59,8 +59,11 @@ class mirrorGUI:
 	
 	# Changes the Gui variable to adjust min and max data
 	def thermoUpdate(self, temperature):
-		thermo = 'House Temperature: ' +  str (temperature) + ' °C '
+		if temperature != '':
+			thermo = 'House Temperature: ' +  str (temperature) + ' °C '
 		#minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
+		else:
+			thermo = ''
 		self.thermoVar.set(thermo)
 		
 	# Changes GUI Variable to update the time based on system time

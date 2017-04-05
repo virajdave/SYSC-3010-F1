@@ -22,10 +22,12 @@ public class Thermostat extends Device {
 
     @Override // for other drivers requests
     public Data requestOutput(Data in) {
-    	if (thermostatTemp != -500)
-        return new Data("temp", Parse.toString(this.thermostatTemp));
-    	//if no data available
-        return new Data("temp", "no temp ");
+    	if (in.is("temp")) {
+    		if (thermostatTemp != -500)
+    			return new Data("temp", Parse.toString(this.thermostatTemp));
+    	}
+		//if no data available
+    	return null;
     }
 
     @Override //for app requests
