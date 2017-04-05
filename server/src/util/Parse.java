@@ -15,12 +15,20 @@ public class Parse {
 		return Integer.parseInt(var);
 	}
 
+	public static float toFloat(String var) {
+		return Float.parseFloat(var);
+	}
+
 	public static String toString(boolean var) {
 		return var ? "1" : "0";
 	}
 
 	public static String toString(int var) {
 		return Integer.toString(var);
+	}
+
+	public static String toString(float var) {
+		return Float.toString(var);
 	}
 
 	public static String toString(char var) {

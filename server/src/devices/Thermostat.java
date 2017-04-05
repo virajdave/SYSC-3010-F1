@@ -7,10 +7,10 @@ import util.Parse;
  * Created by Mega Prime 2.0 on 3/16/2017.
  */
 public class Thermostat extends Device {
-	int thermostatTemp = -500;
+	float thermostatTemp = -500;
     @Override // input from device to driver 
     public void giveMessage(String msg) {
-    	thermostatTemp = Parse.toInt(msg);
+    	thermostatTemp = Parse.toFloat(msg);
     }
 
     @Override //input to device
