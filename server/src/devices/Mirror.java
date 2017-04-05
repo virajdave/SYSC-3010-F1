@@ -279,7 +279,7 @@ public class Mirror extends Device {
 				e.printStackTrace();
 			}
         } else if (msg.equals("thermo")) {
-        	send(thermoTemp());
+        	dataOut = thermoTemp();
         }
         send(dataOut);
     }
