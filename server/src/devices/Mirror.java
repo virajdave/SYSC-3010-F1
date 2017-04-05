@@ -42,6 +42,10 @@ public class Mirror extends Device {
         return "t"+ time;
     }
 
+    /**
+     * Changes the location of the weather data
+     * @param loc comma seperated lat and lon, eg 58,96
+     */
     public void setLoc(String loc) {
     	String[] temp;
         String delimeter = ",";
@@ -56,6 +60,10 @@ public class Mirror extends Device {
 		}
     }
     
+    /**
+     * Changes the bus info to collect from OCTranspo
+     * @param routeInfo comma seterated station,route,direction
+     */
     public void changeRoute(String routeInfo) {
     	String[] temp;
         String delimeter = ",";
@@ -73,30 +81,61 @@ public class Mirror extends Device {
 		}
     }
     
+    /**
+     * Changes the set station
+     * @param station Station number
+     */
     private void setStation (String station) {
     	this.currStop = station;
     }
     
+    /**
+     * Changes the route to look for at the station
+     * @param route route number
+     */
     private void setRoute (String route) {
     	this.currRoute = route;
     }
     
+    /**
+     * Changes the direction of a route to look at
+     * @param direction 0 for both, 1 for east and 2 for west
+     */
     private void setDirection (String direction) {
     	this.currDirection = direction;
     }
     
+    
+    /**
+     * Gives the current station
+     * @return station number as a string
+     */
     public String getStation () {
     	return this.currStop;
     }
     
+    /**
+     * Gives the current route
+     * @return current route as a string
+     */
     public String getRoute () {
     	return this.currRoute;
     }
     
+    /**
+     * Gives the direction interested in
+     * @return direction number as string
+     */
     public String getDirection () {
     	return this.currDirection;
     }
     
+    
+    /**
+     * Collects bus information from octranspo api
+     * @return string to be sent to mirror device
+     * @throws IOException no internet access
+     */
     public String getBus() throws IOException {
         String url = buildBusURL(currStop, currRoute);
         InputStream is = new URL(url).openStream();
@@ -108,6 +147,12 @@ public class Mirror extends Device {
         }
     }
     
+    /**
+     * Builds the url for the api
+     * @param stop stop number
+     * @param route route number
+     * @return url to access api
+     */
     private String buildBusURL(String stop, String route) {
     	String key = "appID=7f6091d8&apiKey=4be816c142bfb4100421b9cbdef4fb9a";
     	String strStop = "&stopNo=" + stop;
@@ -118,6 +163,11 @@ public class Mirror extends Device {
     }
     
     
+    /**
+     * Collects the weather from openWeather api
+     * @return the string to be sent to the mirror
+     * @throws IOException no internet access
+     */
     public String getWeather() throws IOException {
         String url = buildWeatherURL();
         InputStream is = new URL(url).openStream();
@@ -129,6 +179,10 @@ public class Mirror extends Device {
         }
     }
     
+    /**
+     * Builds the url to access the api
+     * @return url for openweather api
+     */
     private String buildWeatherURL() {
         String user_api = "b86f030e92681cb37afdbb0f336668ae";
         String unit = "metric";  // For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
@@ -153,6 +207,10 @@ public class Mirror extends Device {
         return sb.toString();
     }
 
+    /**
+     * Changes the currently set colour of the mirror
+     * @param colour string hex code eg #FFFFFF
+     */
     private void setColour(String colour) {
     	// Check the new colour matches the required pattern.
         String HEX_PATTERN = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
@@ -164,10 +222,14 @@ public class Mirror extends Device {
         }
     }
     
+    /**
+     * Returns the current colour of the mirror
+     * @return colour in format #colour
+     */
     private String getColour() {
     	return this.currentColour;
     }
-
+    
     public String thermoTemp() {
         return "";
     }
