@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.swing.AbstractListModel;
@@ -15,11 +16,8 @@ public class DeviceListModel extends AbstractListModel<String> {
 	
 	public void setElements(String[] list) {
 		// Get the current ids so that stray entries can be removed later.
-		ArrayList<Integer> removed = new ArrayList<>(devices.keySet());
-		int currentSize = devices.size();
-		int currentIndex = 0;
-		int firstChange = -1;
-		int numberAdded = 0;
+		TreeMap<Integer, DeviceInfo> oldList = devices;
+		devices = new TreeMap<>();
 		
 		for (String dev : list) {
 			if (dev.length() != 0) {
@@ -27,58 +25,43 @@ public class DeviceListModel extends AbstractListModel<String> {
 				int id = Parse.toInt(info[0]);
 				int type = Parse.toInt(info[1]);
 				boolean dead = Parse.toBool(info[2]);
-
-				DeviceInfo curinfo = devices.get(id);
-				DeviceInfo newInfo = new DeviceInfo(type, dead);
-				devices.put(id, newInfo);
-
-				if (curinfo == null) {
-					if (firstChange == -1 || currentIndex < firstChange) {
-						firstChange = currentIndex;
-					}
-					numberAdded++;
-				} else {
-					removed.remove((Integer)id);
-					if (!curinfo.equals(newInfo)) {
-						if (firstChange == -1 || currentIndex < firstChange) {
-							fireContentsChanged(this, currentIndex, currentIndex);
-						}
-					}
-				}
-				currentIndex++;
+				
+				devices.put(id, new DeviceInfo(type, dead));
 			}
-		}
-
-		// Remove any remaining entries that were not in the input list.
-		for (int i = 0; i < removed.size(); i++) {
-			devices.remove(removed.get(i));
-			numberAdded--;
 		}
 		
-		// Properly notify how many elements were changed/added/removed.
-		if (firstChange != -1) {
-			if (numberAdded > 0) {
-				System.out.println("Changed: [" + firstChange + ", " + (currentSize) + "] Added: [" + currentSize + ", " + (currentSize + numberAdded) + "]");
-				fireContentsChanged(this, firstChange, currentSize - 1);
-				fireIntervalAdded(this, currentSize, currentSize + numberAdded);
-			} else if (numberAdded < 0) {
-				System.out.println("Changed: [" + firstChange + ", " + (currentSize + numberAdded) + "] Removed: [" + (currentSize + numberAdded) + ", " + (currentSize) + "]");
-				fireContentsChanged(this, firstChange, currentSize + numberAdded);
-				fireIntervalRemoved(this, currentSize + numberAdded, currentSize);
-			} else {
-				System.out.println("Changed: [" + firstChange + ", " + (currentSize) + "]");
-				fireContentsChanged(this, firstChange, currentSize);
+		int index = 0;
+		boolean[] changed = new boolean[oldList.size()];
+		Iterator<Entry<Integer, DeviceInfo>> newSet = devices.entrySet().iterator();
+		for (Entry<Integer, DeviceInfo> oldDev : oldList.entrySet()) {
+			if (!newSet.hasNext()) {
+				break;
 			}
-		} else {
-			if (numberAdded > 0) {
-				System.out.println("Added: [" + currentSize + ", " + (currentSize + numberAdded) + "]");
-				fireIntervalAdded(this, currentSize, currentSize + numberAdded);
-			} else if (numberAdded < 0) {
-				System.out.println("Removed: [" + (currentSize + numberAdded) + ", " + (currentSize) + "]");
-				fireIntervalRemoved(this, currentSize + numberAdded, currentSize);
-			} else {
-				System.out.println("No change");
+			Entry<Integer, DeviceInfo> newDev = newSet.next();
+			
+			changed[index++] = !oldDev.equals(newDev);
+		}
+		
+		int i = 0;
+		while (i < index) {
+			if (changed[i]) {
+				System.out.println("a");
+				int start = i;
+				while (++i < index && changed[i]);
+				System.out.println("b");
+				int end = i - 1;
+				System.out.println("Changed: " + start + ", " + end);
+				fireContentsChanged(this, start, end);
 			}
+			i++;
+		}
+		
+		if (devices.size() < oldList.size()) {
+			System.out.println("Removed: " + devices.size() + ", " + (oldList.size() - 1));
+			fireIntervalRemoved(this, devices.size(), oldList.size() - 1);
+		} else if (devices.size() > oldList.size()) {
+			System.out.println("Added: " + oldList.size() + ", " + (devices.size() - 1));
+			fireIntervalAdded(this, oldList.size(), devices.size() - 1);
 		}
 	}
 
@@ -89,6 +72,9 @@ public class DeviceListModel extends AbstractListModel<String> {
 		
 		if (info != null) {
 			String str = "#" + id;
+			if (info.type >= TYPENAMES.length) {
+				info.type = TYPENAMES.length - 1;
+			}
 			str += " " + TYPENAMES[info.type];
 			if (info.disconnected)
 				str += " (Disconnected)";
@@ -135,7 +121,8 @@ public class DeviceListModel extends AbstractListModel<String> {
         "Switch",
         "Mirror",
         "Thermostat",
-        "Bed"
+        "Bed",
+        "Null"
     };
 
 }
