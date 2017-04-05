@@ -1,18 +1,11 @@
 import java.net.InetSocketAddress;
 import java.util.Observable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultListModel;
 
 import main.Server;
 import types.Message;
 import util.Codes;
-import util.Log;
 import util.Parse;
 
 public class Model extends Observable {
@@ -61,7 +54,7 @@ public class Model extends Observable {
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {
-				getDeviceInfo(index);
+				getDeviceInfo(devices.getIDAt(index));
 			}
 		});
 	}
