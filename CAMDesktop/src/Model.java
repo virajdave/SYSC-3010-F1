@@ -3,10 +3,10 @@ import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 
 import main.Server;
@@ -16,15 +16,15 @@ import util.Log;
 import util.Parse;
 
 public class Model extends Observable {
-	private static final int SERVER_TIMEOUT = 1000;
+	private static final int TIMEOUT = 1000;
 	private static final int NET_RATE = 5000;
-	private static final InetSocketAddress serverAddr = new InetSocketAddress("134.117.58.104", 3010);
+	private static final InetSocketAddress serverAddr = new InetSocketAddress("localhost", 3010);
 
 	private Server s;
-	private DefaultListModel<String> devices;
+	private DeviceListModel devices;
 	private ExecutorService executor;
 
-	public Model(DefaultListModel<String> devices) {
+	public Model(DeviceListModel devices) {
 		this.s = new Server();
 		s.start();
 		this.devices = devices;
@@ -35,23 +35,17 @@ public class Model extends Observable {
 		this.setChanged();
 		this.notifyObservers("Loading...");
 		
-		Model m = this;
-		new Thread(new Runnable() {
+		executor.submit(new Runnable() {
 			@Override
 			public void run() {
 				while (!Thread.interrupted()) {
 					// Update the net info.
-					try {
-						queueUp(new Runnable() {
-							@Override
-							public void run() {
-								updateNetInfo();
-							}
-						}, SERVER_TIMEOUT);
-					} catch (TimeoutException e) {
-						m.setChanged();
-						m.notifyObservers("Server disconnected.");
-					}
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							updateNetInfo();
+						}
+					});
 					
 					try {
 						Thread.sleep(NET_RATE);
@@ -60,49 +54,28 @@ public class Model extends Observable {
 					}
 				}
 			}
-		}).start();
-	}
-
-	private void queueUp(Runnable run, int timeout) throws TimeoutException {
-		try {
-			Future<?> task = executor.submit(run);
-			if (timeout != 0) {
-				task.get(timeout, TimeUnit.MILLISECONDS);
-			}
-		} catch (InterruptedException | ExecutionException e) {
-			// EAT.
-			e.printStackTrace();
-		}
+		});
 	}
 
 	public void selectDevice(int index) {
-		try {
-			queueUp(new Runnable() {
-				@Override
-				public void run() {
-					getDeviceInfo(index);
-				}
-			}, SERVER_TIMEOUT);
-		} catch (TimeoutException e) {
-		}
+		executor.submit(new Runnable() {
+			@Override
+			public void run() {
+				getDeviceInfo(index);
+			}
+		});
 	}
 
 	private void updateNetInfo() {
 		s.sendMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_NETINF), serverAddr));
-		String msg = s.recvWait().getMessage();
-		System.out.println("Got: " + msg);
-		devices.removeAllElements();
+		Message msg = s.recvWait(TIMEOUT);
+		if (msg == null) {
+			this.setChanged();
+			this.notifyObservers("Server disconnected.");
+		}
 
-		if (msg.substring(0, 2).equals(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF))) {
-			for (String dev : msg.substring(3).split("/")) {
-				if (dev.length() != 0) {
-					String info[] = dev.split(":");
-					String str = "#" + info[0];
-					str += " " + TYPENAMES[Parse.toInt(info[1])];
-					str += Parse.toBool(info[2]) ? " (Disconnected)" : "";
-					devices.addElement(str);
-				}
-			}
+		if (msg.getMessage().substring(0, 2).equals(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF))) {
+			devices.setElements(msg.getMessage().substring(3).split("/"));
 		}
 		
 		this.setChanged();
@@ -110,20 +83,17 @@ public class Model extends Observable {
 	}
 
 	private void getDeviceInfo(int id) {
-		System.out.println("Get device info " + id);
 		s.sendMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, id), serverAddr));
-		String msg = s.recvWait().getMessage();
-		System.out.println("Got info " + id);
+		Message msg = s.recvWait(TIMEOUT);
+		if (msg == null) {
+			this.setChanged();
+			this.notifyObservers("[Server did not respond.");
+		}
 		
-		this.setChanged();
-		this.notifyObservers("[" + msg);
+		if (msg.getMessage().substring(0, 2).equals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF))) {
+			
+			this.setChanged();
+			this.notifyObservers("[" + msg.getMessage().substring(3));
+		}
 	}
-    
-    static final String[] TYPENAMES = new String[] {
-        "Lights",
-        "Switch",
-        "Mirror",
-        "Thermostat",
-        "Bed"
-    };
 }

@@ -9,18 +9,13 @@ public class View implements Observer {
 	private JLabel deviceLabel;
 	private JTextArea textArea;
 	private JList<String> deviceList;
-	private final DefaultListModel<String> devices;
+	private final DeviceListModel devices;
 
 	public View() {
 		// Make the frame.
 		JFrame frame = new JFrame("CAM");
 
-		devices = new DefaultListModel<>();
-		
-		devices.addElement("Apple");
-		devices.addElement("Grapes");
-		devices.addElement("Mango");
-		devices.addElement("Peer");
+		devices = new DeviceListModel();
 		
 		deviceList = new JList<>(devices);
 		deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -49,7 +44,7 @@ public class View implements Observer {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
-	public DefaultListModel<String> getDeviceModel() {
+	public DeviceListModel getDeviceModel() {
 		return devices;
 	}
 	
@@ -69,16 +64,16 @@ public class View implements Observer {
 		if (obj instanceof String) {
 			String s = (String)obj;
 			
-			deviceLabel.setText(s);
-			if (devices.isEmpty()) {
-				deviceLabel.setText("No devices.");
-				showDeviceList(false);
-			} else {
-				showDeviceList(s.length() == 0);
-			}
-			
-			if (s.length() > 0 && s.charAt(0) == '[') {
+			if (s.length() == 0) {
+				boolean empty = devices.isEmpty();
+				showDeviceList(!empty);
+				if (empty) {
+					deviceLabel.setText("No devices.");
+				}
+			} else if(s.charAt(0) == '[') {
 				textArea.setText(s.substring(1));
+			} else {
+				deviceLabel.setText(s);
 			}
 		}
 	}
