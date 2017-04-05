@@ -101,6 +101,8 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                                 guiQueue.put_nowait(message('direction', messageRecv.info[1:]))
                                         if (messageRecv.info[0] == 't'):
                                                 linux_set_time(messageRecv.info[1:])
+										if (messageRecv.info[0] == 'h'):
+												guiQueue.put_nowait(message('thermo', messageRecv.info[1:]))
                                 elif(messageRecv.messageType == 'id'):
                                         lastBeatTime = int(round(time.time() * 1000))
                                         if (id == '-1'):
@@ -109,8 +111,8 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                         sendingQueue.put_nowait(message('beat', id))
 
                 currentTime = int(round(time.time() * 1000))
-                if (currentTime - lastBeatTime > 600000):
-                    #If the server hasnt sent a beat in 10 mins server disconnected
+                if (currentTime - lastBeatTime > 300000):
+                    #If the server hasnt sent a beat in 5 mins server disconnected
                     id = '-1'
                     
                 if (id == '-1'):

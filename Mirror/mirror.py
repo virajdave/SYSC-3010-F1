@@ -34,7 +34,7 @@ class mirrorGUI:
                 self.dateVar = StringVar()
                 self.tempVar = StringVar()
                 self.conditionsVar = StringVar()
-                self.minmaxVar = StringVar()
+                self.thermoVar = StringVar()
                 self.busStation = StringVar()
                 self.firstDirectionTitle = StringVar()
                 self.firstDirectionTimes = StringVar()
@@ -58,9 +58,10 @@ class mirrorGUI:
 		
 	
 	# Changes the Gui variable to adjust min and max data
-	def minMaxlineUpdate(self, weatherData):
-		minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
-		self.minmaxVar.set(minmax)
+	def thermoUpdate(self, temperature):
+		thermo = 'House Temperature: ' +  str (temperature) + ' °C '
+		#minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
+		self.thermoVar.set(thermo)
 		
 	# Changes GUI Variable to update the time based on system time
 	def timeUpdate(self, time):
@@ -123,13 +124,14 @@ class mirrorGUI:
 					elif message.messageType == 'weather':
 						self.tempUpdate(message.info)
 						self.conditionsUpdate(message.info)
-						self.minMaxlineUpdate(message.info)
 					elif message.messageType == 'bus':
 						self.busUpdate(message.info)
 					elif message.messageType == 'colour':
 						self.changeColour(message.info)
 					elif message.messageType == 'direction':
-                                                self.direction = int(message.info)
+                        self.direction = int(message.info)
+					elif message.messageType == 'thermo':
+						self.thermoUpdate(message.info)
 			time.sleep(0.1)
 
 			
@@ -188,18 +190,18 @@ class mirrorGUI:
 							font=(self.fontType, self.smallFontSize)) 
 		self.widgets.append(self.conLab)
 		
-		self.minmaxLab = Label(self.weatherFrame,
-								textvariable=self.minmaxVar,
+		self.thermoLab = Label(self.weatherFrame,
+								textvariable=self.thermoVar,
 								fg=self.mirrorFg,
 								bg=self.mirrorBg,
 								font=(self.fontType, self.smallFontSize)) 
-		self.widgets.append(self.minmaxLab)
+		self.widgets.append(self.thermoLab)
 		
 		#Positioning of widgets
 		self.weatherFrame.place(rely=0.0, relx=1.0, x=0, y=0, anchor=NE)
 		self.tempLab.grid(row=0, column=0)
 		self.conLab.grid(row=1, column=0)
-		self.minmaxLab.grid(row=2, column=0)
+		self.thermoLab.grid(row=2, column=0)
 	
 	
 	#Creates and places the Bottom right hand of GUI which is bus info	
