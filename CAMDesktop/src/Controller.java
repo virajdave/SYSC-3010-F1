@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionListener;
 public class Controller implements ActionListener, ListSelectionListener {
 	private Model model;
 	private View view;
+	private int selectedDevice = -1;
 
 	public Controller(Model model, View view) {
 		this.model = model;
@@ -34,7 +35,11 @@ public class Controller implements ActionListener, ListSelectionListener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
-		model.selectDevice(((JList<String>)event.getSource()).getSelectedIndex());
+		int index = ((JList<String>)event.getSource()).getSelectedIndex();
+		if (selectedDevice != index && index != -1) {
+			selectedDevice = index;
+			model.selectDevice(selectedDevice);
+		}
 	}
 
 }

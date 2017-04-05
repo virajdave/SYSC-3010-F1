@@ -7,6 +7,7 @@ import java.util.Observer;
 public class View implements Observer {
 	private JPanel sidebar;
 	private JLabel deviceLabel;
+	private JTextArea textArea;
 	private JList<String> deviceList;
 	private final DefaultListModel<String> devices;
 
@@ -32,7 +33,9 @@ public class View implements Observer {
 		sidebar.setLayout(new BorderLayout());
 		sidebar.add(deviceLabel);
 		JScrollPane left = new JScrollPane(sidebar);
-		JScrollPane right = new JScrollPane();
+		textArea = new JTextArea(5, 20);
+		textArea.setEditable(false);
+		JScrollPane right = new JScrollPane(textArea);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
 		splitPane.setResizeWeight(0.2);
 		frame.setContentPane(splitPane);
@@ -72,6 +75,10 @@ public class View implements Observer {
 				showDeviceList(false);
 			} else {
 				showDeviceList(s.length() == 0);
+			}
+			
+			if (s.length() > 0 && s.charAt(0) == '[') {
+				textArea.setText(s.substring(1));
 			}
 		}
 	}

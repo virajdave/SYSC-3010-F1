@@ -3,6 +3,7 @@ import java.util.Observable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -16,8 +17,8 @@ import util.Parse;
 
 public class Model extends Observable {
 	private static final int SERVER_TIMEOUT = 1000;
-	private static final int NET_RATE = 1000;
-	private static final InetSocketAddress serverAddr = new InetSocketAddress("localhost", 3010);
+	private static final int NET_RATE = 5000;
+	private static final InetSocketAddress serverAddr = new InetSocketAddress("134.117.58.104", 3010);
 
 	private Server s;
 	private DefaultListModel<String> devices;
@@ -27,7 +28,7 @@ public class Model extends Observable {
 		this.s = new Server();
 		s.start();
 		this.devices = devices;
-		this.executor = Executors.newFixedThreadPool(3);
+		this.executor = Executors.newFixedThreadPool(2);
 	}
 
 	public void start() {
@@ -35,7 +36,7 @@ public class Model extends Observable {
 		this.notifyObservers("Loading...");
 		
 		Model m = this;
-		queueUp(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (!Thread.interrupted()) {
@@ -59,23 +60,14 @@ public class Model extends Observable {
 					}
 				}
 			}
-		});
-	}
-	
-	private void queueUp(Runnable run) {
-		try {
-			queueUp(run, 0);
-		} catch (TimeoutException e) {
-			// EAT.
-		}
+		}).start();
 	}
 
 	private void queueUp(Runnable run, int timeout) throws TimeoutException {
 		try {
-			if (timeout == 0) {
-				executor.submit(run);
-			} else {
-				executor.submit(run).get(timeout, TimeUnit.MILLISECONDS);
+			Future<?> task = executor.submit(run);
+			if (timeout != 0) {
+				task.get(timeout, TimeUnit.MILLISECONDS);
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			// EAT.
@@ -84,30 +76,54 @@ public class Model extends Observable {
 	}
 
 	public void selectDevice(int index) {
-		System.out.println(index);
+		try {
+			queueUp(new Runnable() {
+				@Override
+				public void run() {
+					getDeviceInfo(index);
+				}
+			}, SERVER_TIMEOUT);
+		} catch (TimeoutException e) {
+		}
 	}
 
 	private void updateNetInfo() {
 		s.sendMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_NETINF), serverAddr));
 		String msg = s.recvWait().getMessage();
+		System.out.println("Got: " + msg);
 		devices.removeAllElements();
+
 		if (msg.substring(0, 2).equals(Parse.toString("", Codes.W_SERVER, Codes.T_NETINF))) {
 			for (String dev : msg.substring(3).split("/")) {
-				String info[] = dev.split(":");
-				String str = "#" + info[0];
-				str += " " + info[1]; // TODO: Show actual type.
-				str += Parse.toBool(info[2]) ? " (Disconnected)" : "";
-				devices.addElement(str);
+				if (dev.length() != 0) {
+					String info[] = dev.split(":");
+					String str = "#" + info[0];
+					str += " " + TYPENAMES[Parse.toInt(info[1])];
+					str += Parse.toBool(info[2]) ? " (Disconnected)" : "";
+					devices.addElement(str);
+				}
 			}
 		}
+		
 		this.setChanged();
 		this.notifyObservers("");
 	}
 
 	private void getDeviceInfo(int id) {
+		System.out.println("Get device info " + id);
 		s.sendMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DEVINF, id), serverAddr));
-		Message msg = s.recvWait();
+		String msg = s.recvWait().getMessage();
+		System.out.println("Got info " + id);
+		
 		this.setChanged();
-		this.notifyObservers(msg.toString());
+		this.notifyObservers("[" + msg);
 	}
+    
+    static final String[] TYPENAMES = new String[] {
+        "Lights",
+        "Switch",
+        "Mirror",
+        "Thermostat",
+        "Bed"
+    };
 }
