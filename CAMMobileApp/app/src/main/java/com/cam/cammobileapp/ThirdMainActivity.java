@@ -45,6 +45,8 @@ public class ThirdMainActivity extends AppCompatActivity {
     public double longitude;
     public double latitude;
 
+    public static ServerOnApp server = new ServerOnApp();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -75,7 +77,7 @@ public class ThirdMainActivity extends AppCompatActivity {
         }; */
 
         Intent intent = getIntent();
-
+        server.start();
 
         final ImageButton imageButton5 = (ImageButton) findViewById(R.id.btn_setTrans);
         imageButton5.setOnClickListener(new View.OnClickListener() {
@@ -115,12 +117,21 @@ public class ThirdMainActivity extends AppCompatActivity {
                 colourConfirmed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //selctedColourR = cp.getRed();
-                        //selectedColourG = cp.getGreen();
-                        //selectedColourB = cp.getBlue();
+                        int redRGB = cp.getRed();
+                        int greenRGB = cp.getGreen();
+                        int blueRGB = cp.getBlue();
+                        int theRGBCode = redRGB+greenRGB+blueRGB;
+                        String inString = Integer.toString(theRGBCode);
+                        String HexRed = Integer.toHexString(redRGB);
+                        String HexGreen = Integer.toHexString(greenRGB);
+                        String HexBlue = Integer.toHexString(blueRGB);
+                        String finalRGB = "#"+HexRed+HexGreen+HexBlue;
+
+                        //10/id/colour/(Colourcode)
+                        // id(must get it with the a list of devices)
 
                         cp.dismiss();
-                        Toast.makeText(prev, "Colour Selected to send to Mirror", Toast.LENGTH_LONG).show();
+                        Toast.makeText(prev, finalRGB, Toast.LENGTH_LONG).show();
                     }
                 });
             }

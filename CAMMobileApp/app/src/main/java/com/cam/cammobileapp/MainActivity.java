@@ -13,12 +13,15 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     public static ServerOnApp server = new ServerOnApp();
+    private boolean useBroadcast = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         server.start();
+        this.sendMessage();
 
 
     ImageButton imageButton1 = (ImageButton) findViewById(R.id.btn_thermostat);
@@ -51,6 +54,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public void sendMessage(){
+        String message = "10";
+        if(useBroadcast){
+            server.sendBroadcast(message);
+        }
+
+        else {
+            server.sendBroadcast(message);
+        }
+
 
     }
 }
