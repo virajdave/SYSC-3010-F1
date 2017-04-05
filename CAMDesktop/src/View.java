@@ -5,11 +5,15 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View implements Observer {
-	private JPanel sidebar;
+	private JPanel sidebar, right;
 	private JLabel deviceLabel;
 	private JTextArea textArea;
 	private JList<String> deviceList;
+	private JButton refresh, delete;
 	private final DeviceListModel devices;
+	JSplitPane splitPane;
+	
+	private static final double WEIGHT = 0.3; 
 
 	public View() {
 		// Make the frame.
@@ -21,7 +25,7 @@ public class View implements Observer {
 		deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Setup device label + list.
-		deviceLabel = new JLabel("                                                  ");
+		deviceLabel = new JLabel();
 
 		// Create panels and set the content pane.
 		sidebar = new JPanel();
@@ -30,9 +34,18 @@ public class View implements Observer {
 		JScrollPane left = new JScrollPane(sidebar);
 		textArea = new JTextArea(5, 20);
 		textArea.setEditable(false);
-		JScrollPane right = new JScrollPane(textArea);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
-		splitPane.setResizeWeight(0.2);
+		
+		JPanel menu = new JPanel(new GridLayout(1, 2));
+		refresh = new JButton("Refresh");
+		delete = new JButton("Delete");
+		menu.add(refresh);
+		menu.add(delete);
+		right = new JPanel(new BorderLayout());
+		right.add(BorderLayout.NORTH, menu);
+		right.add(BorderLayout.CENTER, new JScrollPane(textArea));
+		right.setVisible(false);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
+		splitPane.setResizeWeight(WEIGHT);
 		frame.setContentPane(splitPane);
 
 		// Set size and make the window visible.
@@ -77,6 +90,18 @@ public class View implements Observer {
 			}
 		}
 	}
+	
+	public boolean isRefreshButton(Object obj) {
+		return refresh.equals(obj);
+	}
+	
+	public boolean isDeleteButton(Object obj) {
+		return delete.equals(obj);
+	}
+	
+	public int getSelectedIndex() {
+		return deviceList.getSelectedIndex();
+	}
 
 	/**
 	 * Add button listeners to the controller.
@@ -85,6 +110,15 @@ public class View implements Observer {
 	 */
 	public void addListeners(Controller controller) {
 		deviceList.addListSelectionListener(controller);
+		refresh.addActionListener(controller);
+		delete.addActionListener(controller);
+	}
+
+	public void showRight(boolean b) {
+		if (b && !right.isVisible()) {
+			splitPane.setDividerLocation(WEIGHT);
+		}
+		right.setVisible(b);
 	}
 
 }

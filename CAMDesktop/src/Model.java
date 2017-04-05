@@ -59,6 +59,15 @@ public class Model extends Observable {
 		});
 	}
 
+	public void deleteDevice(int index) {
+		executor.submit(new Runnable() {
+			@Override
+			public void run() {
+				s.sendMessage(new Message(Parse.toString("/", Codes.W_APP + "" + Codes.T_DELETE, devices.getIDAt(index)), serverAddr));
+			}
+		});
+	}
+
 	private void updateNetInfo() {
 		s.sendMessage(new Message(Parse.toString("", Codes.W_APP, Codes.T_NETINF), serverAddr));
 		Message msg = s.recvWait(TIMEOUT);
@@ -86,7 +95,7 @@ public class Model extends Observable {
 		if (msg.getMessage().substring(0, 2).equals(Parse.toString("", Codes.W_SERVER, Codes.T_DEVINF))) {
 			
 			this.setChanged();
-			this.notifyObservers("[" + msg.getMessage().substring(3));
+			this.notifyObservers("[" + msg.getMessage().substring(3).replace('/', '\n'));
 		}
 	}
 }

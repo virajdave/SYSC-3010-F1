@@ -17,25 +17,21 @@ public class Controller implements ActionListener, ListSelectionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-//		if (view.isResetButton(e.getSource())) {
-//			// If the reset button was pressed set the counter back to zero.
-//			model.setCounter(0);
-//		} else if (view.isSetButton(e.getSource())) {
-//			// If the set button was pressed set the counter back to the input value.
-//			String valueString = view.getValueField();
-//			try {
-//				int value = Integer.parseInt(valueString);
-//				model.setCounter(value);
-//			} catch (Exception ex) {
-//				System.out.println("The text is not a valid integer");
-//			}
-//		}
+		int index = view.getSelectedIndex();
+		
+		if (view.isRefreshButton(e.getSource())) {
+			model.selectDevice(index);
+		} else if (view.isDeleteButton(e.getSource())) {			
+			model.deleteDevice(index);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
-		int index = ((JList<String>)event.getSource()).getSelectedIndex();
+		int index = view.getSelectedIndex();
+
+		view.showRight(index != -1);
 		if (selectedDevice != index && index != -1) {
 			selectedDevice = index;
 			model.selectDevice(selectedDevice);
