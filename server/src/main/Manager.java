@@ -224,8 +224,26 @@ public class Manager extends Thread implements Observer {
 					} else {
 						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
 					}
-					// Send back acknowledge.
+					// Send back acknowledge saying if the request worked.
 					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, worked), msg.getSocketAddress()));
+				}  catch (NumberFormatException e) {
+					Log.warn("App giving malformed device ID, from " + msg.getMessage());
+				} catch (ArrayIndexOutOfBoundsException e) {
+					Log.warn("App message missing at least 1 of 3 required pieces of data, from " + msg.getMessage());
+				}
+				break;
+			case Codes.T_DELETE:
+				try {
+					id = Parse.toInt(data[1]);
+					
+					Device d = web.getByID(id);
+					if (d != null) {
+						web.remove(d);
+					} else {
+						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
+					}
+					// Send back acknowledge.
+					server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				}  catch (NumberFormatException e) {
 					Log.warn("App giving malformed device ID, from " + msg.getMessage());
 				} catch (ArrayIndexOutOfBoundsException e) {

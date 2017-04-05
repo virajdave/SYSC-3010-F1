@@ -12,5 +12,6 @@ public class Codes {
 	
 	public static final char T_NETINF = '0';
 	public static final char T_DEVINF = '3';
+	public static final char T_DELETE = '4';
 
 }
