@@ -59,6 +59,42 @@ public class ParseTest {
 		} catch (NumberFormatException e) {
 			assertEquals("For input string: \"false\"", e.getMessage());
 		}
+		try {
+			Parse.toInt("1.2"); fail("Expected NumberFormatException to be thrown");
+		} catch (NumberFormatException e) {
+			assertEquals("For input string: \"1.2\"", e.getMessage());
+		}
+	}
+	
+	private boolean floatEquals(float first, float second) {
+	    return (Math.abs(first - second) < 0.01);
+	}
+
+	@Test
+	public void testToFloat() {
+		assertTrue(floatEquals(1f, Parse.toFloat("1")));
+		assertTrue(floatEquals(50.25f, Parse.toFloat("50.25")));
+		assertTrue(floatEquals(0f, Parse.toFloat("0")));
+		assertTrue(floatEquals(-502.596f, Parse.toFloat("-502.596")));
+	}
+
+	@Test
+	public void testToFloatException() {
+		try {
+			Parse.toFloat("a"); fail("Expected NumberFormatException to be thrown");
+		} catch (NumberFormatException e) {
+			assertEquals("For input string: \"a\"", e.getMessage());
+		}
+		try {
+			Parse.toFloat("true"); fail("Expected NumberFormatException to be thrown");
+		} catch (NumberFormatException e) {
+			assertEquals("For input string: \"true\"", e.getMessage());
+		}
+		try {
+			Parse.toFloat("false"); fail("Expected NumberFormatException to be thrown");
+		} catch (NumberFormatException e) {
+			assertEquals("For input string: \"false\"", e.getMessage());
+		}
 	}
 
 	@Test
@@ -92,6 +128,7 @@ public class ParseTest {
 		assertEquals("1/0", Parse.toString("/", true, false));
 		assertEquals("-88+1+no", Parse.toString("+", -88, true, "no"));
 		assertEquals("Bbreak0breakthis", Parse.toString("break", 'B', '0', "this"));
+		assertEquals("0`1.2`things", Parse.toString("`", false, 1.2f, "things"));
 	}
 
 	@Test

@@ -42,6 +42,8 @@ public class Parse {
 				s[i] = toString((boolean) var[i]);
 			} else if (var[i] instanceof Integer) {
 				s[i] = toString((int) var[i]);
+			} else if (var[i] instanceof Float) {
+				s[i] = toString((float) var[i]);
 			} else if (var[i] instanceof Character) {
 				s[i] = toString((char) var[i]);
 			} else if (var[i] instanceof String) {
