@@ -139,9 +139,9 @@ class mirrorGUI:
 	#main gui creator
 	def createWidgets(self):
 		self.top.configure(background=self.mirrorBg)
-		w, h = self.top.winfo_screenwidth(), self.top.winfo_screenheight()
-		self.top.overrideredirect(1)
-		self.top.geometry("%dx%d+0+0" % (w, h))
+	#	w, h = self.top.winfo_screenwidth(), self.top.winfo_screenheight()
+	#	self.top.overrideredirect(1)
+	#	self.top.geometry("%dx%d+0+0" % (w, h))
 		self.setUpTimeWidget()		
 		self.setUpWeatherWidget()
 		self.setUpBusWidget()

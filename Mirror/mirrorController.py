@@ -80,6 +80,8 @@ def timeSync(queue):
 # Watches the recv queue for messages then ditributes them   
 def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
         global stopFlag
+        global id
+        lastBeatTime = int(round(time.time() * 1000))
         while True:
                 if stopFlag == 1:
                     return
@@ -100,10 +102,17 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                         if (messageRecv.info[0] == 't'):
                                                 linux_set_time(messageRecv.info[1:])
                                 elif(messageRecv.messageType == 'id'):
+                                        lastBeatTime = int(round(time.time() * 1000))
                                         if (id == '-1'):
                                                 setId(messageRecv.info)
                                 elif(messageRecv.messageType == 'beat'):
                                         sendingQueue.put_nowait(message('beat', id))
+
+                currentTime = int(round(time.time() * 1000))
+                if (currentTime - lastBeatTime > 600000):
+                    #If the server hasnt sent a beat in 10 mins server disconnected
+                    id = '-1'
+                    
                 if (id == '-1'):
                     sendingQueue.put_nowait(message('beat', id))
                     time.sleep(10)

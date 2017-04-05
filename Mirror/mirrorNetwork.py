@@ -45,7 +45,7 @@ def mirrorNetRecv(port, s, queue):
 def mirrorNetSend(serverIp, servPort, s, queue):
         global networkStop
         server_address = (serverIp, int(servPort))
-        #heartBeat(serverIp,servPort,s,'-1')
+       # heartBeat(serverIp,servPort,s,'-1')
         while True:
                 if networkStop:
                     return
