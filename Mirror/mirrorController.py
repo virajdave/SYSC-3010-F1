@@ -60,7 +60,7 @@ def tellGUIToUpdateThermo(queue):
             if stopFlag == 1:
                 return
             if (id != '-1'):
-                sleep = 60
+                sleep = 10
                 queue.put_nowait(message('data', id + '/thermo'))
             time.sleep(sleep)			
 			
@@ -114,8 +114,8 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                                 guiQueue.put_nowait(message('direction', messageRecv.info[1:]))
                                         if (messageRecv.info[0] == 't'):
                                                 linux_set_time(messageRecv.info[1:])
-										if (messageRecv.info[0] == 'h'):
-												guiQueue.put_nowait(message('thermo', messageRecv.info[1:]))
+                                        if (messageRecv.info[0] == 'h'):
+                                                guiQueue.put_nowait(message('thermo', messageRecv.info[1:]))
                                 elif(messageRecv.messageType == 'id'):
                                         lastBeatTime = int(round(time.time() * 1000))
                                         if (id == '-1'):
@@ -152,7 +152,7 @@ def runController(server, port):
     _thread.start_new_thread(tellGUIToUpdateTime, (guiRecvQueue,))
     _thread.start_new_thread(tellGUIToUpdateWeather, (sendQueue,))
     _thread.start_new_thread(tellGUIToUpdateBusInfo, (sendQueue,))
-	_thread.start_new_thread(tellGUIToUpdateThermo, (sendQueue,))
+    _thread.start_new_thread(tellGUIToUpdateThermo, (sendQueue,))
     _thread.start_new_thread(timeSync, (sendQueue,))
     
     # Start up networking side

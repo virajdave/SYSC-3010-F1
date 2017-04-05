@@ -48,7 +48,7 @@ class mirrorGUI:
 
 	# Changes the Gui variable to adjust temperature data
 	def tempUpdate(self, weatherData):
-		temp = str(weatherData['temp']) + ' °C '
+		temp = str(round(float(weatherData['temp']), 1)) + ' °C '
 		self.tempVar.set(temp)
 	
 	# Changes the Gui variable to adjust conditions data
@@ -60,7 +60,7 @@ class mirrorGUI:
 	# Changes the Gui variable to adjust min and max data
 	def thermoUpdate(self, temperature):
 		if temperature != '':
-			thermo = 'House Temperature: ' +  str (temperature) + ' °C '
+			thermo = 'House Temperature: ' +  str (round(float(temperature), 1)) + ' °C '
 		#minmax = 'Max Temp: ' + str(weatherData['temp_max']) + '\t' + 'Min Temp: ' + str(weatherData['temp_min'])
 		else:
 			thermo = ''
@@ -132,7 +132,7 @@ class mirrorGUI:
 					elif message.messageType == 'colour':
 						self.changeColour(message.info)
 					elif message.messageType == 'direction':
-                        self.direction = int(message.info)
+                                                self.direction = int(message.info)
 					elif message.messageType == 'thermo':
 						self.thermoUpdate(message.info)
 			time.sleep(0.1)

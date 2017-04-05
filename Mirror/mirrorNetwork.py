@@ -47,7 +47,7 @@ def mirrorNetSend(serverIp, servPort, s, queue):
         server_address = (serverIp, int(servPort))
        # heartBeat(serverIp,servPort,s,'-1')
         while True:
-			try:
+            try:
                 if networkStop:
                     return
                 if not queue.empty():
@@ -66,8 +66,8 @@ def mirrorNetSend(serverIp, servPort, s, queue):
                                         sendError = open('logs/sendError.log', 'a')
                                         sendError.write(messageToSend.messageType + ':' + messageToSend.info + '\n')
                                         sendError.close()
-			except:
-				print('No internet Access')
+            except:
+                    print('No internet Access')
 
 def heartBeat(host,port,s,id):
         server_address = (host,int(port))
