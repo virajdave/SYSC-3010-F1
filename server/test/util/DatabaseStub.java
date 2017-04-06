@@ -9,8 +9,9 @@ public class DatabaseStub extends Database {
 	}
 	
 	@Override
-	public void open() {
+	public boolean open() {
 		connection = null;
+		return true;
 	}
 
 }
