@@ -5,7 +5,9 @@
     <property name="test.build.dir" value="bin" />
     <property name="test.src.dir" value="test" />
 
-    <path id="classpath.base" />
+    <path id="classpath.base">
+        <pathelement location="lib/sqlite-jdbc-3.16.1.jar" />
+    </path>
 
     <path id="classpath.cuke">
         <pathelement location="lib/cucumber-core-1.2.5.jar" />
