@@ -35,7 +35,7 @@ public class Web {
 				}
 				
 				// Create the device and add it to the web.
-				Device device = Device.createNew(deviceEntry.getValue().getKey(), id, this, db.getProp(id));
+				Device device = Device.createNew(deviceEntry.getValue().getKey(), id, this);
 				if (device != null) {
 					devices.put(addr, device);
 				}

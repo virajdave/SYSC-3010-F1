@@ -104,13 +104,13 @@ public abstract class Device extends Observable {
 	}
 	
 	/**
-	 * Restore a new device of the giving type using the data.
+	 * Create a new device of the giving type.
 	 * @param type
 	 * @param id
 	 * @param data
 	 * @return
 	 */
-	public static Device createNew(int type, int id, Web web, HashMap<String, String> data) {
+	public static Device createNew(int type, int id, Web web) {
 		Device d = null;
 		
 		try {
@@ -118,48 +118,39 @@ public abstract class Device extends Observable {
 			if (type > types.length - 2 || type < 0) {
 				Log.warn("Device #" + id + " type '" + type + "' is out of range, adding Null device.");
 				d = types[types.length - 1].newInstance();
-				
-				d.type = type;
-				d.id = id;
-				d.web = web;
 			} else {
-				if (data == null) {
-					d = types[type].newInstance();
-				} else {
-					boolean hasConstructor = false;
+				// Get the properties related to this device.
+				HashMap<String, String> data = web.getDB().getProp(id);
+				boolean useImport = false;
+				
+				// If there is data and the driver has the required constructor use import.
+				if (data != null) {
 					for (Constructor<?> constructor : types[type].getConstructors()) {
 						Type[] parameterTypes = constructor.getGenericParameterTypes();
 						if (parameterTypes.length == 1) {
-							hasConstructor = true;
+							useImport = true;
 							break;
 						}
 					}
-					if (hasConstructor) {
-						d = types[type].getConstructor(data.getClass()).newInstance(data);
-					} else {
-						d = types[type].newInstance();
-					}
 				}
 				
-				d.type = type;
-				d.id = id;
-				d.web = web;
+				// If importing pass in the data to the correct constructor.
+				if (useImport) {
+					d = types[type].getConstructor(data.getClass()).newInstance(data);
+				} else {
+					d = types[type].newInstance();
+				}
 			}
+
+			// Set variables attached to the driver.
+			d.type = type;
+			d.id = id;
+			d.web = web;
 		} catch (Exception e) {
 			Log.err("Exception when creating device", e);
 		}
 		
 		return d;
-	}
-	
-	/**
-	 * Create a new device of the giving type.
-	 * @param type
-	 * @param id
-	 * @return
-	 */
-	public static Device createNew(int type, int id, Web web) {
-		return createNew(type, id, web, null);
 	}
 	
 	@SuppressWarnings("unchecked")
