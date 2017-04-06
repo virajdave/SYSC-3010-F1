@@ -19,13 +19,13 @@ import java.util.List;
 public class Steps {
 	public static final InetSocketAddress appAddr = new InetSocketAddress("localhost", 10);
 
-	ServerStub server;
+	ServerMock server;
 	Manager manager;
 	HashMap<String, Dev> devices;
 
 	@Given("^the manager is started$")
 	public void startManager() throws Throwable {
-		server = new ServerStub();
+		server = new ServerMock();
 		DatabaseStub db = new DatabaseStub();
 		manager = new Manager(server, db, 0, 1);
 		devices = new HashMap<>();

@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import types.Message;
 
-public class ServerStub extends Server {
+public class ServerMock extends Server {
 	private static final int TIMEOUT = 10;
 
 	private Queue<Message> recvQueue;
@@ -17,11 +17,11 @@ public class ServerStub extends Server {
 	private Integer port;
 	private int currPort;
 
-	public ServerStub() {
+	public ServerMock() {
 		this(null);
 	}
 
-	public ServerStub(Integer _port) {
+	public ServerMock(Integer _port) {
 		port = _port;
 		recvQueue = new LinkedList<>();
 		sendQueue = new HashMap<>();
