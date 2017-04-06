@@ -9,7 +9,7 @@ public class DatabaseStub extends Database {
 	}
 	
 	@Override
-	public void start() {
+	public void open() {
 		connection = null;
 	}
 

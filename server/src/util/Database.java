@@ -23,16 +23,38 @@ public class Database {
 	 */
 	public Database(String name) {
 		this.name = name;
-		start();
+		open();
 	}
 	
-	public void start() {
+	/**
+	 * Open the database.
+	 */
+	public boolean open() {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
+			return true;
 		} catch (SQLException e) {
 			Log.err("Database connection could not be established", e);
 			connection = null;
 		}
+		return false;
+	}
+	
+	/**
+	 * Close the database.
+	 * @return if successful
+	 */
+	public boolean close() {
+		if (connection != null) {
+			try {
+				connection.close();
+				connection = null;
+			} catch (SQLException e) {
+				Log.err("Database could not be closed", e);
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -41,12 +63,12 @@ public class Database {
 	 */
 	public boolean exists() {
 		if (connection != null) {
-			try {
-				Statement statement = connection.createStatement();
+			try (Statement statement = connection.createStatement()) {
 				statement.setQueryTimeout(TIMEOUT);
 				
-				ResultSet rs = statement.executeQuery("SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name='properties'");
-				return rs.getInt("count") > 0;
+				try (ResultSet rs = statement.executeQuery("SELECT count(*) AS count FROM sqlite_master WHERE type='table' AND name='properties'")) {
+					return rs.getInt("count") > 0;
+				}
 			} catch (SQLException e) {
 				Log.err("SQL exception when checking if table exists", e);
 			}
@@ -61,8 +83,7 @@ public class Database {
 	 */
 	public boolean create() {		
 		if (connection != null) {
-			try {
-		          Statement statement = connection.createStatement();
+			try (Statement statement = connection.createStatement()) {
 		          statement.setQueryTimeout(TIMEOUT);
 		          
 		          statement.executeUpdate("DROP TABLE IF EXISTS devices");
@@ -77,6 +98,7 @@ public class Database {
 		          		+ "key TEXT NOT NULL, "
 		          		+ "data TEXT NOT NULL, "
 		          		+ "PRIMARY KEY (id, key))");
+		          
 		          return true;
 			} catch (SQLException e) {
 				Log.err("SQL exception when creating table", e);
@@ -95,8 +117,7 @@ public class Database {
 	 */
 	public boolean addDevice(int id, int type, String inet) {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("INSERT OR REPLACE INTO devices (id, type, inet) VALUES(?,?,?)");
+			try (PreparedStatement statement = connection.prepareStatement("INSERT OR REPLACE INTO devices (id, type, inet) VALUES(?,?,?)")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.setInt(1, id);
@@ -122,12 +143,13 @@ public class Database {
 	 */
 	public boolean removeDevice(int id) {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("DELETE FROM devices WHERE id = ?");
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM devices WHERE id = ?")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.setInt(1, id);
 				statement.executeUpdate();
+				
+				// TODO: Also delete all properties with this ID.
 				
 				return true;
 			} catch (SQLException e) {
@@ -147,8 +169,7 @@ public class Database {
 	 */
 	public boolean addProp(int id, String key, String data) {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("INSERT OR REPLACE INTO properties (id, key, data) VALUES(?,?,?)");
+			try (PreparedStatement statement = connection.prepareStatement("INSERT OR REPLACE INTO properties (id, key, data) VALUES(?,?,?)")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.setInt(1, id);
@@ -167,21 +188,19 @@ public class Database {
 
 	public HashMap<Integer, Entry<Integer, String>> getDevices() {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("SELECT id, type, inet FROM devices");
+			try (PreparedStatement statement = connection.prepareStatement("SELECT id, type, inet FROM devices")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.execute();
 				
-				ResultSet results = statement.getResultSet();
-
-				
-				HashMap<Integer, Entry<Integer, String>> data = new HashMap<>();
-				while(results.next()) {
-					data.put(results.getInt("id"), new AbstractMap.SimpleEntry<Integer, String>(results.getInt("type"), results.getString("inet")));
+				try (ResultSet results = statement.getResultSet()) {
+					HashMap<Integer, Entry<Integer, String>> data = new HashMap<>();
+					while(results.next()) {
+						data.put(results.getInt("id"), new AbstractMap.SimpleEntry<Integer, String>(results.getInt("type"), results.getString("inet")));
+					}
+					
+					return data;
 				}
-				
-				return data;
 			} catch (SQLException e) {
 				// Error 0 means no results were found, can be ignored.
 				if (e.getErrorCode() != 0) {
@@ -195,30 +214,29 @@ public class Database {
 
 	public HashMap<Integer, HashMap<String, String>> getProp() {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("SELECT id, key, data FROM properties");
+			try (PreparedStatement statement = connection.prepareStatement("SELECT id, key, data FROM properties")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.execute();
 				
-				ResultSet results = statement.getResultSet();
-				
-				HashMap<Integer, HashMap<String, String>> data = new HashMap<>();
-				while(results.next()) {
-					HashMap<String, String> deviceData;
-					int id = results.getInt("id");
-					
-					if (!data.containsKey(id)) {
-						deviceData = new HashMap<>();
-						data.put(id, deviceData);
-					} else {
-						deviceData = data.get(id);
+				try (ResultSet results = statement.getResultSet()) {
+					HashMap<Integer, HashMap<String, String>> data = new HashMap<>();
+					while(results.next()) {
+						HashMap<String, String> deviceData;
+						int id = results.getInt("id");
+						
+						if (!data.containsKey(id)) {
+							deviceData = new HashMap<>();
+							data.put(id, deviceData);
+						} else {
+							deviceData = data.get(id);
+						}
+						
+						deviceData.put(results.getString("key"), results.getString("data"));
 					}
 					
-					deviceData.put(results.getString("key"), results.getString("data"));
+					return data;
 				}
-				
-				return data;
 			} catch (SQLException e) {
 				// Error 0 means no results were found, can be ignored.
 				if (e.getErrorCode() != 0) {
@@ -237,21 +255,20 @@ public class Database {
 	 */
 	public HashMap<String, String> getProp(int id) {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("SELECT key, data FROM properties WHERE id = ?");
+			try (PreparedStatement statement = connection.prepareStatement("SELECT key, data FROM properties WHERE id = ?")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.setInt(1, id);
 				statement.execute();
 				
-				ResultSet results = statement.getResultSet();
-				
-				HashMap<String, String> data = new HashMap<>();
-				while(results.next()) {
-					data.put(results.getString("key"), results.getString("data"));
+				try (ResultSet results = statement.getResultSet()) {
+					HashMap<String, String> data = new HashMap<>();
+					while(results.next()) {
+						data.put(results.getString("key"), results.getString("data"));
+					}
+					
+					return data;
 				}
-				
-				return data;
 			} catch (SQLException e) {
 				// Error 0 means no results were found, can be ignored.
 				if (e.getErrorCode() != 0) {
@@ -271,17 +288,16 @@ public class Database {
 	 */
 	public String getProp(int id, String key) {
 		if (connection != null) {
-			try {
-				PreparedStatement statement = connection.prepareStatement("SELECT data FROM properties WHERE id = ? AND key = ?");
+			try (PreparedStatement statement = connection.prepareStatement("SELECT data FROM properties WHERE id = ? AND key = ?")) {
 				statement.setQueryTimeout(TIMEOUT);
 	
 				statement.setInt(1, id);
 				statement.setString(2, key);
 				statement.execute();
 				
-				ResultSet result = statement.getResultSet();
-				
-				return result.getString("data");
+				try (ResultSet result = statement.getResultSet()) {
+					return result.getString("data");
+				}
 			} catch (SQLException e) {
 				// Error 0 means no results were found, can be ignored.
 				if (e.getErrorCode() != 0) {
