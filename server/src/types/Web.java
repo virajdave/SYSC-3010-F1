@@ -21,6 +21,7 @@ public class Web {
 		
 		db = database;
 		if (db.exists()) {
+			// If the database already exists then restore it.
 			HashMap<Integer, Entry<Integer, String>> data = db.getDevices();
 			
 			for (Entry<Integer, Entry<Integer, String>> deviceEntry : data.entrySet()) {
@@ -40,18 +41,36 @@ public class Web {
 				}
 			}
 		} else {
+			// Otherwise create a fresh database from scratch.
 			db.create();
 		}
 	}
 	
+	/**
+	 * Get the attached database.
+	 * 
+	 * @return db
+	 */
 	public Database getDB() {
 		return db;
 	}
 	
+	/**
+	 * Convert a socket address to a string.
+	 * 
+	 * @param addr
+	 * @return String 'host:port'
+	 */
 	private String inetToString(InetSocketAddress addr) {
 		return Parse.toString(":", addr.getHostName().toString(), addr.getPort());
 	}
 	
+	/**
+	 * Convert a string to a socket address.
+	 * 
+	 * @param inet String 'host:port'
+	 * @return address
+	 */
 	private InetSocketAddress inetFromString(String inet) {
 		String[] parts = inet.split(":");
 		return new InetSocketAddress(parts[0], Parse.toInt(parts[1]));
@@ -64,6 +83,7 @@ public class Web {
 	 * @return device
 	 */
 	public Device add(InetSocketAddress addr, int type) {
+		// Create a new device of the correct type using a new ID.
 		int id = index++;
 		Device device = Device.createNew(type, id, this);
 		if (device != null) {
@@ -81,6 +101,7 @@ public class Web {
 	 * @return device
 	 */
 	public Device getByID(int id) {
+		// Search though the devices to find the device with the given ID.
 		for (Device d : devices.inverse().keySet()) {
 			if (d.hasID(id)) {
 				return d;
@@ -106,6 +127,7 @@ public class Web {
 	 * @return device
 	 */
 	public Device change(Device device, InetSocketAddress new_addr) {
+		// Set a new address for the given device and save it to the DB.
 		devices.inverse().put(device, new_addr);
 		db.addDevice(device.getID(), device.getType(), inetToString(new_addr));
 
@@ -120,6 +142,7 @@ public class Web {
 	 * @return device
 	 */
 	public Device change(InetSocketAddress old_addr, InetSocketAddress new_addr) {
+		// Get the device associated witht he old address, then set it to use new address and save it to the DB.
 		Device device = devices.get(old_addr);
 		devices.inverse().put(device, new_addr);
 		db.addDevice(device.getID(), device.getType(), inetToString(new_addr));
@@ -134,6 +157,7 @@ public class Web {
 	 * @return if a device was removed
 	 */
 	public boolean remove(Device device) {
+		// Remove the device entry from the DB and the device map.
 		db.removeDevice(device.getID());
 		return devices.inverse().remove(device) != null;
 	}
@@ -145,6 +169,7 @@ public class Web {
 	 * @return if a device was removed
 	 */
 	public boolean remove(InetSocketAddress addr) {
+		// Remove the device entry (by device ID) from the DB and the device map.
 		db.removeDevice(devices.get(addr).getID());
 		return devices.remove(addr) != null;
 	}
@@ -171,6 +196,7 @@ public class Web {
 
 	/**
 	 * Converts the web information to a compact string.
+	 * Format -> id : type : dead / ...each device
 	 */
 	@Override
 	public String toString() {
