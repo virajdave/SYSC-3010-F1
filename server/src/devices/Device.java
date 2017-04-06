@@ -48,6 +48,18 @@ public abstract class Device extends Observable {
 		return web.getByID(id);
 	}
 	
+	protected String getProperty(String key) {
+		return web.getDB().getProp(this.getID(), key);
+	}
+	
+	protected HashMap<String, String> getProperties() {
+		return web.getDB().getProp(this.getID());
+	}
+	
+	protected boolean setProperty(String key, String data) {
+		return web.getDB().addProp(this.getID(), key, data);
+	}
+	
 	/**
 	 * Return the device type.
 	 * @return
@@ -103,24 +115,24 @@ public abstract class Device extends Observable {
 			// If out of range add a null device.
 			if (type > types.length - 2 || type < 0) {
 				Log.warn("Device #" + id + " type '" + type + "' is out of range, adding Null device.");
-				
-				if (data == null) {
-					d = types[types.length - 1].newInstance();
-				} else {
-					d = types[types.length - 1].getConstructor(HashMap.class).newInstance(data);
-				}
+				d = types[types.length - 1].newInstance();
 				
 				d.type = type;
 				d.id = id;
 				d.web = web;
 			} else {
-				d = types[type].newInstance();
+				if (data == null) {
+					d = types[type].newInstance();
+				} else {
+					d = types[type].getConstructor(data.getClass()).newInstance(data);
+				}
+				
 				d.type = type;
 				d.id = id;
 				d.web = web;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.err("Exception when creating device", e);
 		}
 		
 		return d;
