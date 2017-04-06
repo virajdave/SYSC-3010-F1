@@ -7,9 +7,17 @@ public class Bedroom extends Device {
 	boolean lights;
 	@Override
 	public void giveMessage(String msg) {
-		
+		String dataOut = "";
+		if (msg.equals("time")) {
+			
+        	    dataOut = getTime();
+		}
+		send(dataOut);
 	}
-
+	public String getTime() {
+        	long time = System.currentTimeMillis();
+        	return "t"+ time;
+    }
 	@Override
 	public boolean giveInput(Data in) {
 		send(in.getName() + "/" + in.get());
