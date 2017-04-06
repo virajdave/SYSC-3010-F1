@@ -1,5 +1,7 @@
 package devices;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -124,7 +126,19 @@ public abstract class Device extends Observable {
 				if (data == null) {
 					d = types[type].newInstance();
 				} else {
-					d = types[type].getConstructor(data.getClass()).newInstance(data);
+					boolean hasConstructor = false;
+					for (Constructor<?> constructor : types[type].getConstructors()) {
+						Type[] parameterTypes = constructor.getGenericParameterTypes();
+						if (parameterTypes.length == 1) {
+							hasConstructor = true;
+							break;
+						}
+					}
+					if (hasConstructor) {
+						d = types[type].getConstructor(data.getClass()).newInstance(data);
+					} else {
+						d = types[type].newInstance();
+					}
 				}
 				
 				d.type = type;
