@@ -54,7 +54,6 @@ def mirrorNetSend(serverIp, servPort, s, queue):
                         while not queue.empty():
                                 messageToSend = queue.get()
                                 if(messageToSend.messageType == 'beat'):
-                                        print('Sending: ' + messageToSend.info)
                                         heartBeat(serverIp,servPort,s,messageToSend.info)
                                 elif(messageToSend.messageType == 'data'):
                                         data = '22/' + messageToSend.info
@@ -64,7 +63,7 @@ def mirrorNetSend(serverIp, servPort, s, queue):
                                         sendAck(serverIp,servPort,s,messageToSend.info)
                                 else:
                                         sendError = open('logs/sendError.log', 'a')
-                                        sendError.write(messageToSend.messageType + ':' + messageToSend.info + '\n')
+                                        sendError.write('Error Sending: ' + messageToSend.messageType + ':' + messageToSend.info + '\n')
                                         sendError.close()
             except:
                     print('No internet Access')
