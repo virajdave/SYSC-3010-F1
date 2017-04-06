@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.os.Build;
 import android.provider.Settings;
+import android.renderscript.Double2;
 import android.support.annotation.ColorInt;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -30,7 +31,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-
+import android.util.Log;
 
 
 
@@ -147,68 +148,79 @@ public class ThirdMainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(prev, "Need to show the location coordinates", Toast.LENGTH_LONG).show();
                 final AlertDialog locationDialog = new AlertDialog.Builder(prev).create();
-                View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
+                final View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
                 locationDialog.setView(location_layout);
                 locationDialog.show();
                 Button enableLocation = (Button) locationDialog.findViewById(R.id.turnOnGPS);
                 Button sendLocation = (Button) locationDialog.findViewById(R.id.sendGPS);
 
-                theLatCoord = (TextView) findViewById(R.id.latCoord);
-                theLongCoord = (TextView) findViewById(R.id.longCoord);
+                theLatCoord = (TextView) location_layout.findViewById(R.id.latCoord);
+                theLongCoord = (TextView) location_layout.findViewById(R.id.longCoord);
+
 
                 enableLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        /*
                         grabLocation gettingGPS = new grabLocation(prev);
                         longitude = gettingGPS.getTheLongitude();
                         latitude = gettingGPS.getTheLatitude();
-                        /*
-                        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                        Criteria accurateCriteria = new Criteria();
-                        accurateCriteria.setAccuracy(Criteria.ACCURACY_FINE);
-                        String provider = locationManager.getBestProvider(accurateCriteria, false);
 
-                        LocationListener theListener = new LocationListener() {
-                            @Override
-                            public void onLocationChanged(Location location) {
-                                getLocation(location, theLatCoord, theLongCoord);
-                            }
+                            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                            Criteria accurateCriteria = new Criteria();
+                            accurateCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+                            String provider = locationManager.getBestProvider(accurateCriteria, false);
 
-                            @Override
-                            public void onStatusChanged(String provider, int status, Bundle extras) {
+                            LocationListener theListener = new LocationListener() {
+                                @Override
+                                public void onLocationChanged(Location location) {
+                                    getLocation(location, theLatCoord, theLongCoord);
+                                }
 
-                            }
+                                @Override
+                                public void onStatusChanged(String provider, int status, Bundle extras) {
 
-                            @Override
-                            public void onProviderEnabled(String provider) {
+                                }
 
-                            }
+                                @Override
+                                public void onProviderEnabled(String provider) {
 
-                            @Override
-                            public void onProviderDisabled(String provider) {
+                                }
 
-                            }
-                        };
+                                @Override
+                                public void onProviderDisabled(String provider) {
 
-                        locationManager.requestLocationUpdates(provider,0,0,theListener);
-                        getLocation(locationManager.getLastKnownLocation(provider), theLatCoord, theLongCoord);
+                                }
+                            };
+
+                            locationManager.requestLocationUpdates(provider, 0, 0, theListener);
+                            getLocation(locationManager.getLastKnownLocation(provider), theLatCoord, theLongCoord);
+                        }
+                        catch (Exception ce){
+                            Log.e("Here", "This", ce);
+                        }
                         */
 
-                        /* Code that isn't working yet
-
+                        try{
                         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                         final LocationListener listenerForLocation = new ListenerForLocation();
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
-                        theLatCoord = (TextView) findViewById(R.id.latCoord);
-                        theLongCoord = (TextView) findViewById(R.id.longCoord);
+                        theLatCoord = (TextView) location_layout.findViewById(R.id.latCoord);
+                        theLongCoord = (TextView) location_layout.findViewById(R.id.longCoord);
                         Location theCoord = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        longitude = theCoord.getLatitude();
+                        longitude = theCoord.getLongitude();
                         latitude = theCoord.getLatitude();
-                        theLatCoord.setText(Double.toString(latitude));
-                        theLongCoord.setText(Double.toString(longitude));
-                        */
+                            String finalLongitude = Double.toString(longitude);
+                            String finalLatitude = Double.toString(latitude);
+                            Log.e("Here", finalLatitude+finalLongitude);
+                            theLatCoord.setText(finalLatitude);
+                            theLongCoord.setText(finalLongitude);
+                    }
+
+                    catch (Exception ce){
+                        Log.e("Here", "This", ce);
+                    }
                     }
                 });
 
