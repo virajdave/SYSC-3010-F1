@@ -1,5 +1,6 @@
 package devices;
 
+import java.util.HashMap;
 import java.util.Observable;
 
 import types.Data;
@@ -89,19 +90,26 @@ public abstract class Device extends Observable {
 	}
 	
 	/**
-	 * Create a new device of the giving type.
+	 * Restore a new device of the giving type using the data.
 	 * @param type
 	 * @param id
+	 * @param data
 	 * @return
 	 */
-	public static Device createNew(int type, int id, Web web) {
+	public static Device createNew(int type, int id, Web web, HashMap<String, String> data) {
 		Device d = null;
 		
 		try {
 			// If out of range add a null device.
 			if (type > types.length - 2 || type < 0) {
 				Log.warn("Device #" + id + " type '" + type + "' is out of range, adding Null device.");
-				d = types[types.length - 1].newInstance();
+				
+				if (data == null) {
+					d = types[types.length - 1].newInstance();
+				} else {
+					d = types[types.length - 1].getConstructor(HashMap.class).newInstance(data);
+				}
+				
 				d.type = type;
 				d.id = id;
 				d.web = web;
@@ -116,6 +124,16 @@ public abstract class Device extends Observable {
 		}
 		
 		return d;
+	}
+	
+	/**
+	 * Create a new device of the giving type.
+	 * @param type
+	 * @param id
+	 * @return
+	 */
+	public static Device createNew(int type, int id, Web web) {
+		return createNew(type, id, web, null);
 	}
 	
 	@SuppressWarnings("unchecked")
