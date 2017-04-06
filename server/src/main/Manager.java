@@ -7,6 +7,7 @@ import devices.Device;
 import devices.Null;
 import types.*;
 import util.Codes;
+import util.Database;
 import util.Log;
 import util.Parse;
 
@@ -17,14 +18,13 @@ public class Manager extends Thread implements Observer {
 	private Web web;
 	private Server server;
 	private HeartBeat heart;
-	private int timeout;
 
 	/**
 	 * Create a new Manager with defaults.
 	 * @param s Server to use for sending messages
 	 */
-	public Manager(Server s) {
-		this(s, BEATRATE, TIMEOUT);
+	public Manager(Server s, Database db) {
+		this(s, db, BEATRATE, TIMEOUT);
 	}
 
 	/**
@@ -33,10 +33,9 @@ public class Manager extends Thread implements Observer {
 	 * @param beatrate Rate to send heartbeat    (in miliseconds)
 	 * @param timeout  Time for message timeouts (in seconds)
 	 */
-	public Manager(Server s, double beatrate, int timeout) {
-		web = new Web();
+	public Manager(Server s, Database db, double beatrate, int timeout) {
+		web = new Web(db);
 		server = s;
-		this.timeout = timeout;
 		heart = new HeartBeat(server, web, beatrate);
 	}
 
@@ -283,6 +282,6 @@ public class Manager extends Thread implements Observer {
 	}
 
 	public static void main(String[] args) {
-		new Manager(new Server(3010)).start();
+		new Manager(new Server(3010), new Database("web")).start();
 	}
 }

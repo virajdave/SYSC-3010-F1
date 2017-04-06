@@ -1,6 +1,5 @@
 package util;
 
-import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,13 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.AbstractMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class Database {
 	private String name;
-	private Connection connection;
+	protected Connection connection;
 	
 	private static final int TIMEOUT = 30; // Number of seconds before a query times out.
 	
@@ -25,6 +23,10 @@ public class Database {
 	 */
 	public Database(String name) {
 		this.name = name;
+		start();
+	}
+	
+	public void start() {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
 		} catch (SQLException e) {

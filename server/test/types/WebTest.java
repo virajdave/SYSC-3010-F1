@@ -11,6 +11,7 @@ import org.junit.Test;
 import devices.Device;
 import devices.Lights;
 import devices.Switch;
+import util.DatabaseStub;
 
 public class WebTest {
 	private static int index;
@@ -32,7 +33,7 @@ public class WebTest {
 	@Before
 	public void setup() {
 		d = new Device[3];
-		web = new Web();
+		web = new Web(new DatabaseStub());
 		d[0] = web.add(addr[0], 0);
 		d[1] = web.add(addr[1], 0);
 		d[2] = web.add(addr[2], 1);
@@ -55,7 +56,7 @@ public class WebTest {
 
 	@Test
 	public void newWebIDs() {
-		web = new Web();
+		web = new Web(new DatabaseStub());
 		d[0] = web.add(addr[0], 0);
 		assertEquals(index, d[0].getID());
 		index++;

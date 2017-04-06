@@ -1,4 +1,5 @@
 package main;
+
 import static org.junit.Assert.*;
 
 import java.net.InetSocketAddress;
@@ -9,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import types.Message;
+import util.DatabaseStub;
 import util.Log;
 
 public class ManagerTest {
@@ -22,7 +24,7 @@ public class ManagerTest {
 	public void setup() {
 		Log.onlyError(true);
 		Server s = new Server();
-		m = new Manager(s);
+		m = new Manager(s, new DatabaseStub());
 		s.start();
 		
 		// Let server start up.

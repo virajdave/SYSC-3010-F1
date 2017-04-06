@@ -16,10 +16,10 @@ public class Web {
 	private BiMap<InetSocketAddress, Device> devices;
 	private Database db;
 
-	public Web() {
+	public Web(Database database) {
 		devices = new BiMap<>();
 		
-		db = new Database("web");
+		db = database;
 		if (db.exists()) {
 			HashMap<Integer, Entry<Integer, String>> data = db.getDevices();
 			

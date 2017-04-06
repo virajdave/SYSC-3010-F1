@@ -7,6 +7,7 @@ import cucumber.api.java.en.*;
 import main.*;
 import types.Message;
 import util.Codes;
+import util.DatabaseStub;
 import util.Parse;
 
 import java.net.InetSocketAddress;
@@ -25,7 +26,8 @@ public class Steps {
 	@Given("^the manager is started$")
 	public void startManager() throws Throwable {
 		server = new ServerStub();
-		manager = new Manager(server, 0, 1);
+		DatabaseStub db = new DatabaseStub();
+		manager = new Manager(server, db, 0, 1);
 		devices = new HashMap<>();
 		manager.start();
 

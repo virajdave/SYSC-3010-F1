@@ -2,16 +2,23 @@ package devices;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import types.Data;
+import types.Web;
+import util.DatabaseStub;
 
 public class LightsTest {
+	Device test;
+	
+	@Before
+	public void setup() {
+		test = Device.createNew(0, 5, new Web(new DatabaseStub()));
+	}
 
 	@Test
 	public void testCreate() {
-		Device test = Device.createNew(0, 5, null);
-		
 		assertTrue(test instanceof Lights);
 		assertEquals(5, test.getID());
 		assertTrue(test.hasID(5));
@@ -20,11 +27,6 @@ public class LightsTest {
 	
 	@Test
 	public void testInfo() {
-		Device test = new Lights();
-		assertEquals("-1/0/0", test.getInfo());
-		
-
-		test = Device.createNew(0, 5, null);
 		assertEquals("5/0/0", test.getInfo());
 		test.setDead(true);
 		assertEquals("5/1/0", test.getInfo());
