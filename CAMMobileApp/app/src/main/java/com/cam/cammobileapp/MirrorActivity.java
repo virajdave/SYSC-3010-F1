@@ -103,76 +103,29 @@ public class MirrorActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                final AlertDialog locationDialog = new AlertDialog.Builder(activity).create();
-                final View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
-                locationDialog.setView(location_layout);
-                locationDialog.show();
-
-                final TextView theLatCoord = (TextView) location_layout.findViewById(R.id.latCoord);
-                final TextView theLongCoord = (TextView) location_layout.findViewById(R.id.longCoord);
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             Looper.prepare();
                             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                            final LocationListener listenerForLocation = new LocationListener() {
-                                @Override
-                                public void onLocationChanged(final Location location) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            theLatCoord.setText(Double.toString(location.getLatitude()));
-                                            theLongCoord.setText(Double.toString(location.getLongitude()));
-                                        }
-                                    });
-                                }
+                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            final String finalLong = Double.toString(location.getLongitude());
+                            final String finalLat = Double.toString(location.getLatitude());
 
-                                @Override
-                                public void onProviderDisabled(String s) {
-                                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                }
-
-                                @Override
-                                public void onStatusChanged(String s, int i, Bundle bundle) {}
-                                @Override
-                                public void onProviderEnabled(String s) {}
-                            };
-                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listenerForLocation);
-                            final Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    theLatCoord.setText(Double.toString(location.getLatitude()));
-                                    theLongCoord.setText(Double.toString(location.getLongitude()));
-                                }
-                            });
+                            MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "loc", finalLong + "," + finalLat));
+                            String msg = MainActivity.server.recvWait(1000);
+                            if (msg != null && msg.charAt(3) == '1') {
+                                Toasty.show(activity, "Successfully set Magic Mirror location to " + finalLong + ", " + finalLat);
+                            } else {
+                                Toasty.show(activity, "Unable to send location to Magic Mirror");
+                            }
                         } catch (Exception ce) {
-                            locationDialog.dismiss();
                             Toasty.show(activity, "Could not lock GPS location");
                             Log.e("here", "ce", ce);
                         }
                     }
                 }).start();
-
-                locationDialog.findViewById(R.id.sendGPS).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "loc", theLatCoord.getText() + "," + theLongCoord.getText()));
-                                String msg = MainActivity.server.recvWait(1000);
-                                if (msg != null && msg.charAt(3) == '1') {
-                                    Toasty.show(activity, "Successfully set Magic Mirror location to " + theLatCoord.getText() + ", " + theLongCoord.getText());
-                                } else {
-                                    Toasty.show(activity, "Unable to send location to Magic Mirror");
-                                }
-                            }
-                        }).start();
-                    }
-                });
             }
         });
     }
