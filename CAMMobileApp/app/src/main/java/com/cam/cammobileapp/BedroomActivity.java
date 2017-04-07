@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -34,8 +35,8 @@ public class BedroomActivity extends AppCompatActivity {
             lights = false;
         }
         try {
-            hour = Parse.toInt(data[2].substring(0, 1));
-            minute = Parse.toInt(data[2].substring(3, 4));
+            hour = Parse.toInt(data[2].substring(0, 2));
+            minute = Parse.toInt(data[2].substring(3, 5));
         } catch (Exception e) {
             hour = minute = null;
         }
