@@ -184,7 +184,7 @@ public class Mirror extends Device {
     	String key = "appID=7f6091d8&apiKey=4be816c142bfb4100421b9cbdef4fb9a";
     	String strStop = "&stopNo=" + stop;
     	String strRoute = "&routeNo=" + route;
-    	String url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop?";
+    	String url = "http://api.octranspo1.com/v1.2/GetNextTripsForStop?";
     	String full_api_url = url + key + strRoute + strStop + "&format=json";
         return full_api_url;
     }
