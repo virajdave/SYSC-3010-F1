@@ -18,24 +18,13 @@ import android.location.LocationManager;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import android.util.Log;
 
-
-
-
-/**
- * Created by virajdave on 2017-03-24.
- */
-
 public class MirrorActivity extends AppCompatActivity {
 
     final Context prev = this;
     TextView theLatCoord, theLongCoord;
     public LocationManager locationManager;
-    private LocationListener locationListener;
-    private Location lastKnownLocation;
     public double longitude;
     public double latitude;
-
-    public static ServerOnApp server = new ServerOnApp();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +33,6 @@ public class MirrorActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        server.start();
 
         final ImageButton imageButton5 = (ImageButton) findViewById(R.id.btn_setTrans);
         imageButton5.setOnClickListener(new View.OnClickListener() {
@@ -171,10 +159,6 @@ public class MirrorActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
     class ListenerForLocation implements LocationListener {
         //TextView theLatCoord, theLongCoord;
 
@@ -206,7 +190,5 @@ public class MirrorActivity extends AppCompatActivity {
 
         }
     }
-
-
 }
 
