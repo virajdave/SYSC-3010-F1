@@ -116,7 +116,7 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                                 linux_set_time(messageRecv.info[1:])
                                         if (messageRecv.info[0] == 'h'):
                                                 guiQueue.put_nowait(message('thermo', messageRecv.info[1:]))
-                                elif(messageRecv.messageType == 'id'):
+								elif(messageRecv.messageType == 'id'):
                                         lastBeatTime = int(round(time.time() * 1000))
                                         if (id == '-1'):
                                                 setId(messageRecv.info)
@@ -165,14 +165,17 @@ def runController(server, port):
     #Display the gui window
     gui.showGUI()
 
+# changes the device id
 def setId(num):
     global id
     id = num
 
+# Sets flag for the controller to run
 def run():
     global stopFlag
     stopFlag = 0
-    
+
+# sets flag to stop the controller	
 def stop():
     global stopFlag
     stopFlag = 1

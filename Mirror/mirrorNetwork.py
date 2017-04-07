@@ -14,13 +14,14 @@ import _thread
 
 networkStop = 0
 
+# Start up the networking side of the mirror
 def networkInit(server, port, recvQueue, sendQueue):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         localAddress = ('', 0)
         _thread.start_new_thread(mirrorNetRecv, (port, s,recvQueue,))
         _thread.start_new_thread(mirrorNetSend, (server,port,s,sendQueue,))
     
-
+# Start up the recving network side of the mirror
 def mirrorNetRecv(port, s, queue):
         global networkStop
         portInt = int(port)
@@ -41,7 +42,7 @@ def mirrorNetRecv(port, s, queue):
                         recvError.write('Error Message: ' + stringdata + '\n')
                         recvError.close()
     
-
+# Start up the sending side of the mirror
 def mirrorNetSend(serverIp, servPort, s, queue):
         global networkStop
         server_address = (serverIp, int(servPort))
@@ -68,22 +69,26 @@ def mirrorNetSend(serverIp, servPort, s, queue):
             except:
                     print('No internet Access')
 
+# Sends response to heartbeats from the server
 def heartBeat(host,port,s,id):
         server_address = (host,int(port))
         data = '20/' + id + '/2'
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
+# Sends acks back to the server
 def sendAck(host, port, s,id):
         data = '21/' + id + '/2'
         server_address = (host,int(port))
         print('Sending: ' + data)
         s.sendto(data.encode('utf-8'), server_address)
 
+# sets the flag to run the the network
 def networkRun():
     global networkStop
     networkStop = 0
-    
+
+# sets the flag to stop the network	
 def networkStop():
     global networkStop
     networkStop = 1

@@ -13,22 +13,7 @@ import urllib.request
 import json
 import re
 
-def urlBuilderBus(stop, route):
-     key = "appID=7f6091d8&apiKey=4be816c142bfb4100421b9cbdef4fb9a"
-     stop = "&stopNo=" + str(stop)
-     route = '&routeNo=' + str(route)
-     url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop?'
-     fullURL = url + key + route + stop + '&format=json'
-     return fullURL
-
-def getBusInfo (Fullurl):
-     url = urllib.request.urlopen(Fullurl, timeout=10, verify=False)
-     output = url.read().decode('utf-8')
-     #print(output)
-     #raw_api_dict = json.loads(output)
-     url.close()
-     return raw_api_dict
-
+# Takes the JSON bus info and parses it
 def parseBusInfo(info):
      info = json.loads(info)
      data = dict(
