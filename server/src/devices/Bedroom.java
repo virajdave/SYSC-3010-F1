@@ -5,6 +5,7 @@ import util.Parse;
 
 public class Bedroom extends Device {
 	boolean lights;
+	String alarm;
 	@Override
 	public void giveMessage(String msg) {
 		String dataOut = "";
@@ -34,6 +35,9 @@ public class Bedroom extends Device {
 		} else {
 			return false;
 		}
+		if (in.getName().equals("alarm")){
+			alarm = in.get();
+		}
 		return true;
 	}
 
@@ -45,10 +49,10 @@ public class Bedroom extends Device {
 	@Override
 	public String getInfo() {
 		if (lights){
-			return "On";
+			return "On/" + this.alarm;
 		}
 		else if (!lights){
-			return "Off";
+			return "Off/" + this.alarm;
 		}
 		return "";
 	}
