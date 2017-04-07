@@ -57,7 +57,7 @@ public class Parse {
 
         String joined = "";
         for(int i = 0; i < length; i++) {
-            joined += s;
+            joined += s[i];
             if (i != length - 1) {
                 joined += delimiter;
             }
