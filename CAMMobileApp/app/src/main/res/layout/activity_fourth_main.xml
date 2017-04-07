@@ -71,4 +71,29 @@
         android:text="Change Alarm Settings"
         android:textSize="25dp" />
 
+    <TextView
+        android:id="@+id/currentAlarm"
+        android:layout_width="40dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:text=""
+        android:textSize="50dp"
+        android:layout_alignTop="@+id/main4_l2"
+        android:layout_alignStart="@+id/imageView3"
+        android:layout_marginStart="52dp"
+        android:layout_above="@+id/alarmText"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="128dp"
+        android:layout_height="87dp"
+        android:id="@+id/subtitleForCurrentAlarm"
+        android:text="Current Alarm"
+        android:textSize="25dp"
+        android:layout_below="@+id/currentAlarm"
+        android:layout_alignStart="@+id/currentAlarm"
+        android:layout_marginStart="10dp"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"/>
+
 </RelativeLayout>
