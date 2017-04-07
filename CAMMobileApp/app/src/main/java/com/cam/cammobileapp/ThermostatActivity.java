@@ -20,57 +20,92 @@ import org.w3c.dom.Text;
  */
 
 public class ThermostatActivity extends AppCompatActivity{
-
     final Context theWindow = this;
-    int numtest = 0;
+    float numtest = 0f;
+
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second_main);
+
         Intent intent = getIntent();
+        final int id = intent.getIntExtra("deviceID", -1);
+        String temp = intent.getStringExtra("deviceInfo").substring(3);
 
         final TextView theCurrentTemp = (TextView) findViewById(R.id.currentTemp);
-        ImageButton upButton = (ImageButton) findViewById(R.id.btn_up);
-        upButton.setOnClickListener(new View.OnClickListener(){
+        theCurrentTemp.setText(temp);
 
-            public void onClick(View v) {
-                numtest+= 1;
-                TextView t = (TextView) findViewById(R.id.currentTemp);
-                t.setText(numtest+"");
+        if (temp.equals("no temp ")) {
+            return;
+        }
+        numtest = Float.parseFloat(temp);
 
-            }
-        });
-
-        ImageButton downButton = (ImageButton) findViewById(R.id.btn_down);
-        downButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_up).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                numtest-=1;
-                theCurrentTemp.setText(numtest+"");
+                numtest++;
+                theCurrentTemp.setText(Float.toString(numtest));
+
             }
         });
 
-        Button settingTemp = (Button) findViewById(R.id.setTemperature);
-        settingTemp.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_down).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numtest--;
+                theCurrentTemp.setText(Float.toString(numtest));
+            }
+        });
+
+        findViewById(R.id.setTemperature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String currentTempToBeSent = theCurrentTemp.getText().toString();
-                String sendingTemperature = "12/id/";
-                Toast.makeText(theWindow, "Successfully set temperature", Toast.LENGTH_LONG).show();
+                new Thread(new DataRunnable(currentTempToBeSent, id) {
+                    @Override
+                    public void run() {
+                        MainActivity.server.sendBroadcast("12/" + i.toString() + "/temp/" + data);
+                        String msg = MainActivity.server.recvWait(1000);
+                        runOnUiThread(new DataRunnable(msg, null) {
+                            @Override
+                            public void run() {
+                                if (data != null) {
+                                    Toast.makeText(theWindow, "Successfully set temperature", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(theWindow, "Could not send temp to server", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }).start();
             }
         });
 
-        Button resettingTemp = (Button) findViewById(R.id.resetTemp);
-        resettingTemp.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.resetTemp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                numtest = 0;
-                TextView t = (TextView) findViewById(R.id.currentTemp);
-                t.setText(numtest+"");
-                Toast.makeText(theWindow, "Successfully reset temperature", Toast.LENGTH_LONG).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.server.sendBroadcast("13/" + id);
+                        String msg = MainActivity.server.recvWait(1000);
+                        if (msg != null) {
+                            runOnUiThread(new DataRunnable(msg.substring(3), null) {
+                                @Override
+                                public void run() {
+                                    theCurrentTemp.setText(data);
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(theWindow, "Could not get temp from server", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                }).start();
             }
         });
-
     }
-
-
 }

@@ -4,9 +4,9 @@ import android.content.Intent;
 
 public abstract class DataRunnable implements Runnable {
     protected String data;
-    protected Intent i;
+    protected Object i;
 
-    public DataRunnable(String data, Intent i) {
+    public DataRunnable(String data, Object i) {
         this.data = data;
         this.i = i;
     }

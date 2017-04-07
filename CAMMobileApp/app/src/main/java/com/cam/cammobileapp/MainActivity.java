@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import android.content.Intent;
 import android.widget.ListView;
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    Integer devID = list.get(position);
+                    final Integer devID = list.get(position);
                     Log.i("hhhh", devID.toString());
                     alertDialog.dismiss();
 
@@ -119,8 +118,10 @@ public class MainActivity extends AppCompatActivity {
                             server.sendBroadcast("13/" + data);
                             String msg = server.recvWait(1000);
                             if (msg != null) {
-                                i.putExtra("deviceInfo", msg);
-                                startActivity(i);
+                                Intent intent = (Intent)(i);
+                                intent.putExtra("deviceID", Integer.parseInt(data));
+                                intent.putExtra("deviceInfo", msg);
+                                startActivity(intent);
                             } else {
                                 Log.i("hhhh", "aaasasfsa");
 
