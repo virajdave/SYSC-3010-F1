@@ -70,19 +70,18 @@ class thermostatControl:
         print ("wantedTemp = %d" % self.temp)
         n = 0
         if (self.currTemp < self.temp and self.h.on == False) :
-            print ("Temp low activating heater")
+            print ("\nTemp low activating heater\n")
             self.h.onOff()         
         elif (self.currTemp-0.5 >= self.temp and self.h.on) :
-            print ("Temp high deactivating heater")
+            print ("\nTemp high deactivating heater\n")
             self.h.onOff()
             
     def setNewTemp(self, t):
-        self.Temp = t
+        
+        self.temp = float (t)
+        
+        
 
 ts = temperatureSensor()
-tc = thermostatControl()
-tc.currTemp = tc.ts.getTemp()
-while (True):
-    tc.manageTemp()
-    time.sleep(1)
+
 
