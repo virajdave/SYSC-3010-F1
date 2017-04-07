@@ -5,14 +5,23 @@ import util.Parse;
 
 public class Bedroom extends Device {
 	boolean lights;
+	String alarm;
 	@Override
 	public void giveMessage(String msg) {
 		String dataOut = "";
 		if (msg.equals("time")) {
 			
         	    dataOut = getTime();
+        	    send(dataOut);
 		}
-		send(dataOut);
+		if (msg.equals("LO")){
+			this.lights = true;
+			
+		}
+		if (msg.equals("LF")){
+			this.lights = false;
+		}
+		
 	}
 	public String getTime() {
         	long time = System.currentTimeMillis();
@@ -26,6 +35,9 @@ public class Bedroom extends Device {
 		} else {
 			return false;
 		}
+		if (in.getName().equals("alarm")){
+			alarm = in.get();
+		}
 		return true;
 	}
 
@@ -36,7 +48,13 @@ public class Bedroom extends Device {
 
 	@Override
 	public String getInfo() {
-		return null;
+		if (lights){
+			return "On/" + this.alarm;
+		}
+		else if (!lights){
+			return "Off/" + this.alarm;
+		}
+		return "";
 	}
 
 }
