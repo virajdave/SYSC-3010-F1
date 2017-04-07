@@ -1,57 +1,68 @@
 package com.cam.cammobileapp;
 
+import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Switch;
-import android.app.Activity;
-import android.widget.EditText;
+import android.widget.TimePicker;
 
+import com.cam.cammobileapp.util.Parse;
 import com.cam.cammobileapp.util.Toasty;
 
-
-/**
- * Created by virajdave on 2017-03-26.
- */
+import java.util.Calendar;
 
 public class BedroomActivity extends AppCompatActivity {
-    final Activity activity = this;
+    private final Activity activity = this;
+
+    private boolean lights;
+    private Integer hour, minute;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bedroom);
+
         Intent intent = getIntent();
+        final int id = intent.getIntExtra("deviceID", -1);
+        String[] data = intent.getStringExtra("deviceInfo").split("/");
+        try {
+            lights = Parse.toBool(data[0]);
+        } catch (NumberFormatException e) {
+            lights = false;
+        }
+        try {
+            hour = Parse.toInt(data[1].substring(0, 1));
+            minute = Parse.toInt(data[1].substring(3, 4));
+        } catch (Exception e) {
+            hour = minute = null;
+        }
 
-        ImageButton imageButton8 = (ImageButton) findViewById(R.id.btn_alarm);
-        imageButton8.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_alarm).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final AlertDialog alarmDialog = new AlertDialog.Builder(activity).create();
-                View alarm_layout = getLayoutInflater().inflate(R.layout.alarm_layout, null);
-                final EditText hour = (EditText) alarm_layout.findViewById(R.id.enterHour);
-                final EditText minute = (EditText) alarm_layout.findViewById(R.id.enterMinute);
+                if (hour == null || minute == null) {
+                    final Calendar c = Calendar.getInstance();
+                    int hour = c.get(Calendar.HOUR_OF_DAY);
+                    int minute = c.get(Calendar.MINUTE);
+                }
 
-                alarmDialog.setView(alarm_layout);
-                alarmDialog.show();
-
-                Button alarm_Button = (Button) alarm_layout.findViewById(R.id.saveAlarm);
-                alarm_Button.setOnClickListener(new View.OnClickListener() {
+                TimePickerDialog alarmPicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
                     @Override
-                    public void onClick(View v) {
-                        alarmDialog.dismiss();
-                        //Less than 10, add a zero in the front of the hour
-                        String finalHour = hour.getText().toString();
-                        String finalMin  = minute.getText().toString();
-                        String messageToAlarmDriver="12/id/" + finalHour+ "," + minute;
-
-                        //server.getNetInfo()
-                        Toasty.show(activity, "Successfully sent the Alarm Desired to the Alarm");
+                    public void onTimeSet(TimePicker timePicker, final int hour, final int minute) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String sHour = (hour < 10 ? "0" : "") + hour;
+                                String sMinute = (minute < 10 ? "0" : "") + minute;
+                                Log.i("aaaa", sHour + ":" + sMinute);
+                            }
+                        }).start();
                     }
-
-                });
+                }, hour, minute, true);
+                alarmPicker.setTitle("Select Time");
+                alarmPicker.show();
 
             }
         });

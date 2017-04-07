@@ -2,19 +2,18 @@ package com.cam.cammobileapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.content.Intent;
 import android.widget.ListView;
 
-import com.cam.cammobileapp.util.DataRunnable;
-import com.cam.cammobileapp.util.Toasty;
 import com.cam.cammobileapp.net.Server;
+import com.cam.cammobileapp.util.Parse;
+import com.cam.cammobileapp.util.Toasty;
 
 import java.util.ArrayList;
 
@@ -92,17 +91,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void showList(final ArrayList<Integer> list, final Intent i) {
+    public void showList(final ArrayList<Integer> list, final Intent intent) {
         // Short circuit if there's only one device.
         if (list.size() == 1) {
-            new Thread(new DataRunnable(list.get(0).toString(), i) {
+            final int devID = list.get(0);
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    server.sendBroadcast("13/" + data);
+                    // Pass through the ID and info to the new activity.
+                    server.sendBroadcast(Parse.toString("/", "13", devID));
                     String msg = server.recvWait(1000);
                     if (msg != null) {
-                        Intent intent = (Intent) (i);
-                        intent.putExtra("deviceID", Integer.parseInt(data));
+                        intent.putExtra("deviceID", devID);
                         intent.putExtra("deviceInfo", msg);
                         startActivity(intent);
                     } else {
@@ -123,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Build the dialog to pick a device ID from a list.
         final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        LayoutInflater inflater = getLayoutInflater();
-        View listView = (View) inflater.inflate(R.layout.custom_list, null);
+        View listView = (View) getLayoutInflater().inflate(R.layout.custom_list, null);
         alertDialog.setView(listView);
         alertDialog.setTitle("Choose ID");
         ListView lv = (ListView) listView.findViewById(R.id.listView);
@@ -138,18 +137,17 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     // Get the ID selected and dismiss the dialog, so nothing else could be picked.
-                    final Integer devID = list.get(position);
+                    final int devID = list.get(position);
                     alertDialog.dismiss();
 
-                    new Thread(new DataRunnable(devID.toString(), i) {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            server.sendBroadcast("13/" + data);
+                            server.sendBroadcast(Parse.toString("/", "13", devID));
                             String msg = server.recvWait(1000);
                             if (msg != null) {
                                 // Pass through the ID and info to the new activity.
-                                Intent intent = (Intent) (i);
-                                intent.putExtra("deviceID", Integer.parseInt(data));
+                                intent.putExtra("deviceID", devID);
                                 intent.putExtra("deviceInfo", msg);
                                 startActivity(intent);
                             } else {
@@ -166,8 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getNetInfo() {
-        String message = "10";
-        server.sendBroadcast(message);
+        server.sendBroadcast("10");
         String s = server.recvWait(1000);
         //String s = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
         if (s == null) {

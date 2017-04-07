@@ -2,6 +2,8 @@ package com.cam.cammobileapp;
 
 import android.util.Log;
 
+import com.cam.cammobileapp.util.Parse;
+
 import java.util.ArrayList;
 
 public class Devices {
@@ -28,8 +30,9 @@ public class Devices {
                 for (String dev : parsed) {
                     if (dev.length() != 0) {
                         String[] split = dev.split(":");
-                        int id = Integer.parseInt(split[0]);
-                        int type = Integer.parseInt(split[1]);
+                        int id = Parse.toInt(split[0]);
+                        int type = Parse.toInt(split[1]);
+                        //boolean dead = Parse.toBool(split[2]);
 
                         if (type == 2) {
                             mirror.add(id);
