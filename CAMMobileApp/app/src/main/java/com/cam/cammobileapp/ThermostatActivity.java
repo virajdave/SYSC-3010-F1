@@ -11,11 +11,11 @@ import android.widget.TextView;
 import com.cam.cammobileapp.util.Parse;
 import com.cam.cammobileapp.util.Toasty;
 
-public class ThermostatActivity extends AppCompatActivity{
+public class ThermostatActivity extends AppCompatActivity {
     final Activity activity = this;
     float setTemp = 0f;
 
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thermostat);
 
@@ -23,37 +23,37 @@ public class ThermostatActivity extends AppCompatActivity{
         final int id = intent.getIntExtra("deviceID", -1);
         final String temp = intent.getStringExtra("deviceInfo").substring(3);
 
-        final TextView theCurrentTemp = (TextView) findViewById(R.id.currentTemp);
-        theCurrentTemp.setText(temp);
+        final TextView currentTemp = (TextView) findViewById(R.id.currentTemp);
+        currentTemp.setText(temp);
 
         if (temp.equals("no temp ")) {
             findViewById(R.id.btn_up).setEnabled(false);
             findViewById(R.id.btn_down).setEnabled(false);
             findViewById(R.id.setTemp).setEnabled(false);
             findViewById(R.id.resetTemp).setEnabled(false);
-            theCurrentTemp.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
+            currentTemp.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
             return;
         }
         setTemp = Parse.toFloat(temp);
 
-        findViewById(R.id.btn_up).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.btn_up).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                theCurrentTemp.setText(Parse.toString(++setTemp));
+                currentTemp.setText(Parse.toString(++setTemp));
             }
         });
 
         findViewById(R.id.btn_down).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                theCurrentTemp.setText(Parse.toString(--setTemp));
+                currentTemp.setText(Parse.toString(--setTemp));
             }
         });
 
         findViewById(R.id.setTemp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String currentTempToBeSent = theCurrentTemp.getText().toString();
+                final String currentTempToBeSent = currentTemp.getText().toString();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -84,7 +84,7 @@ public class ThermostatActivity extends AppCompatActivity{
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    theCurrentTemp.setText(temp);
+                                    currentTemp.setText(temp);
                                 }
                             });
                         } else {
