@@ -12,13 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.app.Activity;
 import android.content.Intent;
-import android.widget.EditText;
 import android.widget.ListView;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {

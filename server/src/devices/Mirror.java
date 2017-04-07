@@ -7,13 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import types.Data;
 import util.Parse;
 
 public class Mirror extends Device {
-    private Thermostat thermo;
+    private int thermo;
     private String currentColour;
     private String currStop;
     private String currRoute;
@@ -31,9 +32,28 @@ public class Mirror extends Device {
         currDirection = "0";
         lon = "-75.6981200";
         lat = "45.4111700";
-        thermo = null;
+        thermo = -1;
     }
-
+    
+    public Mirror(HashMap<String, String> data) {
+		// Use the DB property if it has been set.
+    	currentColour 	= data.containsKey("colour") 	? data.get("colour") 				: "#2E99A9";
+    	currStop 		= data.containsKey("stop") 		? data.get("stop") 					: "3031";
+    	currRoute 		= data.containsKey("route") 	? data.get("route") 				: "104"; 	
+    	currDirection 	= data.containsKey("direction") ? data.get("direction") 			: "0";
+    	lon 			= data.containsKey("lon") 		? data.get("lon") 					: "-75.6981200";
+    	lat 			= data.containsKey("lat") 		? data.get("lat") 					: "45.4111700";
+    	thermo 			= data.containsKey("thermo") 	? Parse.toInt(data.get("thermo")) 	: -1;
+    	try {
+			send(getWeather());
+			send(getBus());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	send(getTime());
+    	send(thermoTemp());
+	}
 
     /**
      * Creates the JSON string with the time
@@ -54,6 +74,8 @@ public class Mirror extends Device {
         temp = loc.split(delimeter);
         lat = temp[0];
         lon = temp[1];
+        setProperty("lon", this.lon);
+        setProperty("lat", this.lat);
         try {
 			send(this.getWeather());
 		} catch (IOException e) {
@@ -89,6 +111,7 @@ public class Mirror extends Device {
      */
     private void setStation (String station) {
     	this.currStop = station;
+    	setProperty("stop", this.currStop);
     }
     
     /**
@@ -97,6 +120,7 @@ public class Mirror extends Device {
      */
     private void setRoute (String route) {
     	this.currRoute = route;
+    	setProperty("route", this.currRoute);
     }
     
     /**
@@ -105,6 +129,7 @@ public class Mirror extends Device {
      */
     private void setDirection (String direction) {
     	this.currDirection = direction;
+    	setProperty("direction", this.currDirection);
     }
     
     
@@ -221,6 +246,7 @@ public class Mirror extends Device {
         if (m.find( )) {
         	// Set the new colour.
             this.currentColour = m.group(0);
+            setProperty("colour", this.currentColour);
         }
     }
     
@@ -239,8 +265,9 @@ public class Mirror extends Device {
     public String thermoTemp() {
     	String sendString = "h";
     	try{
-    		if (thermo != null) {
-    			Data temp = thermo.requestOutput(new Data("temp", ""));
+    		if (thermo != -1) {
+    			Thermostat thermostat = (Thermostat) getDevice(thermo); 
+    			Data temp = thermostat.requestOutput(new Data("temp", ""));
     			if (temp != null) {
     				sendString += temp.get();
     			}
@@ -255,8 +282,9 @@ public class Mirror extends Device {
     /**
      * Sets the thermostat the mirror is concerned with
      */
-    public void setThermoDevice(Thermostat t) {
+    public void setThermoDevice(int t) {
     	this.thermo = t;
+    	setProperty("thermo", Parse.toString(this.thermo));
     }
 
     @Override
@@ -297,8 +325,7 @@ public class Mirror extends Device {
     	} else if (in.is("loc")) {
     		this.setLoc(in.get());
     	} else if (in.is("thermo")) {
-    		Thermostat d = (Thermostat) getDevice(Parse.toInt(in.get()));
-    		this.setThermoDevice(d);
+    		setThermoDevice(Parse.toInt(in.get()));
     	} else {
     		return false;
     	}
