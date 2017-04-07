@@ -11,12 +11,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.cam.cammobileapp.util.Parse;
 import com.cam.cammobileapp.util.Toasty;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
+
+import java.util.ArrayList;
 
 public class MirrorActivity extends AppCompatActivity {
     final Activity activity = this;
@@ -63,7 +68,7 @@ public class MirrorActivity extends AppCompatActivity {
                                 }
 
                                 MainActivity.requestCheck(
-                                        Parse.toString("/", "12", id, "route", Parse.toString(",", rt, st, dir)),
+                                        Parse.toString("/", "12", id, "route", Parse.toString(",", st, rt, dir)),
                                         "Successfully sent Bus Info to OCTranspo API",
                                         "Could not send Bus Info",
                                         activity
@@ -90,9 +95,9 @@ public class MirrorActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 // Convert RGB to a hex colour value.
-                                String HexRed = Integer.toHexString(cp.getRed());
-                                String HexGreen = Integer.toHexString(cp.getGreen());
-                                String HexBlue = Integer.toHexString(cp.getBlue());
+                                String HexRed = pad(Integer.toHexString(cp.getRed()));
+                                String HexGreen = pad(Integer.toHexString(cp.getGreen()));
+                                String HexBlue = pad(Integer.toHexString(cp.getBlue()));
                                 String finalRGB = "#" + HexRed + HexGreen + HexBlue;
 
                                 // Send colour to server and check it worked.
@@ -137,6 +142,67 @@ public class MirrorActivity extends AppCompatActivity {
                 }).start();
             }
         });
+
+        findViewById(R.id.btn_temp).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                final ArrayList<Integer> list = MainActivity.devices.thermo;
+
+                if (list.size() == 0) {
+                    Toasty.show(activity, "No thermostat devices are connected");
+                    return;
+                }
+
+                // Convert the integer list to a string array so it can be used in a ListView.
+                String[] ids = new String[list.size()];
+                int index = 0;
+                for (Integer ida : list) {
+                    ids[index++] = ida.toString();
+                    Log.i("info", ids[index - 1]);
+                }
+
+                // Build the dialog to pick a device ID from a list.
+                final android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(activity).create();
+                View listView = (View) getLayoutInflater().inflate(R.layout.custom_list, null);
+                alertDialog.setView(listView);
+                alertDialog.setTitle("Choose ID");
+                ListView lv = (ListView) listView.findViewById(R.id.listView);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, ids);
+                lv.setAdapter(adapter);
+
+                // When a device ID is picked get the info from the server and start the associated activity.
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long ida) {
+                        try {
+                            // Get the ID selected and dismiss the dialog, so nothing else could be picked.
+                            final int devID = list.get(position);
+                            alertDialog.dismiss();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainActivity.requestCheck(
+                                            Parse.toString("/", "12", id, "thermo",  devID),
+                                            "Thermostat " + devID + " connected to Mirror",
+                                            "Could not connect Thermostat " + devID,
+                                            activity
+                                    );
+                                }
+                            }).start();
+                        } catch (Exception e) {
+                            Log.e("CAM", "on device pick failure", e);
+                        }
+                    }
+                });
+                alertDialog.show();
+            }
+        });
+    }
+
+    private String pad(String num) {
+        return (num.length() == 1 ? "0" : "") + num;
     }
 }
 

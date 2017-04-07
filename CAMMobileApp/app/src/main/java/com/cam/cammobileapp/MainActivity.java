@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final Activity activity = this;
     public static Server server = new Server();
-    public Devices devices = new Devices();
+    public static Devices devices = new Devices();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Build the dialog to pick a device ID from a list.
-        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        final AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
         View listView = (View) getLayoutInflater().inflate(R.layout.custom_list, null);
         alertDialog.setView(listView);
         alertDialog.setTitle("Choose ID");

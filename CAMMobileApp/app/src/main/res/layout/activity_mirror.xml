@@ -77,6 +77,27 @@
             android:text="Set Transit Stop" />
     </LinearLayout>
 
+    <ImageButton
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:id="@+id/btn_temp"
+        android:src="@drawable/nest"
+        android:maxHeight="42dp"
+        android:maxWidth="42dp"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/main3_l3"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Link Temp"
+        android:paddingLeft="15dp"
+        android:layout_below="@id/btn_temp"
+        android:layout_toEndOf="@+id/imageView" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="140dp"
