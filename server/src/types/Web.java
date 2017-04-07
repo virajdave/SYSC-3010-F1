@@ -3,6 +3,7 @@ package types;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Observer;
 import java.util.Set;
 
 import devices.Device;
@@ -15,8 +16,12 @@ public class Web {
 	
 	private BiMap<InetSocketAddress, Device> devices;
 	private Database db;
-
+	
 	public Web(Database database) {
+		this(database, null);
+	}
+
+	public Web(Database database, Observer o) {
 		devices = new BiMap<>();
 		
 		db = database;
@@ -38,6 +43,9 @@ public class Web {
 				Device device = Device.createNew(deviceEntry.getValue().getKey(), id, this);
 				if (device != null) {
 					devices.put(addr, device);
+					if (o != null) {
+						device.addObserver(o);
+					}
 				}
 			}
 		} else {

@@ -34,7 +34,7 @@ public class Manager extends Thread implements Observer {
 	 * @param timeout  Time for message timeouts (in seconds)
 	 */
 	public Manager(Server s, Database db, double beatrate, int timeout) {
-		web = new Web(db);
+		web = new Web(db, this);
 		server = s;
 		heart = new HeartBeat(server, web, beatrate);
 	}
