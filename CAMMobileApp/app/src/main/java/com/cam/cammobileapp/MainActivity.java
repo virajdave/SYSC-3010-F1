@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        ImageButton imageButton1 = (ImageButton) findViewById(R.id.btn_thermostat);
-        imageButton1.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_thermostat).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (devices.thermo.isEmpty()){
                     Toast.makeText(prev, "No active thermostats. Please refresh list of devices", Toast.LENGTH_LONG).show();
@@ -53,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton imageButton2 = (ImageButton) findViewById(R.id.btn_magicMirror);
-        imageButton2.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_magicMirror).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (devices.mirror.isEmpty()){
                     Toast.makeText(prev, "No active mirrors. Please refresh list of devices", Toast.LENGTH_LONG).show();
@@ -64,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        ImageButton imageButton3 = (ImageButton) findViewById(R.id.btn_bedroom);
-        imageButton3.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_bedroom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (devices.bed.isEmpty()){
@@ -78,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ((ImageButton) findViewById(R.id.btn_refresh)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread(new Runnable() {
