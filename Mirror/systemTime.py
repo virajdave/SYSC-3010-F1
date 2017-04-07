@@ -23,6 +23,7 @@ import os
 #                   0, # Millisecond
 #              )
 
+# Changes the system time on linux
 def linux_set_time(milliSeconds):
     formatedTime = datetime.datetime.fromtimestamp(int(milliSeconds)/1000)
     time_tuple = (formatedTime.year,
