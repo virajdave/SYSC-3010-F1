@@ -20,7 +20,7 @@ import android.widget.EditText;
  */
 
 public class BedroomActivity extends AppCompatActivity {
-    final Context thisActivity = this;
+    final Activity activity = this;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +30,7 @@ public class BedroomActivity extends AppCompatActivity {
         ImageButton imageButton8 = (ImageButton) findViewById(R.id.btn_alarm);
         imageButton8.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final AlertDialog alarmDialog = new AlertDialog.Builder(thisActivity).create();
+                final AlertDialog alarmDialog = new AlertDialog.Builder(activity).create();
                 View alarm_layout = getLayoutInflater().inflate(R.layout.alarm_layout, null);
                 final EditText hour = (EditText) alarm_layout.findViewById(R.id.enterHour);
                 final EditText minute = (EditText) alarm_layout.findViewById(R.id.enterMinute);
@@ -49,7 +49,7 @@ public class BedroomActivity extends AppCompatActivity {
                         String messageToAlarmDriver="12/id/" + finalHour+ "," + minute;
 
                         //server.sendMessage()
-                        Toast.makeText(thisActivity, "Successfully sent the Alarm Desired to the Alarm", Toast.LENGTH_LONG).show();
+                        Toasty.show(activity, "Successfully sent the Alarm Desired to the Alarm");
                     }
 
                 });
@@ -64,11 +64,11 @@ public class BedroomActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final Boolean stateOfLights = lightControl.isChecked();
                 if (stateOfLights) {
-                    Toast.makeText(thisActivity, "Turned On the Lights", Toast.LENGTH_LONG).show();
+                    Toasty.show(activity, "Turned On the Lights");
                     String messageToLightDriver="12/id/l/0)";
                 }
                 else if(!stateOfLights) {
-                    Toast.makeText(thisActivity, "Turned Off the Lights", Toast.LENGTH_LONG).show();
+                    Toasty.show(activity, "Turned Off the Lights");
                     String messageToLightDriver="12/id/l/f)";
                     }
 

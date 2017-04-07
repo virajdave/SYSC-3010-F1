@@ -1,5 +1,6 @@
 package com.cam.cammobileapp;
 
+import android.app.Activity;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +20,8 @@ import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import android.util.Log;
 
 public class MirrorActivity extends AppCompatActivity {
+    final Activity activity = this;
 
-    final Context prev = this;
     TextView theLatCoord, theLongCoord;
     public LocationManager locationManager;
     public double longitude;
@@ -39,7 +40,7 @@ public class MirrorActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                final AlertDialog busDialog = new AlertDialog.Builder(prev).create();
+                final AlertDialog busDialog = new AlertDialog.Builder(activity).create();
                 View transportation_layout = getLayoutInflater().inflate(R.layout.transportation_layout, null);
                 EditText route = (EditText) transportation_layout.findViewById(R.id.enterRoute);
                 EditText stop = (EditText) transportation_layout.findViewById(R.id.enterStop);
@@ -58,7 +59,7 @@ public class MirrorActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         busDialog.dismiss();
 
-                        Toast.makeText(prev, "Successfully sent Bus Info to OCTranspo API", Toast.LENGTH_LONG).show();
+                        Toasty.show(activity, "Successfully sent Bus Info to OCTranspo API");
                     }
                 });
 
@@ -92,7 +93,7 @@ public class MirrorActivity extends AppCompatActivity {
 
                         cp.dismiss();
                         String messageForColour = "12/id/colour/" + finalRGB;
-                        Toast.makeText(prev, finalRGB, Toast.LENGTH_LONG).show();
+                        Toasty.show(activity, finalRGB);
                     }
                 });
             }
@@ -104,7 +105,7 @@ public class MirrorActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                final AlertDialog locationDialog = new AlertDialog.Builder(prev).create();
+                final AlertDialog locationDialog = new AlertDialog.Builder(activity).create();
                 final View location_layout = getLayoutInflater().inflate(R.layout.location_layout, null);
                 locationDialog.setView(location_layout);
                 locationDialog.show();
@@ -149,7 +150,7 @@ public class MirrorActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         String locationToMirror = "12/id/loc/" + finalLong + "," + finalLat;
                         locationDialog.dismiss();
-                        Toast.makeText(prev, "Location sent to Magic Mirror", Toast.LENGTH_LONG).show();
+                        Toasty.show(activity, "Location sent to Magic Mirror");
                     }
                 });
 

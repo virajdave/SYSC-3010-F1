@@ -1,5 +1,6 @@
 package com.cam.cammobileapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    final Context prev = this;
+    final Activity activity = this;
     public static ServerOnApp server = new ServerOnApp();
     public Devices devices = new Devices();
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_thermostat).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (devices.thermo.isEmpty()){
-                    Toast.makeText(prev, "No active thermostats. Please refresh list of devices", Toast.LENGTH_LONG).show();
+                    Toasty.show(activity, "No active thermostats. Please refresh list of devices");
                 } else {
                     showList(devices.thermo, new Intent(MainActivity.this, ThermostatActivity.class));
                 }
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_magicMirror).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (devices.mirror.isEmpty()){
-                    Toast.makeText(prev, "No active mirrors. Please refresh list of devices", Toast.LENGTH_LONG).show();
+                    Toasty.show(activity, "No active mirrors. Please refresh list of devices");
                 } else {
                     showList(devices.mirror, new Intent(MainActivity.this, MirrorActivity.class));
                 }
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (devices.bed.isEmpty()){
-                    Toast.makeText(prev, "No active alarms. Please refresh list of devices", Toast.LENGTH_LONG).show();
+                    Toasty.show(activity, "No active alarms. Please refresh list of devices");
                 } else {
                     showList(devices.mirror, new Intent(MainActivity.this, BedroomActivity.class));
                 }
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setView(listView);
         alertDialog.setTitle("Choose ID");
         ListView lv = (ListView) listView.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(prev, android.R.layout.simple_list_item_1, mirrorIds);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, mirrorIds);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,12 +126,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 Log.i("hhhh", "aaasasfsa");
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(prev, "Could not get dev info", Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                                Toasty.show(activity, "Could not get dev info");
                             }
                         }
                     }).start();
@@ -148,19 +144,9 @@ public class MainActivity extends AppCompatActivity {
         String s = server.recvWait(1000);
         //String s = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
         if (s == null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(prev, "Message is null, server not connected", Toast.LENGTH_LONG).show();
-                }
-            });
+            Toasty.show(activity, "Message is null, server not connected");
         } else {
-            runOnUiThread(new DataRunnable(s, null) {
-                @Override
-                public void run() {
-                    Toast.makeText(prev, data, Toast.LENGTH_LONG).show();
-                }
-            });
+            Toasty.show(activity, s);
             devices.parse(s);
         }
     }

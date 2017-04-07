@@ -20,7 +20,7 @@ import org.w3c.dom.Text;
  */
 
 public class ThermostatActivity extends AppCompatActivity{
-    final Context theWindow = this;
+    final Activity activity = this;
     float numtest = 0f;
 
     protected void onCreate(Bundle savedInstanceState){
@@ -65,16 +65,12 @@ public class ThermostatActivity extends AppCompatActivity{
                     public void run() {
                         MainActivity.server.sendBroadcast("12/" + i.toString() + "/temp/" + data);
                         String msg = MainActivity.server.recvWait(1000);
-                        runOnUiThread(new DataRunnable(msg, null) {
-                            @Override
-                            public void run() {
-                                if (data != null) {
-                                    Toast.makeText(theWindow, "Successfully set temperature", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(theWindow, "Could not send temp to server", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+
+                        if (msg != null) {
+                            Toasty.show(activity, "Successfully set temperature");
+                        } else {
+                            Toasty.show(activity, "Could not send temp to server");
+                        }
                     }
                 }).start();
             }
@@ -96,12 +92,7 @@ public class ThermostatActivity extends AppCompatActivity{
                                 }
                             });
                         } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(theWindow, "Could not get temp from server", Toast.LENGTH_LONG).show();
-                                }
-                            });
+                            Toasty.show(activity, "Could not get temp from server");
                         }
                     }
                 }).start();
