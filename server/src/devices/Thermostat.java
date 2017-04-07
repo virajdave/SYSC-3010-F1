@@ -1,5 +1,7 @@
 package devices;
 
+import java.util.HashMap;
+
 import types.Data;
 import util.Parse;
 
@@ -8,14 +10,24 @@ import util.Parse;
  */
 public class Thermostat extends Device {
 	float thermostatTemp = -500;
+	int setTemp = -100;
+	public Thermostat (){
+		
+	}
+	public Thermostat (HashMap<String, String> data){
+		setTemp = data.containsKey("set Temp")  ? Parse.toInt(data.get("set Temp")) : Parse.toInt("-100");
+		thermostatTemp = data.containsKey("currTemp")  ? Parse.toFloat(data.get("currTemp")) : Parse.toFloat("-100");
+	}
     @Override // input from device to driver 
     public void giveMessage(String msg) {
     	thermostatTemp = Parse.toFloat(msg);
+    	setProperty("currTemp", msg);
     }
 
     @Override //input to device
     public boolean giveInput(Data in) {
     	int temp =  Parse.toInt(in.get());
+    	setProperty("set Temp", in.get());
     	send(in.get());
     	return true;
     }
