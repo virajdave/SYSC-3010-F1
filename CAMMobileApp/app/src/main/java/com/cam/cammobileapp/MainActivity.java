@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,13 +24,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     final Context prev = this;
     public static ServerOnApp server = new ServerOnApp();
-    public static ParseThermo parsedThermostat = new ParseThermo();
-    public static ParseAlarm parsedAlarms = new ParseAlarm();
-    public static ParseMirror parsedMirrors = new ParseMirror();
-    private ArrayList<Integer> id_thermo = new ArrayList<>();
-    private ArrayList<Integer> id_mirror = new ArrayList<>();
-    private ArrayList<Integer> id_alarm = new ArrayList<>();
     public ListView listView;
+    public Devices devices = new Devices();
 
 
     @Override
@@ -50,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 //Intent intent = new Intent(MainActivity.this, SecondMainActivity.class);
                 //startActivity(intent);
 
-                if(id_thermo.isEmpty()){
+                if(devices.mirror.isEmpty()){
                     Toast.makeText(prev, "No active thermostats. Please refresh list of devices", Toast.LENGTH_LONG).show();
                 }
 
@@ -68,70 +65,75 @@ public class MainActivity extends AppCompatActivity {
         ImageButton imageButton2 = (ImageButton) findViewById(R.id.btn_magicMirror);
         imageButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                //startActivity(intent2);
-                /*
-                Fill in code to show available Magic Mirrors
-                 */
-                final View itsViewforMirror = getLayoutInflater().inflate(R.layout.listviewformirror, null);
 
-                listView = (ListView) itsViewforMirror.findViewById(R.id.listMirror);
-                if(listView == null){
-                    Log.e("Fuck", "This");
-                }
 
-                if(id_mirror.isEmpty()){
-                    Toast.makeText(prev, "No active mirrors. Please refresh list of devices", Toast.LENGTH_LONG).show();
-                }
-
-                else {
-
-                    try {
-                        Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-                        ArrayAdapter<Integer> arrayAdapter = new ArrayAdapter<Integer>(prev, android.R.layout.simple_list_item_1, id_mirror);
-                        Log.e("todaaay", "This");
-                            listView.setAdapter(arrayAdapter);
-                        Log.e("pooop", "GiddyUp");
+                ImageButton refreshButton = (ImageButton) findViewById(R.id.btn_refresh);
+                refreshButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendMessage();
                     }
+                });
 
-                    catch(Exception ce){
-                        Log.e("Minnee", "This", ce);
-                    }
-
-                    Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-
-                   // Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                   // startActivity(intent2);
+                String[] mirrorIds = new String[devices.mirror.size()];
+                int index = 0;
+                for(Integer id: devices.mirror){
+                    mirrorIds[index++]=id.toString();
+                    Log.i("info",mirrorIds[index-1]);
                 }
 
-                /*
-                    try {
-                        Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(prev);
-                        builder.setTitle("Select Mirror");
-                        AlertDialog showMirrors = builder.create();
-                        showMirrors.show();
-                        String[] mirrorIds = new String[id_mirror.size()];
-                        int index = 0;
-                        for(Integer id: id_mirror){
-                            mirrorIds[index++]=id.toString();
-                            Log.i("info",mirrorIds[index-1]);
-                        }
-                        builder.setSingleChoiceItems(mirrorIds, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                                startActivity(intent2);
+                final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                LayoutInflater inflater = getLayoutInflater();
+                View listView = (View) inflater.inflate(R.layout.customlist, null);
+                alertDialog.setView(listView);
+                alertDialog.setTitle("List");
+                ListView lv = (ListView) listView.findViewById(R.id.listView);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(prev, android.R.layout.simple_list_item_1, mirrorIds);
+                lv.setAdapter(adapter);
+
+                try {
+                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                            try {
+                                Integer devID = devices.mirror.get(position);
+                                Log.i("hhhh", devID.toString());
+                                alertDialog.dismiss();
+
+                                new Thread(new DataRunnable(devID.toString()) {
+                                    @Override
+                                    public void run() {
+                                        server.sendBroadcast("13/" + data);
+                                        String msg = server.recvWait(1000);
+                                        if (msg != null) {
+                                            Intent i = new Intent(MainActivity.this, ThirdMainActivity.class);
+                                            i.putExtra("deviceInfo", msg);
+                                            startActivity(i);
+                                        } else {
+                                            Log.i("hhhh", "aaasasfsa");
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(prev, "Could not get dev info", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }).start();
+                            } catch (Exception e) {
+                                Log.e("hhhh", "non", e);
                             }
-                        });
-
-                    }
-                    catch (Exception ce){
-                        Log.e("Here", "This", ce);
-                    }
-                    */
-
+                        }
+                    });
+                } catch(Exception e) {
+                    Log.e("hhhh", "fail", e);
                 }
+                alertDialog.show();
+            }
         });
 
 
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 /*
                 Fill in code to show available alarms
                  */
-                if(id_alarm.isEmpty()){
+                if(devices.bed.isEmpty()){
                     Toast.makeText(prev, "No active alarms. Please refresh list of devices", Toast.LENGTH_LONG).show();
                 }
 
@@ -157,30 +159,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton refreshButton = (ImageButton) findViewById(R.id.btn_refresh);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
-
     }
 
     public void sendMessage() {
-        //String message = "10";
-        //server.sendBroadcast(message);
-        //String s = server.recvWait(1000);
-        String s = "00/2:3:0/6:2:1/7:2:1/8:2:0";
+        String message = "10";
+        server.sendBroadcast(message);
+        String s = server.recvWait(1000);
+        //String s = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
         if (s == null) {
             Toast.makeText(prev, "Message is null, server not connected", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(prev, s, Toast.LENGTH_LONG).show();
-            id_thermo = parsedThermostat.parseString(s);
-            id_alarm = parsedAlarms.parseString(s);
-            id_mirror = parsedMirrors.parseString(s);
-            String result ="";
-
+            devices.parse(s);
         }
     }
 }
