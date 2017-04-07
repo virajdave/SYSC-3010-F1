@@ -1,27 +1,22 @@
 package com.cam.cammobileapp;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Looper;
-import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.content.Intent;
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.widget.RadioGroup;
 
 import com.cam.cammobileapp.util.Parse;
 import com.cam.cammobileapp.util.Toasty;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-
-import android.util.Log;
 
 public class MirrorActivity extends AppCompatActivity {
     final Activity activity = this;
@@ -38,30 +33,47 @@ public class MirrorActivity extends AppCompatActivity {
         findViewById(R.id.btn_setTrans).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
                 final AlertDialog busDialog = new AlertDialog.Builder(activity).create();
                 View transportation_layout = getLayoutInflater().inflate(R.layout.transportation_layout, null);
-                EditText route = (EditText) transportation_layout.findViewById(R.id.enterRoute);
-                EditText stop = (EditText) transportation_layout.findViewById(R.id.enterStop);
-                EditText dir = (EditText) transportation_layout.findViewById(R.id.enterDir);
+                final EditText route = (EditText) transportation_layout.findViewById(R.id.enterRoute);
+                final EditText stop = (EditText) transportation_layout.findViewById(R.id.enterStop);
+                final RadioGroup radioGroup = (RadioGroup) transportation_layout.findViewById(R.id.pickDir);
 
                 busDialog.setView(transportation_layout);
-                busDialog.show();
 
-                String finalRoute = route.getText().toString();
-                String finalStation = stop.getText().toString();
-                String finaldirection = dir.getText().toString();
-                String messageToOC = "12/id/route" + finalStation + "," + finalRoute + "," + finaldirection;
-                Button button = (Button) transportation_layout.findViewById(R.id.sendButton);
-                button.setOnClickListener(new View.OnClickListener() {
+                transportation_layout.findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         busDialog.dismiss();
 
-                        Toasty.show(activity, "Successfully sent Bus Info to OCTranspo API");
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int radioButton = radioGroup.getCheckedRadioButtonId();
+
+                                String rt = route.getText().toString();
+                                String st = stop.getText().toString();
+                                int dir;
+                                if (radioButton == R.id.dirBoth) {
+                                    dir = 0;
+                                } else if (radioButton == R.id.dir1) {
+                                    dir = 1;
+                                } else {
+                                    dir = 2;
+                                }
+
+                                MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "route", Parse.toString(",", rt, st, dir)));
+                                String msg = MainActivity.server.recvWait(1000);
+                                if (msg != null && msg.charAt(3) == '1') {
+                                    Toasty.show(activity, "Successfully sent Bus Info to OCTranspo API");
+                                } else {
+                                    Toasty.show(activity, "Could not send Bus Info");
+                                }
+                            }
+                        }).start();
                     }
                 });
-
+                busDialog.show();
             }
         });
 

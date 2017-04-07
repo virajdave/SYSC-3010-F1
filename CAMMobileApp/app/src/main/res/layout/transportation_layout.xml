@@ -1,82 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:gravity="center">
+    android:paddingRight="16dp">
 
     <LinearLayout
         android:id="@+id/trans_l1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:weightSum="1"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
-    <EditText
-        android:id="@+id/enterStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Stop"
-        android:inputType="textWebEditText"
-        android:text="Enter Stop Number"
-        android:layout_marginTop="49dp"
-        android:layout_below="@+id/trans_l1"
-        android:layout_alignStart="@+id/trans_l1" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:weightSum="1">
 
-    <TextView
-        android:id="@+id/stopNo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop #"
-        android:layout_alignBaseline="@+id/enterStop"
-        android:layout_alignBottom="@+id/enterStop"
-        android:layout_alignStart="@+id/routeNo" />
+        <EditText
+            android:id="@+id/enterStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/trans_l1"
+            android:layout_below="@+id/trans_l1"
+            android:layout_marginTop="40dp"
+            android:ems="10"
+            android:hint="Stop Number"
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/enterRoute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Enter Route Number"
-            android:layout_marginTop="77dp"
             android:layout_below="@+id/enterStop"
-            android:layout_toEndOf="@+id/trans_l1"
-            android:hint="Route"    />
-
-        <TextView
-            android:id="@+id/routeNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/enterRoute"
-            android:layout_alignBottom="@+id/enterRoute"
-            android:layout_alignParentEnd="true"
-            android:text="Bus/Train Route #" />
-
-        <EditText
-            android:id="@+id/enterDir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/routeNo"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="40dp"
             android:layout_toEndOf="@+id/trans_l1"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Enter Direction (1/2)"
-            android:hint="Direction"/>
+            android:hint="Route Number"
+            android:inputType="number" />
 
-        <TextView
-            android:id="@+id/direction"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/pickDir"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/stopNo"
-            android:layout_alignTop="@+id/enterDir"
-            android:text="Direction if Applicable" />
+            android:layout_marginTop="40dp"
+            android:checkedButton="@+id/dirBoth"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/dir1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Direction 1" />
+            <RadioButton android:id="@+id/dir2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Direction 2" />
+            <RadioButton android:id="@+id/dirBoth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Both" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/sendButton"
@@ -84,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="47dp"
             android:text="Send" />
     </LinearLayout>
