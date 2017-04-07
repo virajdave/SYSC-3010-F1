@@ -1,5 +1,7 @@
 package com.cam.cammobileapp;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Devices {
@@ -14,24 +16,33 @@ public class Devices {
     }
 
     public void parse(String s) {
-        if (s.substring(0, 2).equals("00")) {
+        mirror.clear();
+        thermo.clear();
+        bed.clear();
 
-            String parsed[] = s.substring(3).split("/");
-            System.out.println("");
+        try {
+            if (s.substring(0, 2).equals("00")) {
 
-            for (String dev : parsed) {
-                String[] split = dev.split(":");
-                int id = Integer.parseInt(split[0]);
-                int type = Integer.parseInt(split[1]);
+                String parsed[] = s.substring(3).split("/");
 
-                if (type == 2) {
-                    mirror.add(id);
-                } else if (type == 3) {
-                    thermo.add(id);
-                } else if (type == 4) {
-                    bed.add(id);
+                for (String dev : parsed) {
+                    if (dev.length() != 0) {
+                        String[] split = dev.split(":");
+                        int id = Integer.parseInt(split[0]);
+                        int type = Integer.parseInt(split[1]);
+
+                        if (type == 2) {
+                            mirror.add(id);
+                        } else if (type == 3) {
+                            thermo.add(id);
+                        } else if (type == 4) {
+                            bed.add(id);
+                        }
+                    }
                 }
             }
+        } catch (Exception e) {
+            Log.e("Devices", "error parsing net info", e);
         }
     }
 }
