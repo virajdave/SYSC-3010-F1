@@ -21,6 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Stop"
         android:inputType="textWebEditText"
         android:text="Enter Stop Number"
         android:layout_marginTop="49dp"
@@ -37,15 +38,16 @@
         android:layout_alignStart="@+id/routeNo" />
 
         <EditText
-        android:id="@+id/enterRoute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Enter Route Number"
-        android:layout_marginTop="77dp"
-        android:layout_below="@+id/enterStop"
-        android:layout_toEndOf="@+id/trans_l1" />
+            android:id="@+id/enterRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Enter Route Number"
+            android:layout_marginTop="77dp"
+            android:layout_below="@+id/enterStop"
+            android:layout_toEndOf="@+id/trans_l1"
+            android:hint="Route"    />
 
         <TextView
             android:id="@+id/routeNo"
@@ -65,7 +67,8 @@
             android:layout_toEndOf="@+id/trans_l1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Enter Direction (1/2)" />
+            android:text="Enter Direction (1/2)"
+            android:hint="Direction"/>
 
         <TextView
             android:id="@+id/direction"
