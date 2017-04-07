@@ -37,7 +37,7 @@ public class ParseTest {
 	public void testToInt() {
 		assertEquals(1, Parse.toInt("1"));
 		assertEquals(0, Parse.toInt("0"));
-		assertEquals(96, Parse.toInt("96"));
+		assertEquals(96, Parse.toInt("0096"));
 		assertEquals(25905, Parse.toInt("25905"));
 		assertEquals(-54, Parse.toInt("-54"));
 	}
@@ -73,7 +73,7 @@ public class ParseTest {
 	@Test
 	public void testToFloat() {
 		assertTrue(floatEquals(1f, Parse.toFloat("1")));
-		assertTrue(floatEquals(50.25f, Parse.toFloat("50.25")));
+		assertTrue(floatEquals(50.25f, Parse.toFloat("050.25")));
 		assertTrue(floatEquals(0f, Parse.toFloat("0")));
 		assertTrue(floatEquals(-502.596f, Parse.toFloat("-502.596")));
 	}
