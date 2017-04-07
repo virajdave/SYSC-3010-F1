@@ -16,7 +16,7 @@ public class Bedroom extends Device {
 	
 	public Bedroom(HashMap<String, String> data) {
 		lights = data.containsKey("lights") ? Parse.toBool(data.get("lights")) : false;
-		alarm  = data.containsKey("alarm")  ? data.get("currTemp")             : "";
+		alarm  = data.containsKey("alarm")  ? data.get("alarm")                : "";
 	}
 	
 	@Override
