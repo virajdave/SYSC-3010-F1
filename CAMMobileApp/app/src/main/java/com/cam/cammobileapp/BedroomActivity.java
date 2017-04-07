@@ -23,7 +23,7 @@ public class BedroomActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fourth_main);
+        setContentView(R.layout.activity_bedroom);
         Intent intent = getIntent();
 
         ImageButton imageButton8 = (ImageButton) findViewById(R.id.btn_alarm);

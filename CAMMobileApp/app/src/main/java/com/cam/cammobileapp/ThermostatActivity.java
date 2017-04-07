@@ -21,7 +21,7 @@ public class ThermostatActivity extends AppCompatActivity{
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second_main);
+        setContentView(R.layout.activity_thermostat);
 
         Intent intent = getIntent();
         final int id = intent.getIntExtra("deviceID", -1);
@@ -44,7 +44,7 @@ public class ThermostatActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 numtest++;
-                theCurrentTemp.setText(Float.toString(numtest));
+                theCurrentTemp.setText(Float.toString(++numtest));
 
             }
         });
@@ -52,8 +52,7 @@ public class ThermostatActivity extends AppCompatActivity{
         findViewById(R.id.btn_down).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                numtest--;
-                theCurrentTemp.setText(Float.toString(numtest));
+                theCurrentTemp.setText(Float.toString(--numtest));
             }
         });
 
@@ -83,6 +82,7 @@ public class ThermostatActivity extends AppCompatActivity{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        // Get the device info again and parse out the temperature.
                         MainActivity.server.sendBroadcast("13/" + id);
                         String msg = MainActivity.server.recvWait(1000);
                         if (msg != null) {

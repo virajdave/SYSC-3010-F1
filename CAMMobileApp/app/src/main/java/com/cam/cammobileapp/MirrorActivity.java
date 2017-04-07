@@ -31,7 +31,7 @@ public class MirrorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_third_main);
+        setContentView(R.layout.activity_mirror);
 
 
         Intent intent = getIntent();

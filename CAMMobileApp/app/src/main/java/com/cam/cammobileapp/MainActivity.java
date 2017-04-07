@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_thermostat).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (devices.thermo.isEmpty()){
+                if (devices.thermo.isEmpty()) {
                     Toasty.show(activity, "No active thermostats. Please refresh list of devices");
                 } else {
                     showList(devices.thermo, new Intent(MainActivity.this, ThermostatActivity.class));
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_magicMirror).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (devices.mirror.isEmpty()){
+                if (devices.mirror.isEmpty()) {
                     Toasty.show(activity, "No active mirrors. Please refresh list of devices");
                 } else {
                     showList(devices.mirror, new Intent(MainActivity.this, MirrorActivity.class));
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_bedroom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (devices.bed.isEmpty()){
+                if (devices.bed.isEmpty()) {
                     Toasty.show(activity, "No active alarms. Please refresh list of devices");
                 } else {
                     showList(devices.mirror, new Intent(MainActivity.this, BedroomActivity.class));
@@ -93,28 +93,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showList(final ArrayList<Integer> list, final Intent i) {
-
-        String[] mirrorIds = new String[list.size()];
-        int index = 0;
-        for(Integer id: list){
-            mirrorIds[index++]=id.toString();
-            Log.i("info",mirrorIds[index-1]);
+        // Short circuit if there's only one device.
+        if (list.size() == 1) {
+            new Thread(new DataRunnable(list.get(0).toString(), i) {
+                @Override
+                public void run() {
+                    server.sendBroadcast("13/" + data);
+                    String msg = server.recvWait(1000);
+                    if (msg != null) {
+                        Intent intent = (Intent) (i);
+                        intent.putExtra("deviceID", Integer.parseInt(data));
+                        intent.putExtra("deviceInfo", msg);
+                        startActivity(intent);
+                    } else {
+                        Toasty.show(activity, "Could not get dev info");
+                    }
+                }
+            }).start();
+            return;
         }
 
+        // Convert the integer list to a string array so it can be used in a ListView.
+        String[] ids = new String[list.size()];
+        int index = 0;
+        for (Integer id : list) {
+            ids[index++] = id.toString();
+            Log.i("info", ids[index - 1]);
+        }
+
+        // Build the dialog to pick a device ID from a list.
         final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         LayoutInflater inflater = getLayoutInflater();
-        View listView = (View) inflater.inflate(R.layout.customlist, null);
+        View listView = (View) inflater.inflate(R.layout.custom_list, null);
         alertDialog.setView(listView);
         alertDialog.setTitle("Choose ID");
         ListView lv = (ListView) listView.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, mirrorIds);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, ids);
         lv.setAdapter(adapter);
 
+        // When a device ID is picked get the info from the server and start the associated activity.
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
+                    // Get the ID selected and dismiss the dialog, so nothing else could be picked.
                     final Integer devID = list.get(position);
                     alertDialog.dismiss();
 
@@ -124,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                             server.sendBroadcast("13/" + data);
                             String msg = server.recvWait(1000);
                             if (msg != null) {
-                                Intent intent = (Intent)(i);
+                                // Pass through the ID and info to the new activity.
+                                Intent intent = (Intent) (i);
                                 intent.putExtra("deviceID", Integer.parseInt(data));
                                 intent.putExtra("deviceInfo", msg);
                                 startActivity(intent);
