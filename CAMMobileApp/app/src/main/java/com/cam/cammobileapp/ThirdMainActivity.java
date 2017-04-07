@@ -98,11 +98,16 @@ public class ThirdMainActivity extends AppCompatActivity {
                 busDialog.setView(transportation_layout);
                 busDialog.show();
 
+                String finalRoute = route.getText().toString();
+                String finalStation = stop.getText().toString();
+                String finaldirection = dir.getText().toString();
+                String messageToOC = "12/id/route" + finalStation + "," + finalRoute + "," + finaldirection;
                 Button button = (Button) transportation_layout.findViewById(R.id.sendButton);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         busDialog.dismiss();
+
                         Toast.makeText(prev, "Successfully sent Bus Info to OCTranspo API", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -136,6 +141,7 @@ public class ThirdMainActivity extends AppCompatActivity {
                         // id(must get it with the a list of devices)
 
                         cp.dismiss();
+                        String messageForColour = "12/id/colour/" + finalRGB;
                         Toast.makeText(prev, finalRGB, Toast.LENGTH_LONG).show();
                     }
                 });
@@ -221,12 +227,16 @@ public class ThirdMainActivity extends AppCompatActivity {
                     catch (Exception ce){
                         Log.e("Here", "This", ce);
                     }
+
                     }
                 });
 
+                final String finalLong = theLongCoord.getText().toString();
+                final String finalLat = theLatCoord.getText().toString();
                 sendLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        String locationToMirror = "12/id/loc/" + finalLong + "," + finalLat;
                         locationDialog.dismiss();
                         Toast.makeText(prev, "Location sent to Magic Mirror", Toast.LENGTH_LONG).show();
                     }

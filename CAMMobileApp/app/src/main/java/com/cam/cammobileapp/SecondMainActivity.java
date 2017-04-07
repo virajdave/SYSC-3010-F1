@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.w3c.dom.Text;
+
 /**
  * Created by virajdave on 2017-03-20.
  */
@@ -26,6 +28,7 @@ public class SecondMainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_second_main);
         Intent intent = getIntent();
 
+        final TextView theCurrentTemp = (TextView) findViewById(R.id.currentTemp);
         ImageButton upButton = (ImageButton) findViewById(R.id.btn_up);
         upButton.setOnClickListener(new View.OnClickListener(){
 
@@ -42,8 +45,7 @@ public class SecondMainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 numtest-=1;
-                TextView t = (TextView) findViewById(R.id.currentTemp);
-                t.setText(numtest+"");
+                theCurrentTemp.setText(numtest+"");
             }
         });
 
@@ -51,6 +53,8 @@ public class SecondMainActivity extends AppCompatActivity{
         settingTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String currentTempToBeSent = theCurrentTemp.getText().toString();
+                String sendingTemperature = "12/id/";
                 Toast.makeText(theWindow, "Successfully set temperature", Toast.LENGTH_LONG).show();
             }
         });

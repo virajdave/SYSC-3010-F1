@@ -32,8 +32,8 @@ public class FourthMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final AlertDialog alarmDialog = new AlertDialog.Builder(thisActivity).create();
                 View alarm_layout = getLayoutInflater().inflate(R.layout.alarm_layout, null);
-                EditText hour = (EditText) alarm_layout.findViewById(R.id.enterHour);
-                EditText minute = (EditText) alarm_layout.findViewById(R.id.enterMinute);
+                final EditText hour = (EditText) alarm_layout.findViewById(R.id.enterHour);
+                final EditText minute = (EditText) alarm_layout.findViewById(R.id.enterMinute);
 
                 alarmDialog.setView(alarm_layout);
                 alarmDialog.show();
@@ -43,6 +43,12 @@ public class FourthMainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         alarmDialog.dismiss();
+                        //Less than 10, add a zero in the front of the hour
+                        String finalHour = hour.getText().toString();
+                        String finalMin  = minute.getText().toString();
+                        String messageToAlarmDriver="12/id/" + finalHour+ "," + minute;
+
+                        //server.sendMessage()
                         Toast.makeText(thisActivity, "Successfully sent the Alarm Desired to the Alarm", Toast.LENGTH_LONG).show();
                     }
 
@@ -59,10 +65,14 @@ public class FourthMainActivity extends AppCompatActivity {
                 final Boolean stateOfLights = lightControl.isChecked();
                 if (stateOfLights) {
                     Toast.makeText(thisActivity, "Turned On the Lights", Toast.LENGTH_LONG).show();
+                    String messageToLightDriver="12/id/l/0)";
                 }
                 else if(!stateOfLights) {
                     Toast.makeText(thisActivity, "Turned Off the Lights", Toast.LENGTH_LONG).show();
+                    String messageToLightDriver="12/id/l/f)";
                     }
+
+                //o - on, f - off
 
                 }
             });
