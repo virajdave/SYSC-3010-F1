@@ -113,7 +113,12 @@ public class ServerOnApp extends Thread {
                 if (bcast == null) {
                     // Get the bcast address if it hasn't been set yet.
                     bcast = Net.getBroadcast();
-                    Log.i("Net", "broadcast set to " + bcast.toString());
+                    if (bcast != null) {
+                        Log.i("Net", "broadcast set to " + bcast.toString());
+                    } else {
+                        Log.i("Net", "could not get broacast");
+                        return;
+                    }
                 }
 
                 try {
