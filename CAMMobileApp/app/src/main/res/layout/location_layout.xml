@@ -56,22 +56,13 @@
             android:layout_weight="0.07" />
 
         <Button
-            android:id="@+id/turnOnGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/sendGPS"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="21dp"
-            android:text="Turn On Location Services" />
-
-        <Button
             android:id="@+id/sendGPS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="23dp"
-            android:text="Send" />
+            android:text="Send Location" />
 
     </LinearLayout>
 </RelativeLayout>
