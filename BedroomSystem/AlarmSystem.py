@@ -28,10 +28,8 @@ class AlarmSystem:
         GPIO.output(LedSeq[x], False)
     # Setup for the button
     GPIO.setup(7, GPIO.IN)
-    #pass hour/minute alarm should trigger
+    #called by timer interupt t in Alarm Control triggers alarm
     def manageAlarm (self):
-
-        print ("Alarm Sounding")
         #turns on all lights then trigger buzzer
         #only occurs if button in pressed (person on bed)
         if (GPIO.input(7) == 1):
@@ -49,27 +47,5 @@ class AlarmSystem:
 
         else:
             print ("Lights already set correctly")
-#test code           
-#a = AlarmSystem()
-#now = datetime.datetime.now()
-#a.manageAlarm (now.hour, now.minute+1)
-#sleep(5)
-#print("leaving Sleep")
-#a.lights(False)
-def linux_set_time(milliSeconds):
-    formatedTime = datetime.datetime.fromtimestamp(int(milliSeconds)/1000)
-    time_tuple = (formatedTime.year,
-               formatedTime.month,
-               formatedTime.day,
-               formatedTime.hour,
-               formatedTime.minute,
-               formatedTime.second,
-               formatedTime.microsecond)
-    systemCall = 'sudo date -s "'
-    systemCall += str(formatedTime.day)
-    systemCall += ' ' + formatedTime.strftime('%B')
-    systemCall += ' ' + str(formatedTime.year)
-    systemCall += ' ' + str(formatedTime.hour) + ':'
-    systemCall += str(formatedTime.minute) + ':'
-    systemCall += str(formatedTime.second) + '"'
-    os.system(systemCall)
+
+
