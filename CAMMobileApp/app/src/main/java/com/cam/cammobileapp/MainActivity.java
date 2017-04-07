@@ -147,9 +147,9 @@ public class MainActivity extends AppCompatActivity {
         String s = server.recvWait(1000);
         //String s = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
         if (s == null) {
-            Toasty.show(activity, "Message is null, server not connected");
+            Toasty.show(activity, "Server not connected");
         } else {
-            Toasty.show(activity, s);
+            Toasty.show(activity, "Refreshed with " + (s.split("/").length - 1) + " devices");
             devices.parse(s);
         }
     }

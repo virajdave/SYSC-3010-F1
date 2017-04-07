@@ -2,6 +2,7 @@ package com.cam.cammobileapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.app.Activity;
@@ -30,6 +31,11 @@ public class ThermostatActivity extends AppCompatActivity{
         theCurrentTemp.setText(temp);
 
         if (temp.equals("no temp ")) {
+            findViewById(R.id.btn_up).setEnabled(false);
+            findViewById(R.id.btn_down).setEnabled(false);
+            findViewById(R.id.setTemp).setEnabled(false);
+            findViewById(R.id.resetTemp).setEnabled(false);
+            theCurrentTemp.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
             return;
         }
         numtest = Float.parseFloat(temp);
@@ -51,7 +57,7 @@ public class ThermostatActivity extends AppCompatActivity{
             }
         });
 
-        findViewById(R.id.setTemperature).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.setTemp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String currentTempToBeSent = theCurrentTemp.getText().toString();

@@ -100,14 +100,6 @@
         android:layout_centerVertical="true"
         android:layout_alignStart="@+id/IncTemp" />
 
-    <Button
-        android:id="@+id/resetTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="Reset Temperature"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:id="@+id/currentTemp"
         android:layout_width="40dp"
@@ -121,12 +113,20 @@
         android:layout_alignEnd="@+id/textView4" />
 
     <Button
-        android:id="@+id/setTemperature"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
+        android:id="@+id/resetTemp"
+        android:layout_width="75pt"
+        android:layout_height="25pt"
+        android:text="Refresh Temp"
         android:layout_alignTop="@+id/imageView"
-        android:text="Set Temperature" />
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/setTemp"
+        android:layout_width="75pt"
+        android:layout_height="25pt"
+        android:text="Set Temp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/imageView" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
         android:text="Current Temperature"
         android:id="@+id/CurrentTempTitle"
         android:layout_below="@+id/LinLay3"
-        android:layout_toEndOf="@+id/setTemperature" />
+        android:layout_toEndOf="@+id/setTemp" />
 
 
 </RelativeLayout>
