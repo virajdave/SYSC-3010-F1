@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 if (devices.bed.isEmpty()) {
                     Toasty.show(activity, "No active alarms. Please refresh list of devices");
                 } else {
-                    showList(devices.mirror, new Intent(MainActivity.this, BedroomActivity.class));
+                    showList(devices.bed, new Intent(MainActivity.this, BedroomActivity.class));
                 }
             }
         });
