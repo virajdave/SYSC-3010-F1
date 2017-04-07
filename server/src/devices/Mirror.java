@@ -86,12 +86,22 @@ public class Mirror extends Device {
     
     /**
      * Changes the bus info to collect from OCTranspo
-     * @param routeInfo comma seterated station,route,direction
+     * @param routeInfo comma separated station,route,direction
      */
-    public void changeRoute(String routeInfo) {
+    public boolean changeRoute(String routeInfo) {
     	String[] temp;
-        String delimeter = ",";
-        temp = routeInfo.split(delimeter);
+        temp = routeInfo.split(",");
+        
+        // Check all values are integers.
+        for (String t : temp) {
+        	try {
+        		Parse.toInt(t);
+        	} catch (NumberFormatException e) {
+        		return false;
+        	}
+        }
+        
+        // Set bus info.
     	setStation(temp[0]);
     	setRoute(temp[1]);
     	setDirection(temp[2]);
@@ -99,10 +109,12 @@ public class Mirror extends Device {
 			String dataOut = getBus();
 			send("d" + this.currDirection);
 			send(dataOut);	
+	    	return true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	return false;
     }
     
     /**
@@ -321,7 +333,7 @@ public class Mirror extends Device {
     		this.setColour(in.get());
     		send("c" + currentColour);
     	} else if (in.is("route")) {
-    		this.changeRoute(in.get());
+    		return this.changeRoute(in.get());
     	} else if (in.is("loc")) {
     		this.setLoc(in.get());
     	} else if (in.is("thermo")) {
