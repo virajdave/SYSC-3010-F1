@@ -72,8 +72,8 @@ public class Mirror extends Device {
     	String[] temp;
         String delimeter = ",";
         temp = loc.split(delimeter);
-        lat = temp[0];
-        lon = temp[1];
+        lon = temp[0];
+        lat = temp[1];
         setProperty("lon", this.lon);
         setProperty("lat", this.lat);
         try {
