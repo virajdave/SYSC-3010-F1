@@ -1,4 +1,4 @@
-package com.cam.cammobileapp;
+package com.cam.cammobileapp.util;
 
 import android.app.Activity;
 import android.os.Looper;

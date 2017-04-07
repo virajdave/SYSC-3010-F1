@@ -2,7 +2,6 @@ package com.cam.cammobileapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,35 +9,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.content.Intent;
 import android.widget.ListView;
+
+import com.cam.cammobileapp.util.DataRunnable;
+import com.cam.cammobileapp.util.Toasty;
+import com.cam.cammobileapp.net.Server;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     final Activity activity = this;
-    public static ServerOnApp server = new ServerOnApp();
+    public static Server server = new Server();
     public Devices devices = new Devices();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Start up the server if hasn't been done yet.
         if (!server.isAlive()) {
             server.start();
+
+            // Wait for thread to startup.
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        // Wait for server to start.
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         // Get the net info.
         new Thread(new Runnable() {
             @Override
             public void run() {
-                sendMessage();
+                getNetInfo();
             }
         }).start();
 
@@ -79,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        sendMessage();
+                        getNetInfo();
                     }
                 }).start();
             }
@@ -110,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     final Integer devID = list.get(position);
-                    Log.i("hhhh", devID.toString());
                     alertDialog.dismiss();
 
                     new Thread(new DataRunnable(devID.toString(), i) {
@@ -124,21 +129,19 @@ public class MainActivity extends AppCompatActivity {
                                 intent.putExtra("deviceInfo", msg);
                                 startActivity(intent);
                             } else {
-                                Log.i("hhhh", "aaasasfsa");
-
                                 Toasty.show(activity, "Could not get dev info");
                             }
                         }
                     }).start();
                 } catch (Exception e) {
-                    Log.e("hhhh", "non", e);
+                    Log.e("CAM", "on device pick failure", e);
                 }
             }
         });
         alertDialog.show();
     }
 
-    public void sendMessage() {
+    public void getNetInfo() {
         String message = "10";
         server.sendBroadcast(message);
         String s = server.recvWait(1000);

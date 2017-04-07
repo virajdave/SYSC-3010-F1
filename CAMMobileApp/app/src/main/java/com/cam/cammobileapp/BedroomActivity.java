@@ -1,18 +1,17 @@
 package com.cam.cammobileapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Switch;
-import android.widget.Toast;
 import android.app.Activity;
 import android.widget.EditText;
+
+import com.cam.cammobileapp.util.Toasty;
 
 
 /**
@@ -48,7 +47,7 @@ public class BedroomActivity extends AppCompatActivity {
                         String finalMin  = minute.getText().toString();
                         String messageToAlarmDriver="12/id/" + finalHour+ "," + minute;
 
-                        //server.sendMessage()
+                        //server.getNetInfo()
                         Toasty.show(activity, "Successfully sent the Alarm Desired to the Alarm");
                     }
 

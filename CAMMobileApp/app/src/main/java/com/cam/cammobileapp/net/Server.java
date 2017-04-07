@@ -1,15 +1,13 @@
-package com.cam.cammobileapp;
+package com.cam.cammobileapp.net;
 
 import android.util.Log;
-
-import com.cam.cammobileapp.Net;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class ServerOnApp extends Thread {
+public class Server extends Thread {
     protected static final int PACKET_SIZE = 1500;
 
     private Queue<String> recvQueue;
@@ -18,7 +16,7 @@ public class ServerOnApp extends Thread {
     private InetAddress bcast = null;
     private InetSocketAddress addr;
 
-    public ServerOnApp() {
+    public Server() {
         recvQueue = new LinkedList<>();
         socket = null;
         addr = new InetSocketAddress("10.0.0.1", 3010);

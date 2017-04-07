@@ -1,4 +1,4 @@
-package com.cam.cammobileapp;
+package com.cam.cammobileapp.net;
 import android.util.Log;
 
 import java.net.*;

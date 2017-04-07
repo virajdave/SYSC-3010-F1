@@ -10,12 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.content.Intent;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
+import com.cam.cammobileapp.util.Toasty;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import android.util.Log;
 
