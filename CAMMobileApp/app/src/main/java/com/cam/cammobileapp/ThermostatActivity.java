@@ -57,14 +57,12 @@ public class ThermostatActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "temp", currentTempToBeSent));
-                        String msg = MainActivity.server.recvWait(1000);
-
-                        if (msg != null) {
-                            Toasty.show(activity, "Successfully set temperature");
-                        } else {
-                            Toasty.show(activity, "Could not send temp to server");
-                        }
+                        MainActivity.requestCheck(
+                                Parse.toString("/", "12", id, "temp", currentTempToBeSent),
+                                "Successfully set temperature",
+                                "Could not send temp to server",
+                                activity
+                        );
                     }
                 }).start();
             }
@@ -77,9 +75,8 @@ public class ThermostatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // Get the device info again and parse out the temperature.
-                        MainActivity.server.sendBroadcast("13/" + id);
-                        String msg = MainActivity.server.recvWait(1000);
-                        if (msg != null) {
+                        String msg = MainActivity.server.request("13/" + id, MainActivity.TIMEOUT);
+                        if (msg != null && msg.length() > 3) {
                             final String temp = msg.substring(3);
                             runOnUiThread(new Runnable() {
                                 @Override

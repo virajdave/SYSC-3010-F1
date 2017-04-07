@@ -7,96 +7,43 @@ import java.net.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Server extends Thread {
+public class Server {
     protected static final int PACKET_SIZE = 1500;
 
-    private Queue<String> recvQueue;
     private DatagramSocket socket;
     private Integer port;
     private InetAddress bcast = null;
     private InetSocketAddress addr;
 
     public Server() {
-        recvQueue = new LinkedList<>();
-        socket = null;
         addr = new InetSocketAddress("10.0.0.1", 3010);
-    }
-
-    /**
-     * Start up the server.
-     */
-    public void run() {
 
         try {
-            // Create socket.
             socket = new DatagramSocket();
             port = socket.getLocalPort();
-            Log.i("Server",  "using port " + port);
-
-            // Receive.
-            while (!Thread.interrupted()) {
-                // Stick a received message in a packet.
-                byte[] data = new byte[PACKET_SIZE];
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
-                // Create a message from the packet and add it to the queue,
-                // notify any waiting receives.
-                String message = new String(packet.getData(), 0, packet.getLength());
-                Log.i("Server",  "recv -> " + message);
-                synchronized (recvQueue) {
-                    recvQueue.add(message);
-                    recvQueue.notifyAll();
-                }
-            }
-
+            Log.i("Server", "using port " + port);
         } catch (SocketException e) {
             if (e.getMessage().toLowerCase().equals("socket closed") && Thread.interrupted()) {
                 return;
             }
             Log.e("Server", "socket error", e);
-        } catch (IOException e) {
-            Log.e("Server", "socket error", e);
-        } finally {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-            }
         }
     }
 
-    /**
-     * Close down the server.
-     */
-    @Override
-    public void interrupt() {
-        super.interrupt();
+    public void stop() {
         socket.close();
-        Log.i("Server", "interrupted");
     }
 
     /**
-     * Send a message.
+     * Send and then wait to receive.
      *
      * @param message
+     * @param timeout
+     * @return
      */
-    public void sendMessage(String message) {
-
-        new Thread(new MyRunnable(message) {
-            public void run() {
-                try {
-                    if (socket != null) {
-                        // Convert message data to bytes, create the packet and send it.
-                        byte[] sendData = data.getBytes("UTF-8");
-                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, addr);
-                        socket.send(sendPacket);
-                        Log.i("Server",  "sent -> " + data);
-                    } else {
-                        Log.d("Server", "not running, cannot send message.");
-                    }
-                } catch (IOException e) {
-                    Log.e("Server", "send error", e);
-                }
-            }
-        }).start();
+    public String request(String message, int timeout) {
+        send(message);
+        return recv(timeout);
     }
 
     /**
@@ -104,67 +51,54 @@ public class Server extends Thread {
      *
      * @param message
      */
-    public void sendBroadcast(String message) {
-
-        new Thread(new MyRunnable(message) {
-            public void run() {
-                if (bcast == null) {
-                    // Get the bcast address if it hasn't been set yet.
-                    bcast = Net.getBroadcast();
-                    if (bcast != null) {
-                        Log.i("Net", "broadcast set to " + bcast.toString());
-                    } else {
-                        Log.i("Net", "could not get broacast");
-                        return;
-                    }
-                }
-
-                try {
-                    if (socket != null) {
-                        // Convert message data to bytes, create the packet and send it.
-                        byte[] sendData = data.getBytes("UTF-8");
-                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, bcast, addr.getPort());
-                        socket.send(sendPacket);
-                        Log.i("Server",  "b.sent -> " + data);
-                    } else {
-                        Log.d("Server", "not running, cannot send message.");
-                    }
-                } catch (IOException e) {
-                    Log.e("Server", "send error", e);
-                }
+    public void send(String message) {
+        if (bcast == null) {
+            // Get the bcast address if it hasn't been set yet.
+            bcast = Net.getBroadcast();
+            if (bcast != null) {
+                Log.i("Net", "broadcast set to " + bcast.toString());
+            } else {
+                Log.i("Net", "could not get broadcast");
+                return;
             }
-        }).start();
-    }
+        }
 
-    /**
-     * Check for a received message, waiting if the queue is empty.
-     *
-     * @return Message
-     */
-    public String recvWait(int timeout) {
-        // Wait if the queue is empty.
-        synchronized (recvQueue) {
-            if (recvQueue.isEmpty()) {
-                try {
-                    recvQueue.wait(timeout);
-                    return recvQueue.poll();
-                } catch (InterruptedException e) {
-                }
+        try {
+            if (socket != null) {
+                // Convert message data to bytes, create the packet and send it.
+                byte[] sendData = message.getBytes("UTF-8");
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, bcast, addr.getPort());
+                socket.send(sendPacket);
+                Log.i("Server",  "b.sent -> " + message);
+            } else {
+                Log.d("Server", "not running, cannot send message.");
             }
-            return recvQueue.poll();
+        } catch (IOException e) {
+            Log.e("Server", "send error", e);
         }
     }
 
     /**
-     * Check for a received message.
+     * Wait to receive a message.
      *
-     * @return Message or null if the queue is empty
+     * @param timeout
+     * @return message or null on timeout
      */
-    public String recvMessage() {
-        // Grab the first message and return it.
-        synchronized (recvQueue) {
-            return recvQueue.poll();
+    public String recv(int timeout) {
+        try {
+            socket.setSoTimeout(timeout);
+
+            byte[] data = new byte[PACKET_SIZE];
+            DatagramPacket packet = new DatagramPacket(data, data.length);
+            socket.receive(packet);
+
+            return new String(packet.getData(), 0, packet.getLength());
+        } catch (SocketException e) {
+            Log.e("Server", "recv error", e);
+        } catch (IOException e) {
+            Log.e("Server", "recv errora", e);
         }
+        return null;
     }
 
     public Integer getPort() {

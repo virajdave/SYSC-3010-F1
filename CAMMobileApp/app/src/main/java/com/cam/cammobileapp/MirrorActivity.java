@@ -62,13 +62,12 @@ public class MirrorActivity extends AppCompatActivity {
                                     dir = 2;
                                 }
 
-                                MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "route", Parse.toString(",", rt, st, dir)));
-                                String msg = MainActivity.server.recvWait(1000);
-                                if (msg != null && msg.charAt(3) == '1') {
-                                    Toasty.show(activity, "Successfully sent Bus Info to OCTranspo API");
-                                } else {
-                                    Toasty.show(activity, "Could not send Bus Info");
-                                }
+                                MainActivity.requestCheck(
+                                        Parse.toString("/", "12", id, "route", Parse.toString(",", rt, st, dir)),
+                                        "Successfully sent Bus Info to OCTranspo API",
+                                        "Could not send Bus Info",
+                                        activity
+                                );
                             }
                         }).start();
                     }
@@ -97,13 +96,12 @@ public class MirrorActivity extends AppCompatActivity {
                                 String finalRGB = "#" + HexRed + HexGreen + HexBlue;
 
                                 // Send colour to server and check it worked.
-                                MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "colour", finalRGB));
-                                String msg = MainActivity.server.recvWait(1000);
-                                if (msg != null && msg.charAt(3) == '1') {
-                                    Toasty.show(activity, "Set the mirror colour to " + finalRGB);
-                                } else {
-                                    Toasty.show(activity, "Could not set the mirror colour");
-                                }
+                                MainActivity.requestCheck(
+                                        Parse.toString("/", "12", id, "colour", finalRGB),
+                                        "Set the mirror colour to " + finalRGB,
+                                        "Could not set the mirror colour",
+                                        activity
+                                );
                             }
                         }).start();
                     }
@@ -125,13 +123,12 @@ public class MirrorActivity extends AppCompatActivity {
                             final String finalLong = Double.toString(location.getLongitude());
                             final String finalLat = Double.toString(location.getLatitude());
 
-                            MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "loc", finalLong + "," + finalLat));
-                            String msg = MainActivity.server.recvWait(1000);
-                            if (msg != null && msg.charAt(3) == '1') {
-                                Toasty.show(activity, "Successfully set Magic Mirror location to " + finalLong + ", " + finalLat);
-                            } else {
-                                Toasty.show(activity, "Unable to send location to Magic Mirror");
-                            }
+                            MainActivity.requestCheck(
+                                    Parse.toString("/", "12", id, "loc", finalLong + "," + finalLat),
+                                    "Successfully set Magic Mirror location to " + finalLong + ", " + finalLat,
+                                    "Unable to send location to Magic Mirror",
+                                    activity
+                            );
                         } catch (Exception ce) {
                             Toasty.show(activity, "Could not lock GPS location");
                             Log.e("here", "ce", ce);

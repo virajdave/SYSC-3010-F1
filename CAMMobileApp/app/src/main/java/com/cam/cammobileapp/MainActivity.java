@@ -18,7 +18,9 @@ import com.cam.cammobileapp.util.Toasty;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    final Activity activity = this;
+    public static final int TIMEOUT = 1000;
+
+    private final Activity activity = this;
     public static Server server = new Server();
     public Devices devices = new Devices();
 
@@ -26,18 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Start up the server if hasn't been done yet.
-        if (!server.isAlive()) {
-            server.start();
-
-            // Wait for thread to startup.
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         // Get the net info.
         new Thread(new Runnable() {
@@ -99,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     // Pass through the ID and info to the new activity.
-                    server.sendBroadcast(Parse.toString("/", "13", devID));
-                    String msg = server.recvWait(1000);
+                    String msg = server.request(Parse.toString("/", "13", devID), TIMEOUT);
                     if (msg != null) {
                         intent.putExtra("deviceID", devID);
                         intent.putExtra("deviceInfo", msg);
@@ -143,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            server.sendBroadcast(Parse.toString("/", "13", devID));
-                            String msg = server.recvWait(1000);
+                            String msg = server.request(Parse.toString("/", "13", devID), TIMEOUT);
                             if (msg != null) {
                                 // Pass through the ID and info to the new activity.
                                 intent.putExtra("deviceID", devID);
@@ -164,14 +152,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getNetInfo() {
-        server.sendBroadcast("10");
-        String s = server.recvWait(1000);
-        //String s = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
-        if (s == null) {
+        String msg = server.request("10", TIMEOUT);
+        //String msg = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
+        if (msg == null) {
             Toasty.show(activity, "Server not connected");
         } else {
-            Toasty.show(activity, "Refreshed with " + (s.split("/").length - 1) + " devices");
-            devices.parse(s);
+            Toasty.show(activity, "Refreshed with " + (msg.split("/").length - 1) + " devices");
+            devices.parse(msg);
         }
+    }
+
+    public static void requestCheck(String message, String good, String bad, Activity act) {
+        String msg = server.request(message, TIMEOUT);
+        if (ack(msg)) {
+            Toasty.show(act, good);
+        } else {
+            Toasty.show(act, bad);
+        }
+    }
+
+    public static boolean ack(String msg) {
+        return msg != null && msg.length() == 4 && msg.charAt(3) == '1';
     }
 }

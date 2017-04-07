@@ -64,9 +64,8 @@ public class BedroomActivity extends AppCompatActivity {
                                 final String sHour = pad(h);
                                 final String sMinute = pad(m);
 
-                                MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "alarm", sHour + ":" + sMinute));
-                                String msg = MainActivity.server.recvWait(1000);
-                                if (msg != null && msg.charAt(3) == '1') {
+                                String msg = MainActivity.server.request(Parse.toString("/", "12", id, "alarm", sHour + ":" + sMinute), MainActivity.TIMEOUT);
+                                if (MainActivity.ack(msg)) {
                                     hour = h;
                                     minute = m;
                                     runOnUiThread(new Runnable() {
@@ -99,9 +98,8 @@ public class BedroomActivity extends AppCompatActivity {
                     public void run() {
                         final boolean stateOfLights = lightControl.isChecked();
 
-                        MainActivity.server.sendBroadcast(Parse.toString("/", "12", id, "l", stateOfLights));
-                        String msg = MainActivity.server.recvWait(1000);
-                        if (msg != null && msg.charAt(3) == '1') {
+                        String msg = MainActivity.server.request(Parse.toString("/", "12", id, "l", stateOfLights), MainActivity.TIMEOUT);
+                        if (MainActivity.ack(msg)) {
                             lights = stateOfLights;
                         } else {
                             runOnUiThread(new Runnable() {
