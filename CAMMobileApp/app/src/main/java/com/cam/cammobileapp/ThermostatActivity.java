@@ -19,7 +19,7 @@ import org.w3c.dom.Text;
  * Created by virajdave on 2017-03-20.
  */
 
-public class SecondMainActivity extends AppCompatActivity{
+public class ThermostatActivity extends AppCompatActivity{
 
     final Context theWindow = this;
     int numtest = 0;

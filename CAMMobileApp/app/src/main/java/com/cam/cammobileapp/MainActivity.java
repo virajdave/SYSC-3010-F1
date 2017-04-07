@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 if (devices.thermo.isEmpty()){
                     Toast.makeText(prev, "No active thermostats. Please refresh list of devices", Toast.LENGTH_LONG).show();
                 } else {
-                    showList(devices.thermo, new Intent(MainActivity.this, SecondMainActivity.class));
+                    showList(devices.thermo, new Intent(MainActivity.this, ThermostatActivity.class));
                 }
             }
         });
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 if (devices.mirror.isEmpty()){
                     Toast.makeText(prev, "No active mirrors. Please refresh list of devices", Toast.LENGTH_LONG).show();
                 } else {
-                    showList(devices.mirror, new Intent(MainActivity.this, ThirdMainActivity.class));
+                    showList(devices.mirror, new Intent(MainActivity.this, MirrorActivity.class));
                 }
             }
         });
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 if (devices.bed.isEmpty()){
                     Toast.makeText(prev, "No active alarms. Please refresh list of devices", Toast.LENGTH_LONG).show();
                 } else {
-                    showList(devices.mirror, new Intent(MainActivity.this, FourthMainActivity.class));
+                    showList(devices.mirror, new Intent(MainActivity.this, BedroomActivity.class));
                 }
             }
         });
