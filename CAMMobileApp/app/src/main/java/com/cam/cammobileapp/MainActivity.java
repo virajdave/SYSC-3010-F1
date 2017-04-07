@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -68,71 +71,51 @@ public class MainActivity extends AppCompatActivity {
         ImageButton imageButton2 = (ImageButton) findViewById(R.id.btn_magicMirror);
         imageButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                //startActivity(intent2);
-                /*
-                Fill in code to show available Magic Mirrors
-                 */
-                final View itsViewforMirror = getLayoutInflater().inflate(R.layout.listviewformirror, null);
 
-                listView = (ListView) itsViewforMirror.findViewById(R.id.listMirror);
-                if(listView == null){
-                    Log.e("Fuck", "This");
+                String[] mirrorIDS = new String[id_mirror.size()];
+                int index = 0;
+                for (Integer id : id_mirror) {
+                    mirrorIDS[index++] = id.toString();
+                    Log.i("info", mirrorIDS[index - 1]);
                 }
 
-                if(id_mirror.isEmpty()){
-                    Toast.makeText(prev, "No active mirrors. Please refresh list of devices", Toast.LENGTH_LONG).show();
-                }
 
-                else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View listView = (View) inflater.inflate(R.layout.listviewformirror, null);
+                builder.setView(listView);
+                builder.setTitle("Select Mirror");
+                ListView lv = (ListView) listView.findViewById(R.id.listMirror);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(prev, android.R.layout.simple_list_item_1, mirrorIDS);
+                lv.setAdapter(adapter);
+                final AlertDialog showMirrors = builder.create();
+                showMirrors.show();
 
-                    try {
-                        Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-                        ArrayAdapter<Integer> arrayAdapter = new ArrayAdapter<Integer>(prev, android.R.layout.simple_list_item_1, id_mirror);
-                        Log.e("todaaay", "This");
-                            listView.setAdapter(arrayAdapter);
-                        Log.e("pooop", "GiddyUp");
-                    }
-
-                    catch(Exception ce){
-                        Log.e("Minnee", "This", ce);
-                    }
-
-                    Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-
-                   // Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                   // startActivity(intent2);
-                }
-
-                /*
-                    try {
-                        Toast.makeText(prev, "Mirrors are here", Toast.LENGTH_LONG).show();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(prev);
-                        builder.setTitle("Select Mirror");
-                        AlertDialog showMirrors = builder.create();
-                        showMirrors.show();
-                        String[] mirrorIds = new String[id_mirror.size()];
-                        int index = 0;
-                        for(Integer id: id_mirror){
-                            mirrorIds[index++]=id.toString();
-                            Log.i("info",mirrorIds[index-1]);
+                try {
+                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
+                            startActivity(intent2);
+                            showMirrors.dismiss();
                         }
-                        builder.setSingleChoiceItems(mirrorIds, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
-                                startActivity(intent2);
-                            }
-                        });
-
-                    }
-                    catch (Exception ce){
-                        Log.e("Here", "This", ce);
-                    }
-                    */
-
+                    });
+                } catch (Exception ce) {
+                    ce.printStackTrace();
+                    Log.e("WHY", "This");
                 }
-        });
+            }
+            });
+                /*
+                @Override
+                public void onClick(DialogInterface builder,int which){
+                    Intent intent2 = new Intent(MainActivity.this, ThirdMainActivity.class);
+                    startActivity(intent2);
+                }
+            }
+            */
+
+
 
 
 

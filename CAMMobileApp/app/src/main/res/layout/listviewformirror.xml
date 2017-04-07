@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listMirror"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
 
-    <ListView android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/listMirror">
-    </ListView>
-
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/rowTextView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textSize="16sp" >
-    </TextView>
-
-</LinearLayout>  
+</ListView>
