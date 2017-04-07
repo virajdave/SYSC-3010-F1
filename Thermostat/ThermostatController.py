@@ -11,12 +11,11 @@ class ThermostatController:
     themo = thermostatControl()
     id = -1
     t = Timer
-   # serverStatus = False
 
     def setNewTemp(self, data):
         print ('temp to be set to ' + data)
-        #data = 
-        themo.setTemp()
+        print (data) 
+        self.themo.setNewTemp(data)
         
     def runSystem(self):
         #creating datagram , sending heartbeat (setup)
@@ -27,8 +26,7 @@ class ThermostatController:
         server_address = (host, port)
 
         #creating and sending inital packet to server (Discovery)
-        data = '20/' + str(self.id) + '/3'
-        print ('sending: ' + data)
+        data = '20/' + str(self.id) + '/3
         s.sendto(data.encode('utf-8'), server_address)
         
         while True:
@@ -39,16 +37,13 @@ class ThermostatController:
             stringData = buf.decode('utf-8')
             #if socket timed out
             if (stringData == ''):
-                print('got: nothing'+ stringData)
                 #prompts thermostat to check its current status
                 self.themo.manageTemp()
                 continue
-            print('got: '+ stringData)
             #'01' means ACK from server
             if (stringData[:2] == '01'):
                 #if device hasn't yet gotten an id from server set it
                 if(self.id == -1):
-                    print("ACK Received")
                     self.id = stringData[3:]
             #'00' is heartbeat from server
             elif (stringData[:2] == '00'):
