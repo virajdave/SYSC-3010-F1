@@ -145,11 +145,16 @@ public class Database {
 		if (connection != null) {
 			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM devices WHERE id = ?")) {
 				statement.setQueryTimeout(TIMEOUT);
-	
+				
 				statement.setInt(1, id);
 				statement.executeUpdate();
 				
-				// TODO: Also delete all properties with this ID.
+				statement.close();
+				
+				try (PreparedStatement statement2 = connection.prepareStatement("DELETE FROM properties WHERE id = ?")) {
+					statement2.setInt(1, id);
+					statement2.executeUpdate();
+				}
 				
 				return true;
 			} catch (SQLException e) {
@@ -319,10 +324,15 @@ public class Database {
 	
 	public static void main(String[] args) {
 		Database db = new Database("test");
-		System.out.println(db.create());
-		db.addProp(1, "test", "NULL");
-		db.addProp(2, "aaa", "no");
-		db.addProp(2, "aaa", "test");
+		db.create();
+		db.addDevice(2, 6, "test");
+		db.addProp(2, "test", "here");
+		db.addProp(3, "test", "aaaa");
+		db.addProp(2, "go", "no,more");
+		System.out.println(db.getDevices());
+		System.out.println(db.getProp());
+		db.removeDevice(2);
+		System.out.println(db.getDevices());
 		System.out.println(db.getProp());
 	}
 	
