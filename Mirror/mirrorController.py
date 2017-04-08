@@ -116,7 +116,7 @@ def watchRecvMessages(recvedQueue, sendingQueue, guiQueue):
                                                 linux_set_time(messageRecv.info[1:])
                                         if (messageRecv.info[0] == 'h'):
                                                 guiQueue.put_nowait(message('thermo', messageRecv.info[1:]))
-								elif(messageRecv.messageType == 'id'):
+                                elif(messageRecv.messageType == 'id'):
                                         lastBeatTime = int(round(time.time() * 1000))
                                         if (id == '-1'):
                                                 setId(messageRecv.info)

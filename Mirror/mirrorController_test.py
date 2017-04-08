@@ -36,15 +36,15 @@ def test_updateWeather():
 	assert (returned.info == '10/weather'), "Weather update did not have info 10/weather"
 	
 def test_updateBusInfo():
-	testQueue = Queue()
-	setId('10')
-	run()
-	_thread.start_new_thread(tellGUIToUpdateBusInfo, (testQueue,))
-	time.sleep(1)
-	stop()
-	returned = testQueue.get_nowait()
-	assert (returned.messageType == 'data'), "Bus update did not have type data"
-	assert (returned.info == '10/bus'), "Bus update did not have info 10/bus"
+    testQueue = Queue()
+    setId('10')
+    run()
+    _thread.start_new_thread(tellGUIToUpdateBusInfo, (testQueue,))
+    time.sleep(1)
+    stop()
+    returned = testQueue.get_nowait()
+    assert (returned.messageType == 'data'), "Bus update did not have type data"
+    assert (returned.info == '10/bus'), "Bus update did not have info 10/bus"
 	
 	
 def test_timeSync():
