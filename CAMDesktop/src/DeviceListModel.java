@@ -15,10 +15,11 @@ public class DeviceListModel extends AbstractListModel<String> {
 	}
 	
 	public void setElements(String[] list) {
-		// Get the current ids so that stray entries can be removed later.
+		// Move the current devices to an old list and create a new map.
 		TreeMap<Integer, DeviceInfo> oldList = devices;
 		devices = new TreeMap<>();
 		
+		// Iterate over the input strings adding to the new device map.
 		for (String dev : list) {
 			if (dev.length() != 0) {
 				String info[] = dev.split(":");
@@ -30,25 +31,28 @@ public class DeviceListModel extends AbstractListModel<String> {
 			}
 		}
 		
+		// Mark which devices have changed (by index).
 		int index = 0;
 		boolean[] changed = new boolean[oldList.size()];
 		Iterator<Entry<Integer, DeviceInfo>> newSet = devices.entrySet().iterator();
 		for (Entry<Integer, DeviceInfo> oldDev : oldList.entrySet()) {
 			if (!newSet.hasNext()) {
+				// Stop if the new set is empty.
 				break;
 			}
 			Entry<Integer, DeviceInfo> newDev = newSet.next();
 			
+			// If the devices to not match mark true.
 			changed[index++] = !oldDev.equals(newDev);
 		}
 		
+		// Iterate over 1 more time to send content change events for those that are different.
 		int i = 0;
 		while (i < index) {
 			if (changed[i]) {
-				System.out.println("a");
 				int start = i;
 				while (++i < index && changed[i]);
-				System.out.println("b");
+				
 				int end = i - 1;
 				System.out.println("Changed: " + start + ", " + end);
 				fireContentsChanged(this, start, end);
@@ -56,6 +60,7 @@ public class DeviceListModel extends AbstractListModel<String> {
 			i++;
 		}
 		
+		// Depeding on which list is longer either fire an add or remove event.
 		if (devices.size() < oldList.size()) {
 			System.out.println("Removed: " + devices.size() + ", " + (oldList.size() - 1));
 			fireIntervalRemoved(this, devices.size(), oldList.size() - 1);
@@ -67,10 +72,12 @@ public class DeviceListModel extends AbstractListModel<String> {
 
 	@Override
 	public String getElementAt(int index) {
+		// Get the id and info by a given array index.
 		Integer id = (Integer) devices.keySet().toArray()[index];
 		DeviceInfo info = devices.get(id);
 		
 		if (info != null) {
+			// Convert to the string to be shown in the device listing.
 			String str = "#" + id;
 			if (info.type >= TYPENAMES.length) {
 				info.type = TYPENAMES.length - 1;

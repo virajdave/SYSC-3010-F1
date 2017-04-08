@@ -19,31 +19,38 @@ public class View implements Observer {
 		// Make the frame.
 		JFrame frame = new JFrame("CAM");
 
+		// Create device list model and stick it in a JList
 		devices = new DeviceListModel();
-		
 		deviceList = new JList<>(devices);
 		deviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		// Setup device label + list.
+		// Add device information label.
 		deviceLabel = new JLabel();
+		
+		// Create the textArea to show device info.
+		textArea = new JTextArea(5, 20);
+		textArea.setEditable(false);
 
-		// Create panels and set the content pane.
+		// Create sidebar and add it to the left side as a scrollPane.
 		sidebar = new JPanel();
 		sidebar.setLayout(new BorderLayout());
 		sidebar.add(deviceLabel);
 		JScrollPane left = new JScrollPane(sidebar);
-		textArea = new JTextArea(5, 20);
-		textArea.setEditable(false);
 		
+		// Create the menu for refreshing and deleting a device.
 		JPanel menu = new JPanel(new GridLayout(1, 2));
 		refresh = new JButton("Refresh");
 		delete = new JButton("Delete");
 		menu.add(refresh);
 		menu.add(delete);
+		
+		// Add the pieces to the right side as a scrollPane.
 		right = new JPanel(new BorderLayout());
 		right.add(BorderLayout.NORTH, menu);
 		right.add(BorderLayout.CENTER, new JScrollPane(textArea));
 		right.setVisible(false);
+		
+		// Add both halves to a splitPane with a weight.
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
 		splitPane.setResizeWeight(WEIGHT);
 		frame.setContentPane(splitPane);
@@ -62,6 +69,7 @@ public class View implements Observer {
 	}
 	
 	private void showDeviceList(boolean show) {
+		// Switch between showing the label or the list.
 		if (show) {
 			sidebar.add(deviceList);
 			sidebar.remove(deviceLabel);
