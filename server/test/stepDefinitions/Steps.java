@@ -27,7 +27,7 @@ public class Steps {
 	public void startManager() throws Throwable {
 		server = new ServerMock();
 		DatabaseStub db = new DatabaseStub();
-		manager = new Manager(server, db, 0, 1);
+		manager = new Manager(server, db, 0);
 		devices = new HashMap<>();
 		manager.start();
 

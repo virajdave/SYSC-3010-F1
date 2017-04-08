@@ -13,7 +13,6 @@ import util.Parse;
 
 public class Manager extends Thread implements Observer {
 	private static final double BEATRATE = 0.15; // in minutes
-	private static final int TIMEOUT = 30;  // in seconds
 
 	private Web web;
 	private Server server;
@@ -24,7 +23,7 @@ public class Manager extends Thread implements Observer {
 	 * @param s Server to use for sending messages
 	 */
 	public Manager(Server s, Database db) {
-		this(s, db, BEATRATE, TIMEOUT);
+		this(s, db, BEATRATE);
 	}
 
 	/**
@@ -33,7 +32,7 @@ public class Manager extends Thread implements Observer {
 	 * @param beatrate Rate to send heartbeat    (in miliseconds)
 	 * @param timeout  Time for message timeouts (in seconds)
 	 */
-	public Manager(Server s, Database db, double beatrate, int timeout) {
+	public Manager(Server s, Database db, double beatrate) {
 		web = new Web(db, this);
 		server = s;
 		heart = new HeartBeat(server, web, beatrate);
@@ -82,13 +81,13 @@ public class Manager extends Thread implements Observer {
 				int type = Integer.parseInt(data[2]);
 
 				// Create device and watch for outputs.
-				Device d = web.add(msg.getSocketAddress(), type);
-				if (!d.getClass().equals(Null.class)) {
-					d.addObserver(this);
-					Log.out("Added device #" + d.getID() + " of type " + type);
+				Device device = web.add(msg.getSocketAddress(), type);
+				if (!device.getClass().equals(Null.class)) {
+					device.addObserver(this);
+					Log.out("Added device #" + device.getID() + " of type " + type);
 	
 					// Send ack back letting the device know it was connected.
-					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, d.getID()), msg.getSocketAddress()));
+					server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_ACK, device.getID()), msg.getSocketAddress()));
 				}
 			} catch (NumberFormatException e) {
 				Log.warn("Device type '" + data[2] + "' malformed, from " + msg.toString());
@@ -112,19 +111,19 @@ public class Manager extends Thread implements Observer {
 		char code = data[0].charAt(1);
 
 		// Get the device, if it doesn't exist try adding it.
-		Device d = web.get(msg.getSocketAddress());
-		if (d == null) {
+		Device device = web.get(msg.getSocketAddress());
+		if (device == null) {
 			newDevice(msg, data, code);
 			return;
 		}
-		Log.out("Message from device #" + d.getID() + ": " + msg.getMessage());
+		Log.out("Message from device #" + device.getID() + ": " + msg.getMessage());
 
 		// Quick check device ID matches what we expect.
 		try {
 			int id = Integer.parseInt(data[1]);
 			
-			if (!d.hasID(id)) {
-				Log.warn("Device #" + d.getID() + " gave ID " + id + ", suggesting the network has changed and this device should be reset.");
+			if (!device.hasID(id)) {
+				Log.warn("Device #" + device.getID() + " gave ID " + id + ", suggesting the network has changed and this device should be reset.");
 				return;
 				// TODO: This would be a problem.
 			}
@@ -139,21 +138,22 @@ public class Manager extends Thread implements Observer {
 		// Do different things depending on what the code is.
 		switch (code) {
 			case Codes.T_ACK:
-				// TODO: implement ACK checking.
+				// Nothing needs to happen here.
 			case Codes.T_BEAT:
-				heart.recved(d);
+				// Send the beat into the heart.
+				heart.recved(device);
 				break;
 			case Codes.T_DATA:
 				// Send data to device driver.
 				try {
-					d.giveMessage(msg.getMessage().substring(data[0].length() + data[1].length() + 2));
+					device.giveMessage(msg.getMessage().substring(data[0].length() + data[1].length() + 2));
 				} catch (Exception e) {
-					Log.err("Exception in 'giveMessage' for device driver " + d.getClass(), e);
+					Log.err("Exception in 'giveMessage' for device driver " + device.getClass(), e);
 				}
 				server.sendMessage(new Message(Parse.toString("", Codes.W_SERVER, Codes.T_ACK), msg.getSocketAddress()));
 				break;
 			default:
-				Log.warn("unknown device T code -> " + msg.getMessage().toString() + " from device #" + d.getID() +  " with  " + msg.toString());
+				Log.warn("unknown device T code -> " + msg.getMessage().toString() + " from device #" + device.getID() +  " with  " + msg.toString());
 		}
 	}
 
@@ -174,7 +174,7 @@ public class Manager extends Thread implements Observer {
 				server.sendMessage(new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_NETINF, web.toString()), msg.getSocketAddress()));
 				break;
 			case Codes.T_ACK:
-				// TODO: implement ACK checking.
+				// Nothing needs to happen here.
 				break;
 			case Codes.T_DEVINF:
 				// Give back requested device info by ID.
@@ -182,10 +182,10 @@ public class Manager extends Thread implements Observer {
 					id = Parse.toInt(data[1]);
 					String info = "";
 					
-					Device d = web.getByID(id);
-					if (d != null) {
+					Device device = web.getByID(id);
+					if (device != null) {
 						try {
-							info = d.getInfo();
+							info = device.getInfo();
 						} catch (Exception e) {
 							Log.err("Exception in 'getInfo' for device driver " + web.getByID(id).getClass(), e);
 						}
@@ -216,11 +216,11 @@ public class Manager extends Thread implements Observer {
 					id = Parse.toInt(data[1]);
 					Data in = new Data(data[2], data[3]);
 					
-					Device d = web.getByID(id);
+					Device device = web.getByID(id);
 					boolean worked = false;
-					if (d != null) {
+					if (device != null) {
 						try {
-							worked = d.giveInput(in);
+							worked = device.giveInput(in);
 						} catch (Exception e) {
 							Log.err("Exception in 'giveInput' for device driver " + web.getByID(id).getClass(), e);
 						}
@@ -236,12 +236,13 @@ public class Manager extends Thread implements Observer {
 				}
 				break;
 			case Codes.T_DELETE:
+				// Try to delete a device by ID.
 				try {
 					id = Parse.toInt(data[1]);
 					
-					Device d = web.getByID(id);
-					if (d != null) {
-						web.remove(d);
+					Device device = web.getByID(id);
+					if (device != null) {
+						web.remove(device);
 					} else {
 						Log.warn("App giving device ID which does not exist, from " + msg.getMessage());
 					}
@@ -266,19 +267,23 @@ public class Manager extends Thread implements Observer {
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public void update(Observable oDevice, Object oString) {
 		// Check correct types.
-		if (!(arg0 instanceof Device) || !(arg1 instanceof String)) {
-			Log.err("UH OH");
+		if (!(oDevice instanceof Device)) {
+			Log.err("Observable device is of incorrect type " + oDevice.getClass());
+			return;
+		}
+		if (!(oString instanceof String)) {
+			Log.err("Object string is of incorrect type " + oString.getClass());
 			return;
 		}
 
 		// Send out the message to the correct device.
-		Device d = (Device) arg0;
-		String msg = (String) arg1;
-		Message m = new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DATA, msg), web.get(d));
-		server.sendMessage(m);
-		Log.out("Message to device #" + d.getID() + ": " + m.getMessage());
+		Device device = (Device) oDevice;
+		String string = (String) oString;
+		Message message = new Message(Parse.toString("/", Codes.W_SERVER + "" + Codes.T_DATA, string), web.get(device));
+		server.sendMessage(message);
+		Log.out("Message to device #" + device.getID() + ": " + message.getMessage());
 	}
 
 	public static void main(String[] args) {
