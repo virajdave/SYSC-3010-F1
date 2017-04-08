@@ -17,6 +17,8 @@ public class Devices {
         bed = new ArrayList<>();
     }
 
+    //Parse the incoming NETINF message, and add each type of device
+    //to it's respectable ArrayList of device ID's to display on app
     public void parse(String s) {
         mirror.clear();
         thermo.clear();

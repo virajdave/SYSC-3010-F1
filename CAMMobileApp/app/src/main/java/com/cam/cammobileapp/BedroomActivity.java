@@ -48,6 +48,7 @@ public class BedroomActivity extends AppCompatActivity {
             currentAlarm.setText(hour + ":" + pad(minute));
         }
 
+        //When the alarm button is invoked, open dialog to change the alarm
         findViewById(R.id.btn_alarm).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (hour == null || minute == null) {
@@ -91,6 +92,7 @@ public class BedroomActivity extends AppCompatActivity {
         final Switch lightControl = (Switch) findViewById(R.id.switch1);
         lightControl.setChecked(lights);
 
+        //When the light switch is invoked, change the lights from on to off, or vice versa
         lightControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

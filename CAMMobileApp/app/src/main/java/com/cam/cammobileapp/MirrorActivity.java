@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class MirrorActivity extends AppCompatActivity {
     final Activity activity = this;
 
+    //Need instance of LocationManager to get locaton
     private LocationManager locationManager;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class MirrorActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final int id = intent.getIntExtra("deviceID", -1);
 
+        //When Bus Button is invoked, open new dialog to enter information
         findViewById(R.id.btn_setTrans).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -81,6 +83,7 @@ public class MirrorActivity extends AppCompatActivity {
             }
         });
 
+        //When Colour Button is invoked, open new dialog to choose the colour of the mirror
         findViewById(R.id.btn_colour).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -114,6 +117,7 @@ public class MirrorActivity extends AppCompatActivity {
             }
         });
 
+        //When location button is invoked, get location, and display coordinates as a toast alert
         findViewById(R.id.btn_setLocation).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -143,6 +147,8 @@ public class MirrorActivity extends AppCompatActivity {
             }
         });
 
+        //When Thermostat Link button is invoked, get the currrent thermo temperature and send
+        //it to the mirror
         findViewById(R.id.btn_temp).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {

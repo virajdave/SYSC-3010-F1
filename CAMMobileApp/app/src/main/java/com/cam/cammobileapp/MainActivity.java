@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void getNetInfo() {
         String msg = server.request("10", TIMEOUT);
-        //String msg = "00/0:3:1/1:0:1/2:2:1";//"00/2:3:0/6:2:1/7:2:1/8:2:0";
         if (msg == null) {
             Toasty.show(activity, "Server not connected");
         } else {

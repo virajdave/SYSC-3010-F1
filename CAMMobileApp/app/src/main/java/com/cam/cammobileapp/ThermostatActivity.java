@@ -36,6 +36,8 @@ public class ThermostatActivity extends AppCompatActivity {
         }
         setTemp = Parse.toFloat(temp);
 
+        //When the Increase temp button is invoked, increase the current temperature
+        //by 1 degree and display it
         findViewById(R.id.btn_up).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +45,8 @@ public class ThermostatActivity extends AppCompatActivity {
             }
         });
 
+        //When the Decrease temp button is invoked, decrease the current temperature
+        //by 1 degree and display it
         findViewById(R.id.btn_down).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +54,7 @@ public class ThermostatActivity extends AppCompatActivity {
             }
         });
 
+        //When the send temp button is invoked, send the changed temperature to the server
         findViewById(R.id.setTemp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +73,8 @@ public class ThermostatActivity extends AppCompatActivity {
             }
         });
 
+        //When the reset temperature is invoked, change the temperature back to what it was before
+        //the change
         findViewById(R.id.resetTemp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
